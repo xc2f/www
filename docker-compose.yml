@@ -1,43 +1,38 @@
-# version: "3"
 services:
   payload:
     image: node:24-alpine
+    container_name: payload
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
+      - pnpm_store:/home/node/.pnpm-store
+      - ~/.npmrc:/home/node/.npmrc:ro'
+    environment:
+      - NPM_CONFIG_USERCONFIG=/home/node/.npmrc
+      - PNPM_STORE_DIR=/home/node/.pnpm-store
     working_dir: /home/node/app/
-    # command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
-    command: sh -c "pnpm install && pnpm dev"
+    command: sh -c "npm install -g pnpm && pnpm install && pnpm dev"
     depends_on:
-      # - mongo
       - postgres
     env_file:
       - .env
 
-  # Ensure your DATABASE_URL uses 'mongo' as the hostname ie. mongodb://mongo/my-db-name
-  # mongo:
-  #   image: mongo:latest
-  #   ports:
-  #     - "27017:27017"
-  #   command:
-  #     - --storageEngine=wiredTiger
-  #   volumes:
-  #     - data:/data/db
-  #   logging:
-  #     driver: none
-
-  # Uncomment the following to use postgres
   postgres:
     restart: always
     image: postgres:latest
+    container_name: postgres
     volumes:
-      - data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
     ports:
-      - "5432:5432"
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
 
 volumes:
-  data:
-  # pgdata:
+  pgdata:
   node_modules:
+  pnpm_store:
