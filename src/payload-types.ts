@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     categories: Category;
     feeds: Feed;
+    mails: Mail;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -95,6 +96,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     feeds: FeedsSelect<false> | FeedsSelect<true>;
+    mails: MailsSelect<false> | MailsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -814,6 +816,54 @@ export interface Feed {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mails".
+ */
+export interface Mail {
+  id: number;
+  from: {
+    name?: string | null;
+    address: string;
+  };
+  to: {
+    address: string;
+    name?: string | null;
+    id?: string | null;
+  }[];
+  showAdvanced?: boolean | null;
+  cc?:
+    | {
+        address?: string | null;
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  bcc?:
+    | {
+        address?: string | null;
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  replyTo?: string | null;
+  subject: string;
+  text?: string | null;
+  /**
+   * HTML content (takes precedence over text)
+   */
+  html?: string | null;
+  attachments?:
+    | {
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  status: 'pending' | 'sent' | 'failed';
+  result?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1021,6 +1071,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'feeds';
         value: number | Feed;
+      } | null)
+    | ({
+        relationTo: 'mails';
+        value: number | Mail;
       } | null)
     | ({
         relationTo: 'users';
@@ -1383,6 +1437,54 @@ export interface FeedsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mails_select".
+ */
+export interface MailsSelect<T extends boolean = true> {
+  from?:
+    | T
+    | {
+        name?: T;
+        address?: T;
+      };
+  to?:
+    | T
+    | {
+        address?: T;
+        name?: T;
+        id?: T;
+      };
+  showAdvanced?: T;
+  cc?:
+    | T
+    | {
+        address?: T;
+        name?: T;
+        id?: T;
+      };
+  bcc?:
+    | T
+    | {
+        address?: T;
+        name?: T;
+        id?: T;
+      };
+  replyTo?: T;
+  subject?: T;
+  text?: T;
+  html?: T;
+  attachments?:
+    | T
+    | {
+        file?: T;
+        id?: T;
+      };
+  status?: T;
+  result?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

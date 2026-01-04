@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Feeds } from './collections/Feeds'
+import { Mails } from './collections/Mails'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -77,7 +78,7 @@ export default buildConfig({
     },
     // push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Feeds, Users],
+  collections: [Pages, Posts, Media, Categories, Feeds, Mails, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
@@ -102,7 +103,7 @@ export default buildConfig({
     tasks: [],
   },
   email: nodemailerAdapter({
-    defaultFromAddress: process.env.EMAIL_DEFAULT_FROM as string,
+    defaultFromAddress: process.env.EMAIL_DEFAULT_FROM_NO_REPLY as string,
     defaultFromName: process.env.EMAIL_DEFAULT_FROM_NAME as string,
     transport: transporter,
   }),
