@@ -3,6 +3,8 @@ import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { transporter } from './email/transporter'
 
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
@@ -99,6 +101,11 @@ export default buildConfig({
     },
     tasks: [],
   },
+  email: nodemailerAdapter({
+    defaultFromAddress: process.env.EMAIL_DEFAULT_FROM as string,
+    defaultFromName: process.env.EMAIL_DEFAULT_FROM_NAME as string,
+    transport: transporter,
+  }),
   i18n: { supportedLanguages: { en, zh } },
   localization: {
     locales: [
