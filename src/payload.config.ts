@@ -1,4 +1,3 @@
-// import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import sharp from 'sharp'
 import path from 'path'
@@ -9,12 +8,16 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Feeds } from './collections/Feeds'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+
+import { en } from '@payloadcms/translations/languages/en'
+import { zh } from '@payloadcms/translations/languages/zh'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,6 +36,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    dateFormat: 'yyyy-MM-dd HH:mm:ss',
     livePreview: {
       breakpoints: [
         {
@@ -55,20 +59,23 @@ export default buildConfig({
         },
       ],
     },
+    autoLogin:
+      process.env.NODE_ENV === 'development'
+        ? {
+            email: 'admin@local.host',
+            password: '123456',
+          }
+        : false,
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  // db: mongooseAdapter({
-  //   url: process.env.DATABASE_URL,
-  // }),
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL,
     },
-    // push: false, // Don't auto-push schema changes
-    migrationDir: './migrations',
+    // push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Feeds, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
@@ -91,5 +98,13 @@ export default buildConfig({
       },
     },
     tasks: [],
+  },
+  i18n: { supportedLanguages: { en, zh } },
+  localization: {
+    locales: [
+      { label: 'Chinese', code: 'zh' },
+      { label: 'English', code: 'en' },
+    ],
+    defaultLocale: 'zh',
   },
 })

@@ -14,6 +14,7 @@ services:
       - PNPM_STORE_DIR=/home/node/.pnpm-store
     working_dir: /home/node/app/
     command: sh -c "npm install -g pnpm && pnpm install && pnpm dev"
+    # command: sh -c "npm install -g pnpm && pnpm install && pnpm build && pnpm start"
     depends_on:
       - postgres
     env_file:
