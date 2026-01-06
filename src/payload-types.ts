@@ -803,7 +803,7 @@ export interface Feed {
   id: number;
   title: string;
   /**
-   * 自动生成，格式为 http://localhost:3000/api/feeds/for/{slug}
+   * 自动生成，格式为 https://xc2f.com/api/feeds/for/{slug}
    */
   feedUrl?: string | null;
   enabled?: boolean | null;
