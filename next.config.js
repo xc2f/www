@@ -31,7 +31,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   redirects,
-  output: 'standalone',
+  // output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
   },

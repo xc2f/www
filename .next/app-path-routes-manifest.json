@@ -1,0 +1,18 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/(frontend)/(sitemaps)/posts-sitemap.xml/route": "/posts-sitemap.xml",
+  "/(frontend)/next/exit-preview/route": "/next/exit-preview",
+  "/(frontend)/(sitemaps)/pages-sitemap.xml/route": "/pages-sitemap.xml",
+  "/(frontend)/next/preview/route": "/next/preview",
+  "/(frontend)/next/seed/route": "/next/seed",
+  "/(payload)/api/[...slug]/route": "/api/[...slug]",
+  "/(payload)/api/graphql/route": "/api/graphql",
+  "/(payload)/api/graphql-playground/route": "/api/graphql-playground",
+  "/(frontend)/search/page": "/search",
+  "/(frontend)/posts/[slug]/page": "/posts/[slug]",
+  "/(frontend)/page": "/",
+  "/(frontend)/[slug]/page": "/[slug]",
+  "/(frontend)/posts/page/[pageNumber]/page": "/posts/page/[pageNumber]",
+  "/(frontend)/posts/page": "/posts",
+  "/(payload)/admin/[[...segments]]/page": "/admin/[[...segments]]"
+}

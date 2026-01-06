@@ -1,0 +1,18 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/(frontend)/(sitemaps)/posts-sitemap.xml/route": "app/(frontend)/(sitemaps)/posts-sitemap.xml/route.js",
+  "/(frontend)/next/exit-preview/route": "app/(frontend)/next/exit-preview/route.js",
+  "/(frontend)/(sitemaps)/pages-sitemap.xml/route": "app/(frontend)/(sitemaps)/pages-sitemap.xml/route.js",
+  "/(frontend)/next/preview/route": "app/(frontend)/next/preview/route.js",
+  "/(frontend)/next/seed/route": "app/(frontend)/next/seed/route.js",
+  "/(payload)/api/[...slug]/route": "app/(payload)/api/[...slug]/route.js",
+  "/(payload)/api/graphql/route": "app/(payload)/api/graphql/route.js",
+  "/(payload)/api/graphql-playground/route": "app/(payload)/api/graphql-playground/route.js",
+  "/(frontend)/search/page": "app/(frontend)/search/page.js",
+  "/(frontend)/posts/[slug]/page": "app/(frontend)/posts/[slug]/page.js",
+  "/(frontend)/page": "app/(frontend)/page.js",
+  "/(frontend)/[slug]/page": "app/(frontend)/[slug]/page.js",
+  "/(frontend)/posts/page/[pageNumber]/page": "app/(frontend)/posts/page/[pageNumber]/page.js",
+  "/(frontend)/posts/page": "app/(frontend)/posts/page.js",
+  "/(payload)/admin/[[...segments]]/page": "app/(payload)/admin/[[...segments]]/page.js"
+}
