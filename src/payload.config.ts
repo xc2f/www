@@ -10,6 +10,7 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Notes } from './collections/Notes'
 import { Feeds } from './collections/Feeds'
 import { Mails } from './collections/Mails'
 import { Users } from './collections/Users'
@@ -80,7 +81,7 @@ export default buildConfig({
     },
     // push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Feeds, Mails, Users],
+  collections: [Pages, Posts, Media, Categories, Notes, Feeds, Mails, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,
