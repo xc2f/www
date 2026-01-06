@@ -10,8 +10,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: production
+
+    services:
+      postgres:
+        image: postgres:16
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: payload
+          POSTGRES_USER: payload
+          POSTGRES_PASSWORD: payload
+        options: >-
+          --health-cmd="pg_isready -U payload"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     
     env:
+      DATABASE_URL: postgres://payload:payload@localhost:5432/payload
       AWS_SERVICE_REGION: ${{ vars.AWS_SERVICE_REGION }}
       AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY }}
       EMAIL_DEFAULT_FROM_NAME: ${{ vars.EMAIL_DEFAULT_FROM_NAME }}
