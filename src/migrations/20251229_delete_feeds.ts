@@ -1,5 +1,7 @@
 // import { type MigrateUpArgs, sql } from '@payloadcms/db-postgres'
 
+export const up = async () => {}
+
 // export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 //   await db.execute(sql`
 //     ALTER TABLE feeds
