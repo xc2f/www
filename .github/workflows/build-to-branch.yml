@@ -14,11 +14,12 @@ jobs:
     env:
       AWS_SERVICE_REGION: ${{ vars.AWS_SERVICE_REGION }}
       AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY }}
-      AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
       EMAIL_DEFAULT_FROM_NAME: ${{ vars.EMAIL_DEFAULT_FROM_NAME }}
       EMAIL_DEFAULT_FROM_NO_REPLY: ${{ vars.EMAIL_DEFAULT_FROM_NO_REPLY }}
       EMAIL_DEFAULT_FROM_HI: ${{ vars.EMAIL_DEFAULT_FROM_HI }}
       EMAIL_DEFAULT_REPLY_TO: ${{ vars.EMAIL_DEFAULT_REPLY_TO }}
+      AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
+      PAYLOAD_SECRET: ${{ PAYLOAD_SECRET }}
     
     steps:
       - name: Checkout source
