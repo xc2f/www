@@ -65,27 +65,17 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          # 保存 .gitignore
-          cp .gitignore /tmp/gitignore.tmp
+          # 拷贝 .next 但排除 cache
+          rsync -av --exclude='cache' .next/ /tmp/next-build
 
           # 切换或创建 build 分支
           git checkout -B build
 
-          # 清空分支（只保留 build 产物）
+          # 清空分支
           git rm -rf .
 
           # 把 build 产物拷进去（按需修改）
-          cp -r .next/* .
-
-          # 清理缓存
-          rm -rf .next/cache
-
-          # 如果你还有 public / package.json / next.config.js
-          # cp -r public .
-          # cp package.json next.config.js .
-
-          # copy .gitignore
-          cp /tmp/gitignore.tmp .gitignore
+          cp -r /tmp/next-build .next
 
           git add .next
           git commit -m "chore: build from $GITHUB_SHA"
