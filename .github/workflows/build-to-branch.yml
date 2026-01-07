@@ -78,7 +78,7 @@ jobs:
           # cp package.json next.config.js .
 
           # copy .gitignore
-          cp .gitignore .
+          cp ../.gitignore .
 
           git add .
           git commit -m "chore: build from $GITHUB_SHA"
