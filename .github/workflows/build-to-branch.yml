@@ -77,6 +77,9 @@ jobs:
           # 把 build 产物拷进去（按需修改）
           cp -r .next/* .
 
+          # 清理缓存
+          rm -rf .next/cache
+
           # 如果你还有 public / package.json / next.config.js
           # cp -r public .
           # cp package.json next.config.js .
@@ -84,6 +87,6 @@ jobs:
           # copy .gitignore
           cp /tmp/gitignore.tmp .gitignore
 
-          git add .
+          git add .next
           git commit -m "chore: build from $GITHUB_SHA"
           git push -f origin build
