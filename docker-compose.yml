@@ -12,11 +12,14 @@ services:
     environment:
       - NPM_CONFIG_USERCONFIG=/home/node/.npmrc
       - PNPM_STORE_DIR=/home/node/.pnpm-store
-      # - NODE_OPTIONS="--max-old-space-size=384"
+      # - NODE_OPTIONS="--max-old-space-size=4096"
     working_dir: /home/node/app/
-    # command: sh -c "npm install -g pnpm && pnpm install && pnpm dev"
+    # for dev
+    command: sh -c "npm install -g pnpm && pnpm install && pnpm dev"
+    # for build
     # command: sh -c "npm install -g pnpm && pnpm install && pnpm build && pnpm start"
-    command: sh -c "npm install -g pnpm && pnpm install && pnpm start"
+    # for start
+    # command: sh -c "npm install -g pnpm && pnpm install && pnpm start"
     depends_on:
       - postgres
     env_file:

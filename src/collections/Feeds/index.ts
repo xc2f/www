@@ -14,6 +14,7 @@ export const Feeds: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'feedUrl', 'enabled', '_status', 'updatedAt'],
     group: 'Tools',
   },
   fields: [

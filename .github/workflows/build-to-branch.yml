@@ -25,7 +25,7 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-    
+
     env:
       DATABASE_URL: postgres://payload:payload@localhost:5432/payload
       AWS_SERVICE_REGION: ${{ vars.AWS_SERVICE_REGION }}
@@ -34,9 +34,10 @@ jobs:
       EMAIL_DEFAULT_FROM_NO_REPLY: ${{ vars.EMAIL_DEFAULT_FROM_NO_REPLY }}
       EMAIL_DEFAULT_FROM_HI: ${{ vars.EMAIL_DEFAULT_FROM_HI }}
       EMAIL_DEFAULT_REPLY_TO: ${{ vars.EMAIL_DEFAULT_REPLY_TO }}
+      NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
       AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
       PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-    
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
