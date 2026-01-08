@@ -2,16 +2,32 @@
 import React, { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 
+import { useEmojis } from '@/app/(frontend)/lib/hooks/useFeeds'
+
 interface Props {
   className?: string
-  emojis: string[]
 }
 
-export const Logo = ({ emojis = [] }: Props) => {
+// prettier-ignore
+// const EMOJIS = [
+//   "👨‍💻", "➡️", "🛠️", "➡️", "💾", "➡️",
+//   "🎨", "➡️", "🖌️", "➡️", "📸", "➡️"
+// ]
+
+export const Logo = ({}: Props) => {
+  const { data } = useEmojis()
+  const [emojis, setEmojis] = useState<string[]>([])
+  const [emoji, setEmoji] = useState<string | null>(null)
   const [hovered, setHovered] = useState(false)
-  const [emoji, setEmoji] = useState(emojis[0])
   const indexRef = useRef(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    if (data?.length) {
+      setEmojis(data)
+      setEmoji(data[0])
+    }
+  }, [data])
 
   useEffect(() => {
     if (!hovered || !emoji) {
