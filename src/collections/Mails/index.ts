@@ -30,7 +30,7 @@ export const Mails: CollectionConfig = {
               name: 'address',
               type: 'email',
               required: true,
-              defaultValue: process.env.EMAIL_DEFAULT_FROM_HI,
+              defaultValue: process.env.EMAIL_DEFAULT_FROM,
             },
           ],
         },
