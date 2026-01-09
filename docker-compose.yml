@@ -29,10 +29,13 @@ services:
     restart: always
     image: postgres:latest
     container_name: postgres
+    command: postgres -c config_file=/var/lib/postgresql/postgresql.conf
     volumes:
       - pgdata:/var/lib/postgresql
-    ports:
-      - '5432:5432'
+      - ./postgres/postgresql.conf:/var/lib/postgresql/postgresql.conf:ro
+      - ./postgres/pg_hba.conf:/var/lib/postgresql/pg_hba.conf:ro
+    # ports:
+    #   - '5432:5432'
     environment:
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}

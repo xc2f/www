@@ -66,3 +66,12 @@ docker-compose up -d
 ```bash
 git stash push -- docker-compose.yml
 ```
+
+### postgres 修改密码
+
+```bash
+docker-compose exec postgres sh
+psql -U postgres
+ALTER USER postgres WITH PASSWORD 'postgres';
+# 注：密码postgres要用引号引起来; 命令最后有分号
+```
