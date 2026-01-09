@@ -27,9 +27,9 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const SITE_NAME = process.env.SITE_NAME || 'XC2F'
-  const title = doc?.meta?.title ? `${doc?.meta?.title} | ${SITE_NAME}` : SITE_NAME
+  const title = doc?.meta?.title
 
-  return {
+  const metaData = {
     description: doc?.meta?.description,
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',
@@ -40,9 +40,17 @@ export const generateMeta = async (args: {
             },
           ]
         : undefined,
-      title,
+      title: title ? `${title} | ${SITE_NAME}` : SITE_NAME,
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
     }),
-    title,
   }
+
+  if (title) {
+    return {
+      ...metaData,
+      title,
+    }
+  }
+
+  return metaData
 }

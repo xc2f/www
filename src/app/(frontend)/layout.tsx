@@ -49,11 +49,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   )
 }
 
+const SITE_NAME = process.env.SITE_NAME || 'XC2F'
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
-    creator: '@elonmusk',
+    creator: 'xc2f.com',
   },
 }
