@@ -76,7 +76,7 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::022948663888:oidc-provider/token.actions.githubusercontent.com
+          role-to-assume: arn:aws:iam::022948663888:role/git-ci-role
           aws-region: us-east-1 # Public ECR 固定这个
 
       - name: Login to Amazon Public ECR
