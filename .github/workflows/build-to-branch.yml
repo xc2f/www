@@ -64,9 +64,7 @@ jobs:
       - name: Migrate database
         run: pnpm payload migrate
 
-      - name: Build
-        env:
-          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Build Next
         run: pnpm build
 
       - name: Prepare build branch
