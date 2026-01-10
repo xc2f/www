@@ -101,6 +101,6 @@ jobs:
             --platform linux/amd64,linux/arm64 \
             -f docker/Dockerfile.CI \
             -t public.ecr.aws/umcai/xc2f/payload:latest \
-            -t public.ecr.aws/umcai/xc2f/payload:${{ github.sha::7 }} \
+            -t public.ecr.aws/umcai/xc2f/payload:${{ github.sha.substr(0, 7) }} \
             --push \
             .
