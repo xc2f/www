@@ -12,11 +12,11 @@ echo "🚀 Starting deployment..."
 
 # 1. 拉取最新镜像
 echo "📥 Pulling latest images..."
-docker compose -f $COMPOSE_FILE pull
+docker-compose -f $COMPOSE_FILE pull
 
 # 2. 启动/更新容器
 echo "🆙 Starting containers..."
-docker compose -f $COMPOSE_FILE up -d
+docker-compose -f $COMPOSE_FILE up -d
 
 # 3. 清理旧镜像
 echo "🧹 Cleaning up old images..."

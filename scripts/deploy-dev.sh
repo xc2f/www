@@ -5,17 +5,21 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$PROJECT_DIR"
 
-echo "👉 Pull main"
-git pull origin main
+# 定义文件路径变量
+COMPOSE_FILE="docker-compose.dev.yml"
 
-echo "👉 Fetch build"
-git fetch origin build
+echo "🚀 Starting deployment..."
 
-echo "👉 Clean build artifacts"
-rm -rf .next public
+# 1. 拉取最新镜像
+echo "📥 Pulling latest images..."
+docker-compose -f $COMPOSE_FILE pull
 
-echo "👉 Restore build artifacts"
-git restore --source origin/build .next public
+# 2. 启动/更新容器
+echo "🆙 Starting containers..."
+docker-compose -f $COMPOSE_FILE up -d
 
-echo "👉 Start docker"
-docker-compose up -d
+# 3. 清理旧镜像
+echo "🧹 Cleaning up old images..."
+docker image prune -f
+
+echo "✅ Deployment completed successfully!"

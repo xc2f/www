@@ -1,4 +1,4 @@
-name: Build & Push to ECR
+name: '💎 Deploy: Production (ECR-Prod)'
 
 on:
   push:
