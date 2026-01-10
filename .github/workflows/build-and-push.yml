@@ -4,6 +4,32 @@ on:
   push:
     branches:
       - main
+    # 只有当以下路径的文件发生变动时，才触发此工作流
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'docker/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'next.config.js'
+      - 'redirects.js'
+      - 'tailwind.config.mjs'
+      - 'tsconfig.json'
+      - 'components.json'
+      - '.env.example'
+
+    # 以下路径的变动绝对不会触发构建
+    paths-ignore:
+      - 'README.md'
+      - 'AGENTS.md'
+      - '.vscode/**'
+      - '.cursor/**'
+      - '.gitignore'
+      - '.prettier*'
+      - 'eslint.config.mjs'
+      - 'tests/**'
+      - 'playwright.config.ts'
+      - 'vitest.config.mts'
   workflow_dispatch:
 
 permissions:
@@ -122,7 +148,7 @@ jobs:
           REGISTRY=public.ecr.aws/umcai/xc2f/payload
 
           # 2. 构建镜像
-          docker build -f docker/Dockerfile.CI \
+          docker build -f docker/Dockerfile.prod \
             -t $REGISTRY:latest \
             -t $REGISTRY:${SHORT_SHA} .
 

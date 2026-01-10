@@ -5,26 +5,21 @@ PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$PROJECT_DIR"
 
-echo "👉 Stop docker"
-docker-compose down
+# 定义文件路径变量
+COMPOSE_FILE="docker/docker-compose.prod.yml"
 
-# echo "👉 Stash docker-compose.yml"
-# git stash push -- docker-compose.yml || true
+echo "🚀 Starting deployment..."
 
-echo "👉 Pull main"
-git pull origin main
+# 1. 拉取最新镜像
+echo "📥 Pulling latest images..."
+docker compose -f $COMPOSE_FILE pull
 
-echo "👉 Fetch build"
-git fetch origin build
+# 2. 启动/更新容器
+echo "🆙 Starting containers..."
+docker compose -f $COMPOSE_FILE up -d
 
-echo "👉 Clean build artifacts"
-rm -rf .next public
+# 3. 清理旧镜像
+echo "🧹 Cleaning up old images..."
+docker image prune -f
 
-echo "👉 Restore build artifacts"
-git restore --source origin/build .next public
-
-# echo "👉 Restore stash"
-# git stash pop || true
-
-echo "👉 Start docker"
-docker-compose up -d
+echo "✅ Deployment completed successfully!"

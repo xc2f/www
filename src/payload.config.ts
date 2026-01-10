@@ -26,6 +26,8 @@ import { sendEmailTask } from './tasks/sendEmail'
 import { en } from '@payloadcms/translations/languages/en'
 import { zh } from '@payloadcms/translations/languages/zh'
 
+import { migrations } from './migrations'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -81,6 +83,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL,
     },
     // push: true,
+    // prodMigrations: migrations,
   }),
   collections: [Pages, Posts, Media, Categories, Notes, Feeds, Mails, Users],
   cors: [getServerSideURL()].filter(Boolean),
