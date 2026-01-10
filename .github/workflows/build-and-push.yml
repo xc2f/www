@@ -1,0 +1,62 @@
+name: Build & Push to ECR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Next (standalone)
+        run: pnpm build
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::022948663888:oidc-provider/token.actions.githubusercontent.com
+          aws-region: us-east-1 # Public ECR 固定这个
+
+      - name: Login to Amazon Public ECR
+        run: |
+          aws ecr-public get-login-password \
+            --region us-east-1 \
+          | docker login \
+            --username AWS \
+            --password-stdin public.ecr.aws
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile.CI -t xc2f/payload .
+
+      - name: Tag Docker image (latest + sha)
+        run: |
+          docker tag xc2f/payload:latest public.ecr.aws/umcai/xc2f/payload:latest
+          docker tag xc2f/payload:latest public.ecr.aws/umcai/xc2f/payload:${{ github.sha }}
+
+      - name: Push Docker image
+        run: |
+          docker push public.ecr.aws/umcai/xc2f/payload:latest
+          docker push public.ecr.aws/umcai/xc2f/payload:${{ github.sha }}
