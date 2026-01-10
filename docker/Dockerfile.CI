@@ -1,11 +1,27 @@
-FROM node:24-alpine
+# --------------------------
+# Next.js 15 Standalone + Payload CMS Dockerfile
+# 构建阶段已经在 CI 完成
+# --------------------------
+FROM --platform=$TARGETPLATFORM node:24-alpine
 
+# 工作目录
 WORKDIR /app
 ENV NODE_ENV=production
 
+# 安装 sharp 运行依赖
+RUN apk add --no-cache vips fftw python3 build-base
+
+# 拷贝 CI 构建产物
 COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY public ./public
+COPY package*.json ./
 
+# 安装依赖（optionalDependencies 如 sharp，针对当前平台）
+RUN npm ci --include=optional --omit=dev
+
+# 暴露端口
 EXPOSE 3000
+
+# 启动 Next.js / Payload
 CMD ["node", "server.js"]
