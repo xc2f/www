@@ -70,6 +70,9 @@ jobs:
       - name: Migrate database
         run: pnpm payload migrate
 
+      - name: Print BUILD_OUTPUT
+        run: echo "BUILD_OUTPUT=${{ env.BUILD_OUTPUT }}"
+
       - name: Build Next (standalone)
         run: pnpm build
 
