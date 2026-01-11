@@ -1,50 +1,11 @@
 name: Build and Push to Build Branch
 
 on:
-  push:
-    branches:
-      - main
-    # 只有当以下路径的文件发生变动时，才触发此工作流
-    paths:
-      # Next / App
-      - 'src/**'
-      - 'public/**'
-      # Docker / Infra
-      - 'docker/**'
-      - 'docker-compose*.yml'
-      # Build & Tooling
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'next.config.*'
-      - 'redirects.js'
-      - 'tailwind.config.mjs'
-      - 'postcss.config.js'
-      - 'tsconfig.json'
-      - 'components.json'
-      - 'scripts/**'
-      # Env template
-      - '.env.example'
   workflow_dispatch:
 
 env:
   DATABASE_URL: postgres://payload:payload@localhost:5432/payload
-  AWS_SERVICE_REGION: ${{ vars.AWS_SERVICE_REGION }}
-  AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY }}
-  EMAIL_DEFAULT_FROM_NAME: ${{ vars.EMAIL_DEFAULT_FROM_NAME }}
-  EMAIL_DEFAULT_FROM_NO_REPLY: ${{ vars.EMAIL_DEFAULT_FROM_NO_REPLY }}
-  EMAIL_DEFAULT_FROM: ${{ vars.EMAIL_DEFAULT_FROM }}
-  EMAIL_DEFAULT_REPLY: ${{ vars.EMAIL_DEFAULT_REPLY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
-  S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
-  S3_BUCKET: ${{ vars.S3_BUCKET }}
-  S3_ACCESS_KEY_ID: ${{ vars.S3_ACCESS_KEY_ID }}
-  S3_REGION: ${{ vars.S3_REGION }}
-
-  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
-  CRON_SECRET: ${{ secrets.CRON_SECRET }}
-  PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
-  PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-  S3_SECRET: ${{ secrets.S3_SECRET }}
 
 jobs:
   build:

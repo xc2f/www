@@ -1,4 +1,4 @@
-name: '🚀 Deploy: Development (ECR-Dev)'
+name: '💎 Build and Push Standalone Image'
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - 'public/**'
       # Docker / Infra
       - 'docker/**'
-      - 'docker-compose*.yml'
+      - 'docker-compose.prod.yml'
       # Build & Tooling
       - 'package.json'
       - 'pnpm-lock.yaml'
@@ -32,23 +32,8 @@ permissions:
 
 env:
   DATABASE_URL: postgres://payload:payload@localhost:5432/payload
-  AWS_SERVICE_REGION: ${{ vars.AWS_SERVICE_REGION }}
-  AWS_ACCESS_KEY: ${{ vars.AWS_ACCESS_KEY }}
-  EMAIL_DEFAULT_FROM_NAME: ${{ vars.EMAIL_DEFAULT_FROM_NAME }}
-  EMAIL_DEFAULT_FROM_NO_REPLY: ${{ vars.EMAIL_DEFAULT_FROM_NO_REPLY }}
-  EMAIL_DEFAULT_FROM: ${{ vars.EMAIL_DEFAULT_FROM }}
-  EMAIL_DEFAULT_REPLY: ${{ vars.EMAIL_DEFAULT_REPLY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
-  S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
-  S3_BUCKET: ${{ vars.S3_BUCKET }}
-  S3_ACCESS_KEY_ID: ${{ vars.S3_ACCESS_KEY_ID }}
-  S3_REGION: ${{ vars.S3_REGION }}
-
-  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
-  CRON_SECRET: ${{ secrets.CRON_SECRET }}
-  PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
-  PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
-  S3_SECRET: ${{ secrets.S3_SECRET }}
+  BUILD_OUTPUT: standalone
 
 jobs:
   build:
@@ -88,17 +73,30 @@ jobs:
       - name: Migrate database
         run: pnpm payload migrate
 
-      - name: Build Next
+      - name: Print BUILD_OUTPUT
+        run: echo "BUILD_OUTPUT=${{ env.BUILD_OUTPUT }}"
+
+      - name: Build Next (standalone)
         run: pnpm build
 
-      - name: Prepare .dockerignore for Dev
+      - name: Verify Build Artifacts
         run: |
-          # 把 node_modules 和所有源码打进去
-          echo ".git" > .dockerignore
-          echo ".next/cache" >> .dockerignore
-          echo "node_modules/.cache" >> .dockerignore
-          echo "==== Current .dockerignore ===="
-          cat .dockerignore
+          echo "==== [1/3] Standalone Directory ===="
+          if [ -d ".next/standalone" ]; then
+            ls -F .next/standalone | head -n 10
+            [ -f ".next/standalone/server.js" ] && echo "✅ server.js found" || echo "❌ server.js MISSING"
+          else
+            echo "❌ .next/standalone directory not found!"
+          fi
+
+          echo -e "\n==== [2/3] Static Assets ===="
+          [ -d ".next/static" ] && echo "✅ .next/static exists" || echo "❌ .next/static MISSING"
+
+          echo -e "\n==== [3/3] Public Assets ===="
+          [ -d "public" ] && echo "✅ public exists" || echo "❌ public MISSING"
+
+          echo -e "\n==== Build Context Summary ===="
+          du -sh .next/standalone .next/static public 2>/dev/null
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -111,19 +109,26 @@ jobs:
         with:
           registry-type: public
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Check .dockerignore
+        run: |
+          if [ -f ".dockerignore" ]; then
+            echo "==== .dockerignore content ===="
+            cat .dockerignore
+          else
+            echo "No .dockerignore file found."
+          fi
 
       - name: Build and Push Docker image (ARM64 only)
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: docker/Dockerfile.dev
-          push: true
-          tags: |
-            public.ecr.aws/umcai/xc2f/payload:dev-latest
-          # 关键：启用 GitHub Actions 缓存优化
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          # 明确指定平台（因为你运行在 arm 环境，默认就是 arm）
-          platforms: linux/arm64
+        run: |
+          # 1. 提取 Short SHA
+          SHORT_SHA=${GITHUB_SHA:0:7}
+          REGISTRY=public.ecr.aws/umcai/xc2f/payload
+
+          # 2. 构建镜像
+          docker build -f docker/Dockerfile.prod.standalone \
+            -t $REGISTRY:latest \
+            -t $REGISTRY:${SHORT_SHA} .
+
+          # 3. 推送镜像
+          docker push $REGISTRY:latest
+          docker push $REGISTRY:${SHORT_SHA}
