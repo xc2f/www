@@ -49,7 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   )
 }
 
-const SITE_NAME = process.env.SITE_NAME || 'XC2F'
+const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'XC2F'
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {

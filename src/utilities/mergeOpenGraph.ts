@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from './getURL'
 
-const SITE_NAME = process.env.SITE_NAME || 'XC2F'
+const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'XC2F'
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
   description: 'An open-source website built with Payload and Next.js.',

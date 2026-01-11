@@ -26,7 +26,7 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const SITE_NAME = process.env.SITE_NAME || 'XC2F'
+  const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'XC2F'
   const title = doc?.meta?.title
 
   const metaData = {

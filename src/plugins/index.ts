@@ -14,7 +14,7 @@ import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  const SITE_NAME = process.env.SITE_NAME || 'XC2F'
+  const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'XC2F'
   return doc?.title ? `${doc.title} | ${SITE_NAME}` : SITE_NAME
 }
 
