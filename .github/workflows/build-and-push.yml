@@ -38,6 +38,26 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
+      - name: Load environment variables as defaults
+        run: |
+          while IFS='=' read -r key value || [ -n "$key" ]; do
+            # 1. 忽略注释和空行
+            [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
+
+            # 2. 去掉 key 和 value 的前后空格
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+
+            # 3. 检查环境变量是否已存在
+            # 如果当前环境下 key 已经有值（来自 YAML 顶层 env），则跳过
+            if [ -z "${!key}" ]; then
+              echo "Setting default: $key=$value"
+              echo "$key=$value" >> $GITHUB_ENV
+            else
+              echo "Skipping $key: Using value from YAML override"
+            fi
+          done < .env.example
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
