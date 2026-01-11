@@ -1,14 +1,6 @@
 FROM node:24-slim AS base
 
-# 基础环境
-ENV PNPM_HOME="/home/node/.pnpm-store"
-ENV PATH="$PNPM_HOME:$PATH"
-
-USER root
-
-# 安装 pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
+# ================== postgres client install begin ==================
 # 安装基础依赖
 RUN apt-get update && apt-get install -y \
     curl \
@@ -25,6 +17,14 @@ RUN curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmo
 RUN apt-get update && \
     apt-get install -y postgresql-client-18 && \
     rm -rf /var/lib/apt/lists/*
+# ================== postgres client install end ==================
+
+# 基础环境
+ENV PNPM_HOME="/home/node/.pnpm-store"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# 安装 pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # 依赖安装阶段
 FROM base AS deps

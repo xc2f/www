@@ -1,5 +1,24 @@
 FROM node:24-slim
 
+# ================== postgres client install begin ==================
+# 安装基础依赖
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    --no-install-recommends
+
+# 导入 PostgreSQL 官方 GPG 密钥并设置存储库
+RUN curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+
+# 安装 PostgreSQL 18 客户端
+RUN apt-get update && \
+    apt-get install -y postgresql-client-18 && \
+    rm -rf /var/lib/apt/lists/*
+# ================== postgres client install end ==================
+
 WORKDIR /app
 ENV NODE_ENV=production
 
