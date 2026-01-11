@@ -48,3 +48,9 @@ psql -U postgres
 ALTER USER postgres WITH PASSWORD 'postgres';
 # 注：密码postgres要用引号引起来; 命令最后有分号
 ```
+
+### postgres 修改volume name
+
+```bash
+docker run --rm   -v FROM_NAME_pgdata:/from   -v TO_NAME_pgdata:/to   alpine   sh -c "cd /from && cp -a . /to"
+```
