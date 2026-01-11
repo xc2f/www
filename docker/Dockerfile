@@ -1,25 +1,47 @@
-FROM node:24-alpine
+FROM node:24-slim AS base
 
-# 1️⃣ 用 root 启用 corepack & pnpm
-RUN corepack enable \
-  && corepack prepare pnpm@latest --activate
+# 基础环境
+ENV PNPM_HOME="/home/node/.pnpm-store"
+ENV PATH="$PNPM_HOME:$PATH"
 
-# 2️⃣ 创建 pnpm 需要的目录并授权给 node
-RUN mkdir -p /app /home/node/.pnpm-store \
-  && chown -R node:node /app /home/node
+USER root
 
-# 3️⃣ 切换用户
-USER node
+# 安装 pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# 安装基础依赖
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    --no-install-recommends
+
+# 导入 PostgreSQL 官方 GPG 密钥并设置存储库
+RUN curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+
+# 安装 PostgreSQL 18 客户端
+RUN apt-get update && \
+    apt-get install -y postgresql-client-18 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 依赖安装阶段
+FROM base AS deps
 WORKDIR /app
-
-# 4️⃣ 拷贝依赖文件
+# 先创建目录并赋权
+RUN mkdir -p /app && chown -R node:node /app
+USER node
 COPY --chown=node:node package.json pnpm-lock.yaml ./
+# 显式指向 store
+RUN pnpm config set store-dir /home/node/.pnpm-store && \
+    pnpm install --frozen-lockfile
 
-# 5️⃣ 指定 pnpm store 位置（关键）
-ENV PNPM_STORE_PATH=/home/node/.pnpm-store
-
-RUN pnpm install --frozen-lockfile
-
-# 6️⃣ 拷贝源码
+# 运行阶段
+FROM base AS runner
+WORKDIR /app
+USER node
+COPY --from=deps --chown=node:node /app/node_modules ./node_modules
 COPY --chown=node:node . .
 
+EXPOSE 3000

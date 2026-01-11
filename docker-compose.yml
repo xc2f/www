@@ -9,16 +9,14 @@ services:
       - '3000:3000'
     volumes:
       - .:/app
-      - node_modules:/app/node_modules
+      - /app/node_modules
       - pnpm_store:/home/node/.pnpm-store
       - ~/.aws:/home/node/.aws
-      # - ~/.npmrc:/home/node/.npmrc:ro'
+        # - ~/.npmrc:/home/node/.npmrc:ro'
     environment:
-      - NPM_CONFIG_USERCONFIG=/home/node/.npmrc
-      - PNPM_STORE_DIR=/home/node/.pnpm-store
-      # - NODE_OPTIONS="--max-old-space-size=4096"
-    command: sh -c "pnpm ${APP_CMD}"
-    working_dir: /app
+      - NODE_ENV=development
+      - APP_CMD=${APP_CMD:-dev} # 默认为 dev
+    command: sh -c "pnpm ${APP_CMD:-dev}"
     depends_on:
       - postgres
     env_file:
@@ -42,5 +40,4 @@ volumes:
   pgdata:
     external: true
     name: xc2f_pgdata
-  node_modules:
   pnpm_store:

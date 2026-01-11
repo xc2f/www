@@ -22,6 +22,7 @@ import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
 import { sendEmailTask } from './tasks/sendEmail'
+import { backupDatabaseTask } from './tasks/backupDatabase'
 
 import { en } from '@payloadcms/translations/languages/en'
 import { zh } from '@payloadcms/translations/languages/zh'
@@ -92,16 +93,18 @@ export default buildConfig({
     ...plugins,
     s3Storage({
       collections: {
-        media: true,
+        media: {
+          prefix: 'media',
+        },
       },
       bucket: process.env.S3_BUCKET || '',
       config: {
+        region: process.env.S3_REGION || 'auto',
+        endpoint: process.env.S3_ENDPOINT || '',
         credentials: {
           accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
           secretAccessKey: process.env.S3_SECRET || '',
         },
-        region: process.env.S3_REGION || 'auto',
-        endpoint: process.env.S3_ENDPOINT || '',
       },
     }),
   ],
@@ -123,7 +126,19 @@ export default buildConfig({
         return authHeader === `Bearer ${process.env.CRON_SECRET}`
       },
     },
-    tasks: [sendEmailTask],
+    tasks: [
+      sendEmailTask,
+      {
+        slug: 'backupDatabase',
+        handler: backupDatabaseTask,
+        schedule: [
+          {
+            cron: '0 0 * * *',
+            queue: 'default',
+          },
+        ],
+      },
+    ],
     autoRun: [
       {
         cron: '* * * * *', // Run every minute
