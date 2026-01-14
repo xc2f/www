@@ -9,12 +9,15 @@ permissions:
 
 env:
   DATABASE_URL: postgres://payload:payload@localhost:5432/payload
+  AWS_OIDC_ROLE: ${{ vars.AWS_OIDC_ROLE }}
+  AWS_ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
   NEXT_PUBLIC_SITE_NAME: ${{ vars.NEXT_PUBLIC_SITE_NAME }}
 
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
+    # runs-on: ubuntu-latest
     environment: production
 
     services:
@@ -42,15 +45,15 @@ jobs:
       - name: Load environment variables as defaults
         run: |
           while IFS='=' read -r key value || [ -n "$key" ]; do
-            # 1. 忽略注释和空行
+            # 1. Ignore comments and empty lines
             [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
 
-            # 2. 去掉 key 和 value 的前后空格
+            # 2. Trim whitespace from key and value
             key=$(echo "$key" | xargs)
             value=$(echo "$value" | xargs)
 
-            # 3. 检查环境变量是否已存在
-            # 如果当前环境下 key 已经有值（来自 YAML 顶层 env），则跳过
+            # 3. Check if the environment variable already exists
+            # If the key already has a value (from YAML top-level env), skip it
             if [ -z "${!key}" ]; then
               echo "Setting default: $key=$value"
               echo "$key=$value" >> $GITHUB_ENV
@@ -75,7 +78,7 @@ jobs:
 
       - name: Prepare .dockerignore for Dev
         run: |
-          # 把 node_modules 和所有源码打进去
+          # Include node_modules and all source code in the image
           echo ".git" > .dockerignore
           echo ".next/cache" >> .dockerignore
           echo "node_modules/.cache" >> .dockerignore
@@ -85,8 +88,8 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::022948663888:role/github-ci-role
-          aws-region: us-east-1 # Public ECR 固定这个
+          role-to-assume: ${{ env.AWS_OIDC_ROLE }}
+          aws-region: us-east-1 # Public ECR is fixed to this region
 
       - name: Log in to Amazon ECR Public
         uses: aws-actions/amazon-ecr-login@v2
@@ -102,12 +105,12 @@ jobs:
           context: .
           file: docker/Dockerfile.prod
           push: true
-          tags: |
-            public.ecr.aws/umcai/xc2f/payload:dev-latest
-          # 关键：启用 GitHub Actions 缓存优化
+          tags: ${{ env.AWS_ECR_REGISTRY }}:dev-latest
+          # Key: Enable GitHub Actions cache optimization
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # 明确指定平台（因为你运行在 arm 环境，默认就是 arm）
+          # Explicitly specify platform
           platforms: linux/arm64
-          provenance: false # 禁用来源证明（消除 0.01MB 的镜像）
-          sbom: false # 禁用软件账单
+          # platforms: linux/amd64
+          provenance: false # Disable provenance (eliminate 0.01MB image)
+          sbom: false # Disable Software Bill of Materials (SBOM)

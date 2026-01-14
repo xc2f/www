@@ -38,15 +38,15 @@ jobs:
       - name: Load environment variables as defaults
         run: |
           while IFS='=' read -r key value || [ -n "$key" ]; do
-            # 1. 忽略注释和空行
+            # 1. Ignore comments and empty lines
             [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
 
-            # 2. 去掉 key 和 value 的前后空格
+            # 2. Trim whitespace from key and value
             key=$(echo "$key" | xargs)
             value=$(echo "$value" | xargs)
 
-            # 3. 检查环境变量是否已存在
-            # 如果当前环境下 key 已经有值（来自 YAML 顶层 env），则跳过
+            # 3. Check if the environment variable already exists
+            # If the key already has a value (from YAML top-level env), skip it
             if [ -z "${!key}" ]; then
               echo "Setting default: $key=$value"
               echo "$key=$value" >> $GITHUB_ENV
@@ -74,22 +74,22 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-          # 拷贝 .next 但排除 cache
+          # Copy .next but exclude cache
           # rsync -av --exclude='cache' .next/ /tmp/next-build/
           rm -rf .next/cache
           mkdir -p /tmp/next-build
           cp -r .next/* /tmp/next-build/
-          # copy public
+          # copy public directory
           mkdir -p /tmp/next-public
           cp -r public/* /tmp/next-public/
 
-          # 切换或创建 build 分支
+          # Switch to or create build branch
           git checkout -B build
 
-          # 清空分支
+          # Clear branch
           git rm -rf .
 
-          # 把 build 产物拷进去（按需修改）
+          # Copy build artifacts in (modify as needed)
           # rsync -av /tmp/next-build/ .next/
           rm -rf .next
           mkdir -p .next

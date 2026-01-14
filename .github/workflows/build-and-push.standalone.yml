@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # 只有当以下路径的文件发生变动时，才触发此工作流
+    # Only trigger this workflow when files in the following paths change
     paths:
       # Next / App
       - 'src/**'
@@ -32,6 +32,8 @@ permissions:
 
 env:
   DATABASE_URL: postgres://payload:payload@localhost:5432/payload
+  AWS_OIDC_ROLE: ${{ vars.AWS_OIDC_ROLE }}
+  AWS_ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
   NEXT_PUBLIC_SITE_NAME: ${{ vars.NEXT_PUBLIC_SITE_NAME }}
   BUILD_OUTPUT: standalone
@@ -39,6 +41,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
+    # runs-on: ubuntu-latest
     environment: production
 
     services:
@@ -66,15 +69,15 @@ jobs:
       - name: Load environment variables as defaults
         run: |
           while IFS='=' read -r key value || [ -n "$key" ]; do
-            # 1. 忽略注释和空行
+            # 1. Ignore comments and empty lines
             [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
 
-            # 2. 去掉 key 和 value 的前后空格
+            # 2. Trim whitespace from key and value
             key=$(echo "$key" | xargs)
             value=$(echo "$value" | xargs)
 
-            # 3. 检查环境变量是否已存在
-            # 如果当前环境下 key 已经有值（来自 YAML 顶层 env），则跳过
+            # 3. Check if the environment variable already exists
+            # If the key already has a value (from YAML top-level env), skip it
             if [ -z "${!key}" ]; then
               echo "Setting default: $key=$value"
               echo "$key=$value" >> $GITHUB_ENV
@@ -122,8 +125,8 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::022948663888:role/github-ci-role
-          aws-region: us-east-1 # Public ECR 固定这个
+          role-to-assume: ${{ env.AWS_OIDC_ROLE }}
+          aws-region: us-east-1 # Public ECR is fixed to this region
 
       - name: Log in to Amazon ECR Public
         uses: aws-actions/amazon-ecr-login@v2
@@ -139,17 +142,17 @@ jobs:
             echo "No .dockerignore file found."
           fi
 
-      - name: Build and Push Docker image (ARM64 only)
+      - name: Build and Push Docker image
         run: |
-          # 1. 提取 Short SHA
+          # 1. Extract Short SHA
           SHORT_SHA=${GITHUB_SHA:0:7}
-          REGISTRY=public.ecr.aws/umcai/xc2f/payload
+          REGISTRY=$AWS_ECR_REGISTRY
 
-          # 2. 构建镜像
+          # 2. Build image
           docker build -f docker/Dockerfile.prod.standalone \
             -t $REGISTRY:latest \
             -t $REGISTRY:${SHORT_SHA} .
 
-          # 3. 推送镜像
+          # 3. Push image
           docker push $REGISTRY:latest
           docker push $REGISTRY:${SHORT_SHA}
