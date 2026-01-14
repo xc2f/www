@@ -37,13 +37,21 @@ scripts/**
 docker run --rm -v FROM_NAME_pgdata:/from -v TO_NAME_pgdata:/to alpine sh -c "cd /from && cp -a . /to"
 ```
 
-#### public.ecr.aws/umcai/xc2f/payload:latest
+#### product image
+
+> 通常情况下，server 端应该使用此镜像
+
+```bash
+public.ecr.aws/umcai/xc2f/payload:latest
+```
 
 main 分支 push 后，GitHub CI build standalone 模式 image，推送到 ECR
 
-通常情况下，server 端应该使用此镜像。
+#### production image with dev environment
 
-#### public.ecr.aws/umcai/xc2f/payload:dev-latest
+```bash
+public.ecr.aws/umcai/xc2f/payload:dev-latest
+```
 
 可运行 npn scripts 的镜像，如`pnpm payload migrate`，需在 CI 手动 dispatch `Build and Push Dev Image`
 
