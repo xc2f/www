@@ -216,7 +216,9 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    slugField({
+      localized: true,
+    }),
     {
       name: 'githubDiscussionUrl',
       type: 'text',

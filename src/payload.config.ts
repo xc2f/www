@@ -164,13 +164,16 @@ export default buildConfig({
           transport: transporter,
         })
       : undefined,
+  // admin ui
   i18n: { supportedLanguages: { en, zh } },
+  // next ui
   localization: {
     locales: [
-      { label: 'Chinese', code: 'zh' },
+      { label: '简体中文', code: 'zh' },
       { label: 'English', code: 'en' },
     ],
     defaultLocale: 'zh',
+    fallback: true,
   },
   endpoints,
 })

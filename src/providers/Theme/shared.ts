@@ -1,6 +1,6 @@
 import type { Theme } from './types'
 
-export const themeLocalStorageKey = 'payload-theme'
+export const themeLocalStorageKey = 'xc2f-theme'
 
 export const defaultTheme = 'light'
 

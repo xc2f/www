@@ -15,6 +15,8 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
+import { getTranslations } from 'next-intl/server'
+
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const posts = await payload.find({
@@ -48,7 +50,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   const decodedSlug = decodeURIComponent(slug)
   const url = '/posts/' + decodedSlug
   const post = await queryPostBySlug({ slug: decodedSlug })
-  console.log('👉👉post👈👈-51', post)
+  const t = await getTranslations('PostPage')
 
   if (!post) return <PayloadRedirects url={url} />
 
@@ -75,14 +77,14 @@ export default async function Post({ params: paramsPromise }: Args) {
         </div>
 
         {post.githubDiscussionUrl && (
-          <div className="mt-12 border-t pt-6 text-sm">
+          <div className="mt-12 border-t pt-6">
             <a
               href={post.githubDiscussionUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline"
             >
-              💬 在 GitHub 参与评论
+              💬 {t('join_the_discussion_on_github')}
             </a>
           </div>
         )}

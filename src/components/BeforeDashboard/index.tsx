@@ -12,11 +12,11 @@ const BeforeDashboard: React.FC = () => {
         <h4>Welcome to your dashboard!</h4>
       </Banner>
       <div className="row">
-        <a href="/admin/system">Go to system</a>
-        <span>|</span>
         <a href="/" target="_blank">
           Visit your website
         </a>
+        <span>|</span>
+        <a href="/admin/system">Go to system</a>
         <span>|</span>
         <a href="https://payloadcms.com/docs/getting-started/what-is-payload" target="_blank">
           Visit payload docs
