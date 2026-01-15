@@ -217,6 +217,14 @@ export const Posts: CollectionConfig<'posts'> = {
       ],
     },
     slugField(),
+    {
+      name: 'githubDiscussionUrl',
+      type: 'text',
+      label: 'GitHub 评论地址',
+      admin: {
+        position: 'sidebar',
+      },
+    },
   ],
   hooks: {
     afterChange: [revalidatePost],

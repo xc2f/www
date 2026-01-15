@@ -48,6 +48,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   const decodedSlug = decodeURIComponent(slug)
   const url = '/posts/' + decodedSlug
   const post = await queryPostBySlug({ slug: decodedSlug })
+  console.log('👉👉post👈👈-51', post)
 
   if (!post) return <PayloadRedirects url={url} />
 
@@ -72,6 +73,19 @@ export default async function Post({ params: paramsPromise }: Args) {
             />
           )}
         </div>
+
+        {post.githubDiscussionUrl && (
+          <div className="mt-12 border-t pt-6 text-sm">
+            <a
+              href={post.githubDiscussionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              💬 在 GitHub 参与评论
+            </a>
+          </div>
+        )}
       </div>
     </article>
   )

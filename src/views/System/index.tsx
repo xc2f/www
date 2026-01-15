@@ -25,6 +25,9 @@ const System = async ({ initPageResult, params, searchParams }: AdminViewServerP
     >
       <Gutter>
         <Backup />
+        <Gutter>
+          <a href="/admin">返回 Admin 主页</a>
+        </Gutter>
       </Gutter>
     </DefaultTemplate>
   )

@@ -275,6 +275,7 @@ export interface Post {
    */
   generateSlug?: boolean | null;
   slug: string;
+  githubDiscussionUrl?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1349,6 +1350,7 @@ export interface PostsSelect<T extends boolean = true> {
       };
   generateSlug?: T;
   slug?: T;
+  githubDiscussionUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

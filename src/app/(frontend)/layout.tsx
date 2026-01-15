@@ -15,14 +15,14 @@ import { draftMode } from 'next/headers'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
-import { logo } from './fonts'
+import { LogoFont } from './fonts'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
   return (
     <html
-      className={cn(GeistSans.variable, GeistMono.variable, logo.variable)}
+      className={cn(GeistSans.variable, GeistMono.variable, LogoFont.variable)}
       lang="en"
       suppressHydrationWarning
     >
