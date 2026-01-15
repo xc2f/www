@@ -85,7 +85,7 @@ APP_CMD=start
 
 ## Troubleshooting
 
-- On first startup, you may encounter an error indicating that `xc2f_pgdata` was not found. You can resolve this by commenting out the `volumes.pgdata.external` and `volumes.pgdata.name` lines in `docker-compose.yml`. If you keep these options, you can customize the pgdata name. See [Change Postgres volume name](#change-postgres-volume-name) for details.
+- On first startup, you may encounter an error indicating that `external volume "xc2f_pgdata" not found`. You can resolve this by commenting out the `volumes.pgdata.external` and `volumes.pgdata.name` lines in `docker-compose.yml`. Or you can create the xc2f_pgdata volume by running `docker volume create xc2f_pgdata`.
 - On first startup or after new table structures are added, enter the payload container to run `pnpm payload migrate:create` and `pnpm payload migrate`.
 
 ## Commands
