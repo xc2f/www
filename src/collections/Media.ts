@@ -13,6 +13,10 @@ import { authenticated } from '../access/authenticated'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const webpOptions = {
+  format: 'webp',
+  options: { quality: 80 },
+} as const
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -79,6 +83,10 @@ export const Media: CollectionConfig = {
         height: 630,
         crop: 'center',
       },
-    ],
+    ].map((item) => ({
+      ...item,
+      formatOptions: webpOptions,
+    })),
+    formatOptions: webpOptions,
   },
 }
