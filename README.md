@@ -142,6 +142,7 @@ docker cp payload:/app/src/migrations/. ./migrations/
 
 # Merge and commit
 cd ~/www-code
+git pull
 cp -r ~/www/migrations/* ./src/migrations/
 git status
 git add -A

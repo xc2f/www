@@ -23,6 +23,24 @@ const nextConfig = {
       }),
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN', // 允许在相同域名下的 iframe 中显示
+          },
+          {
+            key: 'Content-Security-Policy',
+            // 现代安全标准：允许自己嵌入自己
+            value: "frame-ancestors 'self';",
+          },
+        ],
+      },
+    ]
+  },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
