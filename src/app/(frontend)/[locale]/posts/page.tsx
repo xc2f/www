@@ -14,6 +14,10 @@ import { setRequestLocale } from 'next-intl/server'
 
 export const revalidate = 600
 
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }))
+}
+
 export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
   // Enable static rendering

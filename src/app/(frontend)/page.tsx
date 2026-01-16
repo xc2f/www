@@ -1,1 +1,5 @@
-export default function RootPage() {}
+export const dynamic = 'force-static'
+
+export default function RootPage() {
+  return null
+}
