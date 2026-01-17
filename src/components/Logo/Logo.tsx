@@ -8,12 +8,6 @@ interface Props {
   className?: string
 }
 
-// prettier-ignore
-// const EMOJIS = [
-//   "👨‍💻", "➡️", "🛠️", "➡️", "💾", "➡️",
-//   "🎨", "➡️", "🖌️", "➡️", "📸", "➡️"
-// ]
-
 export const Logo = ({}: Props) => {
   const { data } = useEmojis()
   const [emojis, setEmojis] = useState<string[]>([])
