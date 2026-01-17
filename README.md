@@ -4,11 +4,12 @@
 
 A personal research project forked from the Payload CMS [website](https://github.com/payloadcms/website). Based on the official example, the following features have been added:
 
-- Email sending by SES
-- Subscription API
-- Notes recording
-- Scheduled database backups
-- File upload to R2/S3
+- Integrated Amazon SES for email delivery (Admin Panel).
+- API subscription (Admin Panel).
+- Note-taking and content recording support (Admin Panel).
+- Scheduled database backups (Admin Panel).
+- File and media uploads to Cloudflare R2 or AWS S3 (Admin Panel).
+- Built-in chart block for visual data analysis and presentation.
 
 ## Develop
 

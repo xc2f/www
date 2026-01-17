@@ -2041,6 +2041,57 @@ export interface BannerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ChartBlock".
+ */
+export interface ChartBlock {
+  title: string;
+  description?: string | null;
+  type: 'line' | 'bar' | 'area' | 'pie' | 'composed';
+  /**
+   * 数组对象格式，例如: [{ "time": "1:51", "Seoul": 97, "Tokyo": 86 }]
+   */
+  dataset:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  xAxisKey: string;
+  series?:
+    | {
+        key: string;
+        label?: string | null;
+        type?: ('line' | 'bar' | 'area') | null;
+        yAxis?: ('left' | 'right') | null;
+        /**
+         * 可填十六进制或 color 名称
+         */
+        color?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * 透传给图表库的原生配置项
+   */
+  config?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  dataSource?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'chart';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
