@@ -2,16 +2,36 @@
 
 import React from 'react'
 import ComposedChart, { ComposedChartProps } from './ComposedChart'
+import { ChartHeader } from './ChartHeader'
+
+interface BaseChartProps {
+  heading?: string
+  description?: string
+}
 
 export type ChartProps =
   | ({ type: 'composed' } & ComposedChartProps)
   | { type: 'line' | 'bar' | 'area' | 'pie' }
 
-export const Chart: React.FC<ChartProps> = ({ type, ...rest }) => {
+export const Chart: React.FC<BaseChartProps & ChartProps> = ({
+  type,
+  heading,
+  description,
+  ...rest
+}) => {
+  let chart = null
   switch (type) {
     case 'composed':
-      return <ComposedChart {...(rest as ComposedChartProps)} />
+      chart = <ComposedChart {...(rest as ComposedChartProps)} />
+      break
     default:
-      return null
+      break
   }
+
+  return (
+    <>
+      <ChartHeader heading={heading} description={description} />
+      {chart}
+    </>
+  )
 }

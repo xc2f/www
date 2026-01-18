@@ -2068,7 +2068,7 @@ export interface BannerBlock {
  * via the `definition` "ChartBlock".
  */
 export interface ChartBlock {
-  title: string;
+  heading?: string | null;
   description?: string | null;
   type: 'line' | 'bar' | 'area' | 'pie' | 'composed';
   /**

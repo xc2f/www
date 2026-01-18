@@ -102,20 +102,33 @@ html[data-theme='light'] {
   opacity: initial;
 }
 
+/* prettier-ignore */
 @layer base {
   :root {
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
+    /* 采用“大跨度跳跃”布局，确保相邻索引颜色反差大 */
+    --chart-1: oklch(0.65 0.22 30);    /* 01. 鲜红 (最醒目) */
+    --chart-2: oklch(0.65 0.15 180);   /* 02. 青绿 (冷色对比) */
+    --chart-3: oklch(0.60 0.20 300);   /* 03. 亮紫 (明暗对比) */
+    --chart-4: oklch(0.80 0.18 85);    /* 04. 金黄 (暖色跳跃) */
+    --chart-5: oklch(0.55 0.18 255);   /* 05. 宝蓝 (深色对比) */
+    --chart-6: oklch(0.72 0.20 50);    /* 06. 橙红 (类似珊瑚) */
+    --chart-7: oklch(0.65 0.22 140);   /* 07. 翡翠 (清新感) */
+    --chart-8: oklch(0.45 0.12 210);   /* 08. 灰蓝 (中性过渡) */
+    --chart-9: oklch(0.70 0.18 340);   /* 09. 玫粉 (高饱和) */
+    --chart-10: oklch(0.50 0.15 110);  /* 10. 橄榄绿 (暗色调) */
   }
 
   [data-theme='dark'] {
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
+    /* 暗色模式：适度提升 L (Lightness)，保持对比度 */
+    --chart-1: oklch(0.65 0.22 30);
+    --chart-2: oklch(0.75 0.12 180);
+    --chart-3: oklch(0.70 0.18 300);
+    --chart-4: oklch(0.85 0.15 85);
+    --chart-5: oklch(0.65 0.18 250);
+    --chart-6: oklch(0.80 0.15 50);
+    --chart-7: oklch(0.75 0.15 140);
+    --chart-8: oklch(0.65 0.12 210);
+    --chart-9: oklch(0.75 0.18 340);
+    --chart-10: oklch(0.60 0.15 110);
   }
 }
