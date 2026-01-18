@@ -12,21 +12,29 @@ import {
 } from '@payloadcms/richtext-lexical/react'
 
 import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-import { ChartBlock, ChartBlockProps } from '@/blocks/ChartBlock/Component'
 
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
+  ChartBlock as ChartBlockProps,
+  MarkdownBlock as MarkdownBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { ChartBlock } from '@/blocks/ChartBlock/Component'
+import { MarkdownBlock } from '@/blocks/MarkdownBlock/Component'
 import { cn } from '@/utilities/ui'
 
 type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps | ChartBlockProps
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | ChartBlockProps
+      | MarkdownBlockProps
     >
 
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
@@ -56,6 +64,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
     cta: ({ node }) => <CallToActionBlock {...node.fields} />,
     chart: ({ node }) => <ChartBlock {...node.fields} />,
+    markdown: ({ node }) => <MarkdownBlock {...node.fields} />,
   },
 })
 

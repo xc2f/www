@@ -15,6 +15,7 @@ import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { ChartBlock } from '../../blocks/ChartBlock/config'
+import { MarkdownBlock } from '../../blocks/MarkdownBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
@@ -93,7 +94,7 @@ export const Posts: CollectionConfig<'posts'> = {
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
                     BlocksFeature({
-                      blocks: [Banner, Code, MediaBlock, ChartBlock()],
+                      blocks: [MediaBlock, Code, MarkdownBlock, Banner, ChartBlock()],
                     }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),

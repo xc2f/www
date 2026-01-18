@@ -6,8 +6,10 @@ import {
   ParagraphFeature,
   lexicalEditor,
   UnderlineFeature,
+  BlocksFeature,
   type LinkFields,
 } from '@payloadcms/richtext-lexical'
+import { MarkdownBlock } from '@/blocks/MarkdownBlock/config'
 
 export const defaultLexical = lexicalEditor({
   features: [
@@ -15,6 +17,9 @@ export const defaultLexical = lexicalEditor({
     UnderlineFeature(),
     BoldFeature(),
     ItalicFeature(),
+    BlocksFeature({
+      blocks: [MarkdownBlock],
+    }),
     LinkFeature({
       enabledCollections: ['pages', 'posts'],
       fields: ({ defaultFields }) => {

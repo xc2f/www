@@ -1,14 +1,16 @@
 import React from 'react'
 import { Chart, ChartProps } from './charts'
 
-type Props = ChartProps & {
-  className?: string
-}
+import type { ChartBlock as ChartBlockProps } from 'src/payload-types'
 
-export const ChartBlock: React.FC<Props> = ({ className, ...restProps }) => {
+type Props = {
+  className?: string
+} & ChartBlockProps
+
+export const ChartBlock: React.FC<Props> = ({ className, ...rest }) => {
   return (
     <div className={[className, 'not-prose'].filter(Boolean).join(' ')}>
-      <Chart {...restProps} />
+      <Chart {...(rest as ChartProps)} />
     </div>
   )
 }
