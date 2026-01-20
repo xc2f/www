@@ -21,7 +21,7 @@ export function CopyButton({ code }: { code: string }) {
         className="flex gap-1"
         variant={'secondary'}
         onClick={async () => {
-          await navigator.clipboard.writeText(code)
+          await navigator.clipboard.writeText(`${code}\n`)
           updateCopyStatus()
         }}
       >

@@ -18,24 +18,27 @@ import 'katex/dist/katex.min.css'
 import rehypeRaw from 'rehype-raw'
 
 import { Code as CodeHighlighter } from '../Code/Component.client'
+import { Checkbox } from '@/components/ui/checkbox'
+
+import './style.scss'
 
 type Props = {
   className?: string
 } & MarkdownBlockProps
 
 export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
-  const withClassName = cn(className, 'prose prose-neutral dark:prose-invert')
+  const withClassName = cn(className, 'markdown')
   const markdownContent = (
     <Markdown
       remarkPlugins={[remarkGfm, remarkMath]}
       rehypePlugins={[rehypeKatex, rehypeRaw]}
       components={{
-        // 1. 拦截 pre 标签
+        // 拦截 pre 标签
         pre(props) {
           const { children, ...rest } = props
           return <>{children}</>
         },
-        // 2. 代码高亮逻辑
+        // 代码高亮逻辑
         code(props) {
           const { children, className, ...rest } = props
           const match = /language-(\w+)/.exec(className || '')
@@ -49,15 +52,26 @@ export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
             </code>
           )
         },
+        input(props) {
+          if (props.type === 'checkbox') {
+            const { checked, disabled } = props
+            return <Checkbox checked={checked} disabled={disabled} className="relative top-[3px]" />
+          }
+          return <input {...props} />
+        },
+        table(props) {
+          const { node, ...rest } = props
+          return (
+            <div className="table-container overflow-auto table-scroll">
+              <table {...rest} />
+            </div>
+          )
+        },
       }}
     >
       {convertLexicalToPlaintext({ data: content })}
     </Markdown>
   )
 
-  if (withClassName) {
-    return <div className={withClassName}>{markdownContent}</div>
-  } else {
-    return markdownContent
-  }
+  return <div className={withClassName}>{markdownContent}</div>
 }

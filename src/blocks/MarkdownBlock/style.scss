@@ -1,0 +1,39 @@
+@mixin custom-scrollbar($thumb-color: var(--border), $radius: 4px) {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: $radius;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  scrollbar-width: thin;
+  scrollbar-color: #{$thumb-color} transparent;
+}
+
+.markdown {
+  .table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    @include custom-scrollbar;
+    table {
+      margin: 0;
+      thead {
+        white-space: nowrap;
+      }
+      tr {
+        th,
+        td {
+          padding: 0.5rem;
+        }
+        &:hover {
+          background-color: color-mix(in oklab, var(--muted) 50%, transparent);
+        }
+      }
+    }
+  }
+}

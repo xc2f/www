@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 
-import { ComposedChart, XAxis, YAxis, CartesianGrid, Area, Bar, Line } from 'recharts'
+import { ComposedChart, XAxis, YAxis, CartesianGrid, Area, Bar, Line, Scatter } from 'recharts'
 import {
   ChartContainer,
   ChartLegend,
@@ -14,8 +14,9 @@ import {
 type SeriesItem = {
   key: string
   label: string
-  type: 'line' | 'bar' | 'area'
+  type: 'line' | 'bar' | 'area' | 'scatter'
   color?: string | undefined
+  yAxis?: 'left' | 'right'
 }
 
 type SeriesConfigMap = Record<string, Partial<SeriesItem>>
@@ -68,7 +69,7 @@ const Chart: React.FC<ComposedChartProps> = (props) => {
   }
 
   const renderSeries = (item: SeriesItem, idx: number) => {
-    const { type, key, label } = item
+    const { type, key, label, yAxis = 'left' } = item
     const color = chartConfig[key]?.color || `var(--chart-${(idx % 10) + 1})`
     const hidden = hiddenKeys.has(key)
 
@@ -77,6 +78,7 @@ const Chart: React.FC<ComposedChartProps> = (props) => {
         return (
           <Line
             key={key}
+            yAxisId={yAxis}
             dataKey={key}
             label={label}
             fill={color}
@@ -92,6 +94,7 @@ const Chart: React.FC<ComposedChartProps> = (props) => {
         return (
           <Bar
             key={key}
+            yAxisId={yAxis}
             dataKey={key}
             label={label}
             fill={color}
@@ -111,6 +114,7 @@ const Chart: React.FC<ComposedChartProps> = (props) => {
           </defs>,
           <Area
             key={key}
+            yAxisId={yAxis}
             dataKey={key}
             label={label}
             fill={`url(#${id})`}
@@ -121,6 +125,21 @@ const Chart: React.FC<ComposedChartProps> = (props) => {
           />,
         ]
       }
+      case 'scatter':
+        return (
+          <Scatter
+            key={key}
+            yAxisId={yAxis}
+            dataKey={key}
+            fill={color}
+            stroke={color}
+            hide={hidden}
+            shape={(props: object) => {
+              // TODO circle size
+              return <circle {...props} r={2} />
+            }}
+          />
+        )
 
       default:
         break
@@ -134,7 +153,8 @@ const Chart: React.FC<ComposedChartProps> = (props) => {
       <ComposedChart data={dataset}>
         <CartesianGrid vertical={false} stroke="#f5f5f5" />
         <XAxis dataKey={xAxisKey} minTickGap={50} tickLine={false} axisLine={false} />
-        <YAxis axisLine={false} tickLine={false} />
+        <YAxis yAxisId="left" axisLine={false} tickLine={false} />
+        <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} />
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend
           content={<ChartLegendContent onItemClick={handleLegendClick} hiddenKeys={hiddenKeys} />}

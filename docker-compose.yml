@@ -10,7 +10,7 @@ services:
     command: sh -c "pnpm ${APP_CMD:-dev}"
     # command: sh -c "pnpm build && pnpm ${APP_CMD:-start}"  # for local build
     ports:
-      - '127.0.0.13000:3000'
+      - '127.0.0.1:3000:3000'
     volumes:
       - .:/app
       - /app/node_modules

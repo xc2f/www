@@ -16,6 +16,7 @@ type SeriesItem = {
   label: string
   type: 'bar'
   color?: string | undefined
+  yAxis?: 'left' | 'right'
 }
 
 type SeriesConfigMap = Record<string, Partial<SeriesItem>>
@@ -68,11 +69,21 @@ const Chart: React.FC<BarChartProps> = (props) => {
   }
 
   const renderSeries = (item: SeriesItem, idx: number) => {
-    const { key, label } = item
+    const { key, label, yAxis = 'left' } = item
     const color = chartConfig[key]?.color || `var(--chart-${(idx % 10) + 1})`
     const hidden = hiddenKeys.has(key)
 
-    return <Bar key={key} dataKey={key} label={label} fill={color} stroke={color} hide={hidden} />
+    return (
+      <Bar
+        key={key}
+        yAxisId={yAxis}
+        dataKey={key}
+        label={label}
+        fill={color}
+        stroke={color}
+        hide={hidden}
+      />
+    )
   }
 
   return (
@@ -80,7 +91,8 @@ const Chart: React.FC<BarChartProps> = (props) => {
       <BarChart data={dataset}>
         <CartesianGrid vertical={false} stroke="#f5f5f5" />
         <XAxis dataKey={xAxisKey} minTickGap={50} tickLine={false} axisLine={false} />
-        <YAxis axisLine={false} tickLine={false} />
+        <YAxis yAxisId="left" axisLine={false} tickLine={false} />
+        <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} />
         <ChartTooltip content={<ChartTooltipContent />} />
         <ChartLegend
           content={<ChartLegendContent onItemClick={handleLegendClick} hiddenKeys={hiddenKeys} />}

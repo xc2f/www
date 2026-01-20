@@ -8,10 +8,12 @@ import AreaChart, { AreaChartProps } from './AreaChart'
 import ScatterChart, { ScatterChartProps } from './ScatterChart'
 import PieChart, { PieChartProps } from './PieChart'
 import { ChartHeader } from './ChartHeader'
+import { ChartFooter } from './ChartFooter'
 
 interface BaseChartProps {
   heading?: string
   description?: string
+  dataSource?: string
 }
 
 export type ChartProps =
@@ -26,6 +28,7 @@ export const Chart: React.FC<BaseChartProps & ChartProps> = ({
   type,
   heading,
   description,
+  dataSource,
   ...rest
 }) => {
   let chart = null
@@ -56,6 +59,7 @@ export const Chart: React.FC<BaseChartProps & ChartProps> = ({
     <>
       <ChartHeader heading={heading} description={description} />
       {chart}
+      <ChartFooter dataSource={dataSource} />
     </>
   )
 }
