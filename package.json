@@ -63,6 +63,7 @@
     "react-dom": "19.2.1",
     "react-hook-form": "7.45.4",
     "react-markdown": "^10.1.0",
+    "react-photo-album": "^3.4.0",
     "recharts": "2.15.4",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
@@ -70,7 +71,8 @@
     "remark-math": "^6.0.0",
     "sharp": "0.34.2",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

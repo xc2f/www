@@ -7,6 +7,7 @@ import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { transporter } from './email/transporter'
 import { s3Storage } from '@payloadcms/storage-s3'
 
+import { Moments } from './collections/Moments'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -89,7 +90,7 @@ export default buildConfig({
     // push: true,
     // prodMigrations: migrations,
   }),
-  collections: [Pages, Posts, Media, Categories, Notes, Feeds, Mails, Users],
+  collections: [Media, Pages, Posts, Categories, Moments, Notes, Feeds, Mails, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
