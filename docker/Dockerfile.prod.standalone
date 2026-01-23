@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     lsb-release \
+    fontconfig \
     --no-install-recommends
 
 # 导入 PostgreSQL 官方 GPG 密钥并设置存储库

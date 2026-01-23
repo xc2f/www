@@ -2,11 +2,13 @@ FROM node:24-slim AS base
 
 # ================== postgres client install begin ==================
 # 安装基础依赖
+# for db backup
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     gnupg \
     lsb-release \
+    fontconfig \
     --no-install-recommends
 
 # 导入 PostgreSQL 官方 GPG 密钥并设置存储库
@@ -17,6 +19,10 @@ RUN curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmo
 RUN apt-get update && \
     apt-get install -y postgresql-client-18 && \
     rm -rf /var/lib/apt/lists/*
+
+# 安装字体
+COPY src/app/(frontend)/fonts/PressStart2P-Regular.ttf /usr/share/fonts/truetype/
+RUN fc-cache -f -v
 # ================== postgres client install end ==================
 
 # 基础环境

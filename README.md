@@ -11,6 +11,8 @@ A personal research project forked from the Payload CMS [website](https://github
 - File and media uploads to Cloudflare R2 or AWS S3.
 - Built-in chart block for visual data analysis and presentation.
 - Markdown support for rich text content (like tables, math, etc.)
+- Moments.
+- Image upload watermark.
 
 ## Develop
 

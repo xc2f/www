@@ -8,8 +8,10 @@ import {
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { anyone } from '../access/anyone'
-import { authenticated } from '../access/authenticated'
+import { anyone } from '../../access/anyone'
+import { authenticated } from '../../access/authenticated'
+
+import { addWatermark } from './hooks/addWatermark'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,6 +33,11 @@ export const Media: CollectionConfig = {
     group: 'Media',
   },
   fields: [
+    {
+      name: 'watermark',
+      type: 'text',
+      defaultValue: '© XC2F',
+    },
     {
       name: 'alt',
       type: 'text',
@@ -88,5 +95,8 @@ export const Media: CollectionConfig = {
       formatOptions: webpOptions,
     })),
     formatOptions: webpOptions,
+  },
+  hooks: {
+    beforeOperation: [addWatermark],
   },
 }

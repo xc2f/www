@@ -168,6 +168,7 @@ export interface UserAuthOperations {
  */
 export interface Media {
   id: number;
+  watermark?: string | null;
   alt?: string | null;
   caption?: {
     root: {
@@ -1239,6 +1240,7 @@ export interface PayloadMigration {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  watermark?: T;
   alt?: T;
   caption?: T;
   prefix?: T;
