@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
+import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 
@@ -10,7 +11,7 @@ export const Moments: CollectionConfig = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: anyone,
+    read: authenticatedOrPublished,
     update: authenticated,
   },
   defaultSort: '-publishedAt',
