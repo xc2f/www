@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslations } from 'next-intl'
 
 const defaultLabels = {
   plural: 'Docs',
@@ -23,6 +24,7 @@ export const PageRange: React.FC<{
   limit?: number
   totalDocs?: number
 }> = (props) => {
+  const t = useTranslations('Posts')
   const {
     className,
     collection,
@@ -47,11 +49,17 @@ export const PageRange: React.FC<{
   return (
     <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
       {(typeof totalDocs === 'undefined' || totalDocs === 0) && 'Search produced no results.'}
-      {typeof totalDocs !== 'undefined' &&
-        totalDocs > 0 &&
-        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ''} of ${totalDocs} ${
-          totalDocs > 1 ? plural : singular
-        }`}
+      {typeof totalDocs !== 'undefined' && totalDocs > 0
+        ? indexStart > 0
+          ? t('pagination', {
+              start: indexStart,
+              end: indexEnd,
+              total: totalDocs,
+            })
+          : t('pagination_0', {
+              total: totalDocs,
+            })
+        : null}
     </div>
   )
 }

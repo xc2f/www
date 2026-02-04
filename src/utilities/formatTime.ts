@@ -1,18 +1,12 @@
-import { ReactNode } from 'react'
-import dynamic from 'next/dynamic'
 import { Locale } from '@/i18n/types'
+import { useLocale } from 'next-intl'
 
-const LocalTimeContent = ({
-  date,
-  locale = 'en',
-}: {
-  date: string | Date
-  locale: Locale
-}): ReactNode => {
-  if (!date) return ''
+export const formatTime = (isoTime: string | Date, _locale?: Locale): string => {
+  const locale = _locale || useLocale()
+  if (!isoTime) return ''
 
   // 2. 统一转换为 Date 对象
-  const d = typeof date === 'string' ? new Date(date) : date
+  const d = typeof isoTime === 'string' ? new Date(isoTime) : isoTime
 
   // 3. 校验日期合法性（防止 Date 构造函数传入非法字符串）
   if (isNaN(d.getTime())) return 'Invalid Date'
@@ -29,9 +23,3 @@ const LocalTimeContent = ({
 
   return timeString
 }
-
-// 导出时禁用 SSR
-export const LocalTime = dynamic(() => Promise.resolve(LocalTimeContent), {
-  ssr: false,
-  loading: () => 'Loading...', // 占位符
-})

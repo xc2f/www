@@ -1,7 +1,7 @@
 import ImageGrid from './ImageGrid'
 import RichText from '@/components/RichText'
+import { LocalTime } from '@/components/LocalTime'
 import { useLocale } from 'next-intl'
-import { LocalTime } from '../../components/LocalTime'
 import Mood from './Mood'
 import { Locale } from '@/i18n/types'
 
@@ -23,7 +23,7 @@ export default function MomentCard({ moment }: MomentCardProps) {
       <div className="md:basis-2/5 space-y-3 group ">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <time>
-            <LocalTime date={moment.publishedAt} locale={locale} />
+            <LocalTime time={moment.publishedAt} locale={locale} />
           </time>
           {moment.mood && <Mood mood={moment.mood} />}
         </div>

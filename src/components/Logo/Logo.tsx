@@ -44,7 +44,7 @@ export const Logo = ({}: Props) => {
 
   return (
     <span
-      className="text-2xl font-bold font-logo cursor-pointer select-none"
+      className="text-2xl font-bold font-logo cursor-pointer select-none text-primary"
       onMouseEnter={() => setHovered(!!emoji)}
       onMouseLeave={() => setHovered(false)}
     >

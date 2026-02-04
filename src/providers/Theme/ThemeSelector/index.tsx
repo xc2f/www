@@ -1,5 +1,5 @@
 'use client'
-
+import React, { useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 import type { Theme } from './types'
 
@@ -15,6 +15,7 @@ import { useTheme } from '..'
 import { themeLocalStorageKey } from './types'
 
 export const ThemeSelector: React.FC = () => {
+  const t = useTranslations('Theme')
   const { setTheme } = useTheme()
   const [value, setValue] = useState('')
 
@@ -42,9 +43,9 @@ export const ThemeSelector: React.FC = () => {
         <SelectValue placeholder="Theme" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="auto">Auto</SelectItem>
-        <SelectItem value="light">Light</SelectItem>
-        <SelectItem value="dark">Dark</SelectItem>
+        <SelectItem value="auto">{t('mode.auto')}</SelectItem>
+        <SelectItem value="light">{t('mode.light')}</SelectItem>
+        <SelectItem value="dark">{t('mode.dark')}</SelectItem>
       </SelectContent>
     </Select>
   )

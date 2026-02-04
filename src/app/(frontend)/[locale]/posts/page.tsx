@@ -10,7 +10,7 @@ import PageClient from './page.client'
 
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale, getTranslations } from 'next-intl/server'
 
 export const revalidate = 600
 
@@ -22,6 +22,7 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
   const { locale } = await params
   // Enable static rendering
   setRequestLocale(locale)
+  const t = await getTranslations('Posts')
 
   const payload = await getPayload({ config: configPromise })
 
@@ -30,6 +31,7 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
     depth: 1,
     limit: 12,
     overrideAccess: false,
+    locale,
     select: {
       title: true,
       slug: true,
@@ -43,7 +45,7 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>{t('posts')}</h1>
         </div>
       </div>
 
@@ -67,8 +69,9 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const t = await getTranslations('Posts')
   return {
-    title: `Posts`,
+    title: t('posts'),
   }
 }

@@ -1,8 +1,22 @@
 {
-  "PostPage": {
-    "join_the_discussion_on_github": "在 GitHub 参与讨论"
+  "Posts": {
+    "posts": "文章",
+    "join_the_discussion_on_github": "在 GitHub 参与讨论",
+    "author": "作者",
+    "date_published": "发布日期",
+    "source": "数据来源",
+    "pagination": "显示第 {start} - {end} 条，共 {total} 条",
+    "pagination_0": "显示 0 条，共 {total} 条",
+    "page": "文章第 {pageNumber} 页"
+  },
+  "Search": {
+    "search": "搜索",
+    "enter": "请输入",
+    "submit": "提交",
+    "empty": "未找到匹配的结果。"
   },
   "Moments": {
+    "moments": "瞬间",
     "mood": {
       "happy": "开心",
       "calm": "平静",
@@ -12,6 +26,13 @@
       "energized": "充实",
       "content": "满足",
       "neutral": "无感"
+    }
+  },
+  "Theme": {
+    "mode": {
+      "auto": "自动",
+      "light": "亮色",
+      "dark": "暗色"
     }
   }
 }

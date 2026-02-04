@@ -11,7 +11,7 @@ import { notFound } from 'next/navigation'
 
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale, getTranslations } from 'next-intl/server'
 
 export const revalidate = 600
 
@@ -28,6 +28,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   // Enable static rendering
   setRequestLocale(locale)
+  const t = await getTranslations('Posts')
 
   const sanitizedPageNumber = Number(pageNumber)
 
@@ -39,6 +40,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     limit: 12,
     page: sanitizedPageNumber,
     overrideAccess: false,
+    locale,
   })
 
   return (
@@ -46,7 +48,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>{t('posts')}</h1>
         </div>
       </div>
 
@@ -73,8 +75,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber, locale } = await paramsPromise
   setRequestLocale(locale)
+  const t = await getTranslations('Posts')
   return {
-    title: `Posts Page ${pageNumber || ''}`,
+    title: t('page', {
+      pageNumber,
+    }),
   }
 }
 

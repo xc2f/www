@@ -1,8 +1,22 @@
 {
-  "PostPage": {
-    "join_the_discussion_on_github": "Join the discussion on GitHub"
+  "Posts": {
+    "posts": "Posts",
+    "join_the_discussion_on_github": "Join the discussion on GitHub",
+    "author": "Author",
+    "date_published": "Date Published",
+    "source": "Source",
+    "pagination": "Showing {start} - {end} of {total, plural, one {# Post} other {# Posts}}",
+    "pagination_0": "Showing 0 of {total, plural, one {# Post} other {# Posts}}",
+    "page": "Posts Page {pageNumber}"
+  },
+  "Search": {
+    "search": "Search",
+    "enter": "Please Enter",
+    "submit": "Submit",
+    "empty": "No results found."
   },
   "Moments": {
+    "moments": "Moments",
     "mood": {
       "happy": "happy",
       "calm": "calm",
@@ -12,6 +26,13 @@
       "energized": "energized",
       "content": "content",
       "neutral": "neutral"
+    }
+  },
+  "Theme": {
+    "mode": {
+      "auto": "Auto",
+      "light": "Light",
+      "dark": "Dark"
     }
   }
 }

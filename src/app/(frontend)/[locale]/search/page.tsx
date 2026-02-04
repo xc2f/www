@@ -9,7 +9,7 @@ import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 
 import { Locale } from '@/i18n/types'
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale, getTranslations } from 'next-intl/server'
 
 type Args = {
   searchParams: Promise<{
@@ -26,6 +26,7 @@ export default async function Page({
 }: Args) {
   // Enable static rendering
   setRequestLocale(locale)
+  const t = await getTranslations('Search')
 
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
@@ -34,6 +35,7 @@ export default async function Page({
     collection: 'search',
     depth: 1,
     limit: 12,
+    locale,
     select: {
       title: true,
       slug: true,
@@ -77,7 +79,7 @@ export default async function Page({
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">Search</h1>
+          <h1 className="mb-8 lg:mb-16">{t('search')}</h1>
           <div className="max-w-[50rem] mx-auto">
             <Search />
           </div>
@@ -87,14 +89,15 @@ export default async function Page({
       {posts.totalDocs > 0 ? (
         <CollectionArchive posts={posts.docs as CardPostData[]} />
       ) : (
-        <div className="container">No results found.</div>
+        <div className="container text-center">{t('empty')}</div>
       )}
     </div>
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const t = await getTranslations('Search')
   return {
-    title: `Search`,
+    title: t('search'),
   }
 }

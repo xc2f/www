@@ -10,7 +10,7 @@ import MomentsFeed from './MomentsFeed'
 
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale, getTranslations } from 'next-intl/server'
 
 export const revalidate = 600
 
@@ -52,9 +52,10 @@ export default async function Page({ params }: Args) {
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const t = await getTranslations('Moments')
   return {
-    title: `Moments`,
+    title: t('moments'),
   }
 }
 
