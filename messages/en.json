@@ -3,7 +3,7 @@
     "posts": "Posts",
     "join_the_discussion_on_github": "Join the discussion on GitHub",
     "author": "Author",
-    "date_published": "Date Published",
+    "published_at": "Published At",
     "source": "Source",
     "pagination": "Showing {start} - {end} of {total, plural, one {# Post} other {# Posts}}",
     "pagination_0": "Showing 0 of {total, plural, one {# Post} other {# Posts}}",

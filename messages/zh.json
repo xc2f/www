@@ -3,7 +3,7 @@
     "posts": "文章",
     "join_the_discussion_on_github": "在 GitHub 参与讨论",
     "author": "作者",
-    "date_published": "发布日期",
+    "published_at": "发布时间",
     "source": "数据来源",
     "pagination": "显示第 {start} - {end} 条，共 {total} 条",
     "pagination_0": "显示 0 条，共 {total} 条",
