@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { routing } from '@/i18n/routing'
+import { LOCALE_TO_HREFLANG } from '../config'
 
 const getPostsSitemap = unstable_cache(
   async () => {
@@ -38,17 +39,24 @@ const getPostsSitemap = unstable_cache(
     const sitemap = results.docs
       ? results.docs
           .filter((post) => Boolean(post?.slug))
-          .flatMap((post) => {
-            return locales.map((locale) => ({
-              // 链接格式：域名/语言/posts/路径
-              loc: `${SITE_URL}/${locale}/posts/${post.slug}`,
-              lastmod: post.updatedAt || dateFallback,
-              // 可选：添加 alternateRefs 让搜索引擎识别多语言关联
-              alternateRefs: locales.map((l) => ({
-                href: `${SITE_URL}/${l}/posts/${post.slug}`,
-                hreflang: l,
-              })),
+          .map((post) => {
+            const alternates = locales.map((locale) => ({
+              hreflang: LOCALE_TO_HREFLANG[locale],
+              href: `${SITE_URL}/${locale}/posts/${post.slug}`,
             }))
+
+            return {
+              // 用默认语言作为 loc（通常 en）
+              loc: `${SITE_URL}/en/posts/${post.slug}`,
+              lastmod: post.updatedAt || dateFallback,
+              alternateRefs: [
+                ...alternates,
+                {
+                  hreflang: 'x-default',
+                  href: `${SITE_URL}/en/posts/${post.slug}`,
+                },
+              ],
+            }
           })
       : []
 

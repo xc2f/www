@@ -3,18 +3,45 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 import { routing } from '@/i18n/routing'
+import { LOCALE_TO_HREFLANG } from '../config'
 
 const getPagesSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
+
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : 'https://example.com')
 
-    // 1. 获取所有语种
     const locales = routing.locales
+    const defaultLocale = 'en'
+    const dateFallback = new Date().toISOString()
 
+    // 1️⃣ 默认页面（search / posts）
+    const defaultPages = ['search', 'posts']
+
+    const defaultSitemap = defaultPages.map((slug) => {
+      const alternates = locales.map((locale) => ({
+        hreflang: LOCALE_TO_HREFLANG[locale],
+        href: `${SITE_URL}/${locale}/${slug}`,
+      }))
+
+      return {
+        loc: `${SITE_URL}/${defaultLocale}/${slug}`,
+        lastmod: dateFallback,
+        alternateRefs: [
+          ...alternates,
+          {
+            hreflang: 'x-default',
+            href: `${SITE_URL}/${defaultLocale}/${slug}`,
+          },
+        ],
+      }
+    })
+
+    // 2️⃣ Payload pages
     const results = await payload.find({
       collection: 'pages',
       overrideAccess: false,
@@ -23,9 +50,7 @@ const getPagesSitemap = unstable_cache(
       limit: 1000,
       pagination: false,
       where: {
-        _status: {
-          equals: 'published',
-        },
+        _status: { equals: 'published' },
       },
       select: {
         slug: true,
@@ -33,38 +58,36 @@ const getPagesSitemap = unstable_cache(
       },
     })
 
-    const dateFallback = new Date().toISOString()
-
-    // 2. 为默认页面（search, posts）生成多语言链接
-    const defaultSitemap = locales.flatMap((locale) => [
-      {
-        loc: `${SITE_URL}/${locale}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/${locale}/posts`,
-        lastmod: dateFallback,
-      },
-    ])
-
-    // 3. 为 Collection 中的页面生成多语言链接
-    const sitemap = results.docs
+    const pageSitemap = results.docs
       ? results.docs
           .filter((page) => Boolean(page?.slug))
-          .flatMap((page) => {
-            // 对每个页面，循环所有语种
-            return locales.map((locale) => {
-              const isHome = page?.slug === 'home'
-              return {
-                // 如果是 home，链接为 /zh 或 /en；否则为 /zh/slug
-                loc: isHome ? `${SITE_URL}/${locale}` : `${SITE_URL}/${locale}/${page?.slug}`,
-                lastmod: page.updatedAt || dateFallback,
-              }
-            })
+          .map((page) => {
+            const isHome = page.slug === 'home'
+
+            const alternates = locales.map((locale) => ({
+              hreflang: LOCALE_TO_HREFLANG[locale],
+              href: isHome ? `${SITE_URL}/${locale}` : `${SITE_URL}/${locale}/${page.slug}`,
+            }))
+
+            return {
+              loc: isHome
+                ? `${SITE_URL}/${defaultLocale}`
+                : `${SITE_URL}/${defaultLocale}/${page.slug}`,
+              lastmod: page.updatedAt || dateFallback,
+              alternateRefs: [
+                ...alternates,
+                {
+                  hreflang: 'x-default',
+                  href: isHome
+                    ? `${SITE_URL}/${defaultLocale}`
+                    : `${SITE_URL}/${defaultLocale}/${page.slug}`,
+                },
+              ],
+            }
           })
       : []
 
-    return [...defaultSitemap, ...sitemap]
+    return [...defaultSitemap, ...pageSitemap]
   },
   ['pages-sitemap'],
   {
