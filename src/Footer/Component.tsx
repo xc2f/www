@@ -9,8 +9,13 @@ import { LanguageSelector } from './Locale'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 
+import { getLocale } from 'next-intl/server'
+import { Locale } from '@/i18n/types'
+
 export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
+  const locale = (await getLocale()) as Locale
+
+  const footerData: Footer = await getCachedGlobal('footer', 1)(locale)
   const navItems = footerData?.navItems || []
 
   return (
