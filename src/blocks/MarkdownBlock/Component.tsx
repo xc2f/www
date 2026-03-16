@@ -36,7 +36,7 @@ export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
       components={{
         // 拦截 pre 标签
         pre(props) {
-          const { children, ...rest } = props
+          const { children } = props
           return <>{children}</>
         },
         // 代码高亮逻辑
@@ -61,10 +61,9 @@ export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
           return <input {...props} />
         },
         table(props) {
-          const { node, ...rest } = props
           return (
             <div className="table-container overflow-auto table-scroll">
-              <table {...rest} />
+              <table {...props} />
             </div>
           )
         },

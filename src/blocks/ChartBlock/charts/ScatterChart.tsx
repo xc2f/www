@@ -69,7 +69,7 @@ const Chart: React.FC<ScatterChartProps> = (props) => {
   }
 
   const renderSeries = (item: SeriesItem, idx: number) => {
-    const { key, label, yAxis = 'left' } = item
+    const { key, yAxis = 'left' } = item
     const color = chartConfig[key]?.color || `var(--chart-${(idx % 10) + 1})`
     const hidden = hiddenKeys.has(key)
 

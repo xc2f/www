@@ -1,6 +1,5 @@
 import type { CollectionConfig } from 'payload'
 
-import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { slugField } from 'payload'
@@ -19,7 +18,7 @@ export const Moments: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'date', 'published'],
     livePreview: {
-      url: ({ data, req }) =>
+      url: ({ data: _data, req }) =>
         generatePreviewPath({
           // slug: data?.slug,
           slug: '',
@@ -27,7 +26,7 @@ export const Moments: CollectionConfig = {
           req,
         }),
     },
-    preview: (data, { req }) =>
+    preview: (_data, { req }) =>
       generatePreviewPath({
         // slug: data?.slug as string,
         slug: '',

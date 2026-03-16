@@ -5,9 +5,10 @@ import {
   isImageSlide,
   useLightboxProps,
   useLightboxState,
-  RenderSlideProps,
   SlideImage,
   SlideVideo,
+  type RenderSlideProps,
+  type Slide,
 } from 'yet-another-react-lightbox'
 import { Video, Thumbnails, Counter, Captions } from 'yet-another-react-lightbox/plugins'
 import 'yet-another-react-lightbox/styles.css'
@@ -16,17 +17,12 @@ import 'yet-another-react-lightbox/plugins/counter.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
 
 import { Media } from '@/components/Media'
+import type { MomentSlide } from './ImageGrid'
 
-type CustomSlide = (SlideImage | SlideVideo) & {
-  key?: string
-  src: string
-  width?: number
-  height?: number
-  alt?: string
-}
+type CustomSlide = MomentSlide | SlideImage | SlideVideo
 
 interface ImageLightboxProps {
-  slides: CustomSlide[]
+  slides: MomentSlide[]
   index: number
   open: boolean
   close: () => void
@@ -34,11 +30,11 @@ interface ImageLightboxProps {
 
 function isNextJsImage(
   slide: CustomSlide,
-): slide is Required<Pick<CustomSlide, 'width' | 'height'>> & CustomSlide {
+): slide is MomentSlide & Required<Pick<MomentSlide, 'width' | 'height'>> {
   return isImageSlide(slide) && typeof slide.width === 'number' && typeof slide.height === 'number'
 }
 
-function NextJsImage({ slide, offset, rect }: RenderSlideProps<CustomSlide>) {
+function NextJsImage({ slide, offset, rect }: RenderSlideProps<Slide>) {
   const {
     on: { click },
     carousel: { imageFit },

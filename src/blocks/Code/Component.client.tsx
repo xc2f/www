@@ -3,11 +3,6 @@ import { Highlight, themes, Prism } from 'prism-react-renderer'
 import React, { useEffect, useState } from 'react'
 import { CopyButton } from './CopyButton'
 
-if (typeof window !== 'undefined') {
-  ;(window as any).Prism = Prism
-  require('prismjs/components/prism-bash')
-}
-
 type Props = {
   code: string
   language?: string
@@ -16,9 +11,13 @@ type Props = {
 export const Code: React.FC<Props> = ({ code, language = '' }) => {
   const [mounted, setMounted] = useState(false)
 
-  // 只有在客户端挂载后才设置为 true
   useEffect(() => {
-    setMounted(true)
+    const prismWindow = window as Window & { Prism?: typeof Prism }
+    prismWindow.Prism = Prism
+
+    void import('prismjs/components/prism-bash').finally(() => {
+      setMounted(true)
+    })
   }, [])
 
   if (!code) return null

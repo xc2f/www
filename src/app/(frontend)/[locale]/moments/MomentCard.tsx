@@ -4,9 +4,10 @@ import { LocalTime } from '@/components/LocalTime'
 import { useLocale } from 'next-intl'
 import Mood from './Mood'
 import { Locale } from '@/i18n/types'
+import type { MomentFeedItem } from './MomentsFeed'
 
 interface MomentCardProps {
-  moment: any
+  moment: MomentFeedItem
 }
 
 export default function MomentCard({ moment }: MomentCardProps) {
@@ -19,12 +20,14 @@ export default function MomentCard({ moment }: MomentCardProps) {
         <ImageGrid images={moment.images} />
       </div>
 
-      {/* 时间 + 心情 */}
+        {/* 时间 + 心情 */}
       <div className="md:basis-2/5 space-y-3 group ">
         <div className="flex items-center gap-2 text-sm text-gray-500">
-          <time>
-            <LocalTime time={moment.publishedAt} locale={locale} />
-          </time>
+          {moment.publishedAt && (
+            <time>
+              <LocalTime time={moment.publishedAt} locale={locale} />
+            </time>
+          )}
           {moment.mood && <Mood mood={moment.mood} />}
         </div>
 

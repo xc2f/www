@@ -1,16 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 
 import { PieChart, Pie, Cell, PieLabelRenderProps } from 'recharts'
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltipContent,
-  ChartConfig,
-} from '@/components/ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from '@/components/ui/chart'
 
 type PieItem = {
   data: {
@@ -27,11 +20,6 @@ export type PieChartProps = {
     nameKey: string
     valueKey: string
   }
-}
-
-type LegendItem = {
-  value?: string
-  color?: string
 }
 
 const renderCustomizedLabel = (props: PieLabelRenderProps) => {
@@ -74,21 +62,6 @@ const renderCustomizedLabel = (props: PieLabelRenderProps) => {
 const Chart: React.FC<PieChartProps> = (props) => {
   const { dataset = [], config = {}, pieConfig } = props
   const { nameKey, valueKey } = pieConfig
-  const [hiddenKeys, setHiddenKeys] = useState<Set<string>>(new Set())
-
-  const handleLegendClick = (item: LegendItem) => {
-    if (!item.value) return
-
-    setHiddenKeys((prev) => {
-      const next = new Set(prev)
-      if (next.has(item.value as string)) {
-        next.delete(item.value as string)
-      } else {
-        next.add(item.value as string)
-      }
-      return next
-    })
-  }
 
   const renderSeries = (pie: PieItem, index: number) => {
     const { data, innerRadius = '0', outerRadius = '100%' } = pie

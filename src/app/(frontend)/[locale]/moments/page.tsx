@@ -1,4 +1,3 @@
-import type { Metadata } from 'next/types'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -6,11 +5,12 @@ import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import MomentsFeed from './MomentsFeed'
+import MomentsFeed, { type MomentFeedItem } from './MomentsFeed'
 
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
+import type { Media } from '@/payload-types'
 
 export const revalidate = 600
 
@@ -53,6 +53,8 @@ export default async function Page({ params }: Args) {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
   const t = await getTranslations('Moments')
   return {
     title: t('moments'),
@@ -83,5 +85,22 @@ const queryMoments = cache(async ({ locale }: { locale: Locale }) => {
     },
   })
 
-  return moments.docs || []
+  return (moments.docs || []).map((moment): MomentFeedItem => ({
+    id: moment.id,
+    content: moment.content,
+    mood: moment.mood,
+    publishedAt: moment.publishedAt,
+    images: (moment.images ?? []).flatMap((item) => {
+      if (!item?.image || typeof item.image === 'number') {
+        return []
+      }
+
+      return [
+        {
+          id: item.id ?? String(item.image.id),
+          image: item.image as Media,
+        },
+      ]
+    }),
+  }))
 })

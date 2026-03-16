@@ -1,5 +1,3 @@
-import type { Metadata } from 'next/types'
-
 import { CollectionArchive } from '@/components/CollectionArchive'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -15,15 +13,17 @@ type Args = {
   searchParams: Promise<{
     q: string
   }>
-  params: {
+  params: Promise<{
     locale: Locale
-  }
+  }>
 }
 
 export default async function Page({
   searchParams: searchParamsPromise,
-  params: { locale },
+  params: paramsPromise,
 }: Args) {
+  const { locale } = await paramsPromise
+
   // Enable static rendering
   setRequestLocale(locale)
   const t = await getTranslations('Search')
@@ -96,6 +96,8 @@ export default async function Page({
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
   const t = await getTranslations('Search')
   return {
     title: t('search'),

@@ -1,6 +1,6 @@
 import { Banner } from '@payloadcms/ui/elements/Banner'
+import Link from 'next/link'
 import React from 'react'
-import { SeedButton } from './SeedButton'
 import './index.scss'
 
 const baseClass = 'before-dashboard'
@@ -16,7 +16,7 @@ const BeforeDashboard: React.FC = () => {
           Visit your website
         </a>
         <span>|</span>
-        <a href="/admin/system">Go to system</a>
+        <Link href="/admin/system">Go to system</Link>
         <span>|</span>
         <a href="https://payloadcms.com/docs/getting-started/what-is-payload" target="_blank">
           Visit payload docs

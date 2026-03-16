@@ -1,6 +1,7 @@
 import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter } from '@payloadcms/ui'
+import Link from 'next/link'
 import Backup from './Backup'
 
 const System = async ({ initPageResult, params, searchParams }: AdminViewServerProps) => {
@@ -26,7 +27,7 @@ const System = async ({ initPageResult, params, searchParams }: AdminViewServerP
       <Gutter>
         <Backup />
         <Gutter>
-          <a href="/admin">返回 Admin 主页</a>
+          <Link href="/admin">返回 Admin 主页</Link>
         </Gutter>
       </Gutter>
     </DefaultTemplate>

@@ -1,8 +1,6 @@
 import { Locale } from '@/i18n/types'
-import { useLocale } from 'next-intl'
 
-export const formatTime = (isoTime: string | Date, _locale?: Locale): string => {
-  const locale = _locale || useLocale()
+export const formatTime = (isoTime: string | Date, locale: Locale = 'en'): string => {
   if (!isoTime) return ''
 
   // 2. 统一转换为 Date 对象

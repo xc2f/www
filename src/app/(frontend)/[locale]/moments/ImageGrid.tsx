@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react'
 import { Media } from '@/components/Media'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
+import type { SlideImage, SlideVideo } from 'yet-another-react-lightbox'
 
 import ImageLightbox from './ImageLightbox'
 
@@ -14,21 +15,28 @@ interface ImageGridProps {
   }[]
 }
 
-type SlideType = {
+type BaseSlide = {
   key: string
   src: string
   width?: number
   height?: number
   alt?: string
-  type?: 'image' | 'video' | undefined
-  autoPlay?: boolean
-  sources?: {
-    src: string
-    type: string
-  }[]
   title?: string
   description?: string
 }
+
+type CustomImageSlide = SlideImage & BaseSlide & { type: 'image' }
+type CustomVideoSlide = SlideVideo &
+  BaseSlide & {
+    type: 'video'
+    autoPlay: true
+    sources: {
+      src: string
+      type: string
+    }[]
+  }
+
+export type MomentSlide = CustomImageSlide | CustomVideoSlide
 
 const IMAGE_BASE_HEIGHT = 200
 
@@ -44,12 +52,13 @@ export default function ImageGrid({ images }: ImageGridProps) {
       aspectRatio: (item.image.width ?? 100) / (item.image.height ?? 100),
     }))
 
-    const processedSliders: SlideType[] = processedPhotos.map((photo) => {
+    const processedSliders: MomentSlide[] = processedPhotos.map((photo) => {
       const alt = (photo.alt || '').trim()
-      const description = convertLexicalToPlaintext({ data: photo.caption }).trim()
-      const slide: SlideType = {
+      const description = photo.caption
+        ? convertLexicalToPlaintext({ data: photo.caption }).trim()
+        : ''
+      const slide: BaseSlide = {
         key: photo.key,
-        type: 'image',
         src: photo.url || '',
         width: photo.width ?? undefined,
         height: photo.height ?? undefined,
@@ -70,7 +79,10 @@ export default function ImageGrid({ images }: ImageGridProps) {
           ],
         }
       }
-      return slide
+      return {
+        ...slide,
+        type: 'image',
+      }
     })
 
     return { photos: processedPhotos, sliders: processedSliders }

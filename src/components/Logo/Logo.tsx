@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import clsx from 'clsx'
 
 import { useEmojis } from '@/app/(frontend)/lib/hooks/useFeeds'
@@ -10,21 +10,20 @@ interface Props {
 
 export const Logo = ({}: Props) => {
   const { data } = useEmojis()
-  const [emojis, setEmojis] = useState<string[]>([])
+  const emojis = useMemo(() => data ?? [], [data])
   const [emoji, setEmoji] = useState<string | null>(null)
   const [hovered, setHovered] = useState(false)
   const indexRef = useRef(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (data?.length) {
-      setEmojis(data)
-      setEmoji(data[0])
+    if (emojis.length > 0) {
+      setEmoji(emojis[0])
     }
-  }, [data])
+  }, [emojis])
 
   useEffect(() => {
-    if (!hovered || !emoji) {
+    if (!hovered || emojis.length === 0) {
       if (timerRef.current) {
         clearInterval(timerRef.current)
         timerRef.current = null
@@ -40,7 +39,7 @@ export const Logo = ({}: Props) => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [hovered])
+  }, [hovered, emojis])
 
   return (
     <span

@@ -1,5 +1,6 @@
 // lib/hooks/useAsync.ts
 'use client'
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { useEffect, useRef, useState } from 'react'
 

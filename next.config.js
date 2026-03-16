@@ -53,12 +53,6 @@ const nextConfig = {
   reactStrictMode: true,
   redirects,
   output: process.env.BUILD_OUTPUT || undefined,
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 }
 
 const withNextIntl = createNextIntlPlugin()

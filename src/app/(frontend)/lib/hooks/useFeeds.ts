@@ -1,9 +1,6 @@
 // lib/hooks/useEmojis.ts
 'use client'
 
-import { feedsAPI } from '../api-client/feeds'
-import { useAsync } from './useAsync'
-
 type UseEmojisReturn = {
   data: string[] | null
   loading: boolean
