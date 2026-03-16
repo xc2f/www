@@ -8,7 +8,7 @@ interface Props {
   className?: string
 }
 
-export const Logo = ({}: Props) => {
+export const Logo = ({ className }: Props) => {
   const { data } = useEmojis()
   const emojis = useMemo(() => data ?? [], [data])
   const [emoji, setEmoji] = useState<string | null>(null)
@@ -43,7 +43,10 @@ export const Logo = ({}: Props) => {
 
   return (
     <span
-      className="text-2xl font-bold font-logo cursor-pointer select-none text-primary"
+      className={clsx(
+        'text-2xl font-bold font-logo cursor-pointer select-none text-primary',
+        className,
+      )}
       onMouseEnter={() => setHovered(!!emoji)}
       onMouseLeave={() => setHovered(false)}
     >
