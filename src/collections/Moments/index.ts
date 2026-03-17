@@ -16,7 +16,7 @@ export const Moments: CollectionConfig = {
   defaultSort: '-publishedAt',
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'date', 'published'],
+    defaultColumns: ['title', 'publishedAt', '_status'],
     livePreview: {
       url: ({ data: _data, req }) =>
         generatePreviewPath({
@@ -76,14 +76,6 @@ export const Moments: CollectionConfig = {
       name: 'content',
       type: 'richText',
       localized: true,
-    },
-    {
-      name: 'published',
-      type: 'checkbox',
-      defaultValue: true,
-      admin: {
-        position: 'sidebar',
-      },
     },
     {
       name: 'publishedAt',

@@ -799,7 +799,6 @@ export interface Moment {
     };
     [k: string]: unknown;
   } | null;
-  published?: boolean | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1502,7 +1501,6 @@ export interface MomentsSelect<T extends boolean = true> {
         id?: T;
       };
   content?: T;
-  published?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;

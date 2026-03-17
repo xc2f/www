@@ -81,7 +81,7 @@ const queryMoments = cache(async ({ locale }: { locale: Locale }) => {
       publishedAt: true,
     },
     where: {
-      published: { equals: true },
+      _status: { equals: 'published' },
     },
   })
 
