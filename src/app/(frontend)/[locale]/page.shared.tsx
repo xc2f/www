@@ -11,6 +11,7 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { HomePage } from './home'
 
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
@@ -63,6 +64,10 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
+
+  if (page.slug === 'home') {
+    return <HomePage draft={draft} page={page} url={url} />
+  }
 
   return (
     <article className="pt-16 pb-24">

@@ -102,6 +102,102 @@ html[data-theme='light'] {
   opacity: initial;
 }
 
+.home-bg-breathe-explore,
+.home-bg-breathe-create,
+.home-bg-breathe-future {
+  transform-origin: center;
+  will-change: opacity, transform, filter;
+}
+
+.home-bg-breathe-explore {
+  animation: homeBreatheExplore 10.5s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+}
+
+.home-bg-breathe-create {
+  animation: homeBreatheCreate 9.2s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+}
+
+.home-bg-breathe-future {
+  animation: homeBreatheFuture 12.4s cubic-bezier(0.42, 0, 0.2, 1) infinite;
+}
+
+@keyframes homeBreatheExplore {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(0.95) saturate(0.98) hue-rotate(-1deg);
+  }
+  25% {
+    transform: translate3d(0, -0.2%, 0) scale(1.005);
+    filter: brightness(0.99) saturate(1.01) hue-rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -0.45%, 0) scale(1.01);
+    filter: brightness(1.03) saturate(1.04) hue-rotate(1deg);
+  }
+  75% {
+    transform: translate3d(0, -0.2%, 0) scale(1.005);
+    filter: brightness(0.99) saturate(1.01) hue-rotate(0deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(0.95) saturate(0.98) hue-rotate(-1deg);
+  }
+}
+
+@keyframes homeBreatheCreate {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(0.96) saturate(1.02) contrast(1.01);
+  }
+  25% {
+    transform: translate3d(0.1%, -0.15%, 0) scale(1.004);
+    filter: brightness(1) saturate(1.05) contrast(1.02);
+  }
+  50% {
+    transform: translate3d(0.18%, -0.3%, 0) scale(1.008);
+    filter: brightness(1.04) saturate(1.08) contrast(1.03);
+  }
+  75% {
+    transform: translate3d(0.1%, -0.15%, 0) scale(1.004);
+    filter: brightness(1) saturate(1.05) contrast(1.02);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(0.96) saturate(1.02) contrast(1.01);
+  }
+}
+
+@keyframes homeBreatheFuture {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(0.92) saturate(0.94) blur(0);
+  }
+  25% {
+    transform: translate3d(0, -0.25%, 0) scale(1.005);
+    filter: brightness(0.96) saturate(0.97) blur(0.06px);
+  }
+  50% {
+    transform: translate3d(0, -0.55%, 0) scale(1.012);
+    filter: brightness(1) saturate(1) blur(0.12px);
+  }
+  75% {
+    transform: translate3d(0, -0.25%, 0) scale(1.005);
+    filter: brightness(0.96) saturate(0.97) blur(0.06px);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: brightness(0.92) saturate(0.94) blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-bg-breathe-explore,
+  .home-bg-breathe-create,
+  .home-bg-breathe-future {
+    animation: none;
+  }
+}
+
 /* prettier-ignore */
 @layer base {
   :root {
