@@ -187,9 +187,9 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
           <div className="max-w-2xl">
             <h1
               aria-label={copy.title}
-              className="group/title max-w-4xl font-sans text-[clamp(4rem,10vw,8.4rem)] leading-[0.82] font-black tracking-[-0.16em]"
+              className="max-w-4xl font-sans text-[clamp(4rem,10vw,8.4rem)] leading-[0.82] font-black tracking-[-0.16em]"
             >
-              <span className="inline-flex items-end gap-0">
+              <span className="group/title inline-flex items-end gap-0">
                 {TITLE_LETTERS.map((letter) => (
                   <span
                     key={letter.text}
