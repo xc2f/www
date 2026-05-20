@@ -4,7 +4,7 @@ services:
       public.ecr.aws/umcai/xc2f/payload:latest
       # public.ecr.aws/umcai/xc2f/payload:dev-latest
     container_name: payload
-    restart: unless-stopped
+    # restart: unless-stopped
     ports:
       - '127.0.0.1:3000:3000'
     # volumes:

@@ -19,7 +19,10 @@ export async function Footer() {
   const navItems = footerData?.navItems || []
 
   return (
-    <footer className="position z-30 mt-auto border-t border-border bg-black dark:bg-card text-white">
+    <footer
+      data-site-footer
+      className="position z-30 mt-auto border-t border-white/10 bg-[#0a0a0a] text-white"
+    >
       <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between">
         <Link className="flex items-center" href="/">
           <Logo className="text-white" />
