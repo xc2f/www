@@ -23,15 +23,15 @@ export async function Footer() {
       data-site-footer
       className="position z-30 mt-auto border-t border-white/10 bg-[#0a0a0a] text-white"
     >
-      <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between">
-        <Link className="flex items-center" href="/">
-          <Logo className="text-white" />
+      <div className="container flex flex-col gap-8 py-8 md:flex-row md:justify-between">
+        <Link className="home-footer-brand flex items-center" href="/">
+          <Logo className="home-footer-logo text-white" />
         </Link>
 
-        <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
-          <nav className="flex flex-col md:flex-row gap-4">
+        <div className="home-footer-controls flex flex-col-reverse items-start gap-4 md:flex-row md:items-center">
+          <nav className="home-footer-nav flex flex-col gap-4 md:flex-row">
             {navItems.map(({ link }, i) => {
-              return <CMSLink className="text-white" key={i} {...link} />
+              return <CMSLink className="home-footer-link text-white" key={i} {...link} />
             })}
           </nav>
           <LanguageSelector />

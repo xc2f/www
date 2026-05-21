@@ -44,7 +44,7 @@ export const Logo = ({ className }: Props) => {
   return (
     <span
       className={clsx(
-        'text-2xl font-bold font-logo cursor-pointer select-none text-primary',
+        'text-2xl font-bold font-logo cursor-pointer select-none text-primary transition duration-300',
         className,
       )}
       onMouseEnter={() => setHovered(!!emoji)}

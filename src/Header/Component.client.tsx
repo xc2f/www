@@ -33,14 +33,18 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   return (
     <header
       data-site-header
-      className={`relative z-20 ${isHomePage ? 'bg-[#02050B]' : ''}`}
+      className={`z-20 ${isHomePage ? 'home-header absolute inset-x-0 top-0' : 'relative'}`}
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <div className="container flex justify-between py-8">
+      <div
+        className={`container flex justify-between ${
+          isHomePage ? 'items-start py-7 sm:py-8' : 'items-center py-8'
+        }`}
+      >
         <Link className="flex items-center" href="/">
-          <Logo />
+          <Logo className={isHomePage ? 'home-header-logo' : undefined} />
         </Link>
-        <HeaderNav data={data} />
+        <HeaderNav data={data} isHomePage={isHomePage} />
       </div>
     </header>
   )

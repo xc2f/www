@@ -1,6 +1,17 @@
 @import '~@payloadcms/ui/scss';
 
 .admin-bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(2, 5, 9, 0.82), rgba(2, 5, 9, 0.62));
+  backdrop-filter: blur(10px);
+
+  .payload-admin-bar {
+    min-height: 36px;
+  }
+
   @include small-break {
     display: none;
   }

@@ -5,7 +5,7 @@ import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
 import { cn } from '@/utilities/ui'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { PayloadAdminBar } from '@payloadcms/admin-bar'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import './index.scss'
@@ -46,9 +46,26 @@ export const AdminBar: React.FC<{
     setShow(Boolean(user?.id))
   }, [])
 
+  useEffect(() => {
+    const body = document.body
+
+    if (show) {
+      body.dataset.adminBar = 'true'
+      body.style.setProperty('--admin-bar-offset', '36px')
+    } else {
+      delete body.dataset.adminBar
+      body.style.setProperty('--admin-bar-offset', '0px')
+    }
+
+    return () => {
+      delete body.dataset.adminBar
+      body.style.setProperty('--admin-bar-offset', '0px')
+    }
+  }, [show])
+
   return (
     <div
-      className={cn(baseClass, 'py-2 bg-black text-white', {
+      className={cn(baseClass, 'bg-black text-white', {
         block: show,
         hidden: !show,
       })}
@@ -56,11 +73,11 @@ export const AdminBar: React.FC<{
       <div className="container">
         <PayloadAdminBar
           {...adminBarProps}
-          className="py-2 text-white"
+          className="py-1.5 text-white"
           classNames={{
-            controls: 'font-medium text-white',
-            logo: 'text-white',
-            user: 'text-white',
+            controls: 'text-[12px] font-medium text-white/88',
+            logo: 'text-[12px] text-white/72',
+            user: 'text-[12px] text-white/72',
           }}
           cmsURL={getClientSideURL()}
           collectionSlug={collection}

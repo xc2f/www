@@ -95,8 +95,17 @@ const config = {
         warning: 'var(--warning)',
       },
       fontFamily: {
-        mono: ['var(--font-geist-mono)'],
-        sans: ['var(--font-geist-sans)'],
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        sans: [
+          'var(--font-geist-sans)',
+          '"PingFang SC"',
+          '"Hiragino Sans GB"',
+          '"Noto Sans CJK SC"',
+          '"Microsoft YaHei"',
+          '"Source Han Sans SC"',
+          'system-ui',
+          'sans-serif',
+        ],
         logo: ['var(--font-logo)'],
       },
       keyframes: {
