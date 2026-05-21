@@ -43,19 +43,13 @@
       "signal": "signal: unresolved"
     },
     "subtitle": {
-      "before": "Not a ",
-      "highlight1": "definition",
-      "middle": ". A ",
-      "highlight2": "presence",
-      "after": "."
-    },
-    "panel": {
       "before": "Not ",
       "highlight1": "complete",
       "middle": ". Still ",
       "highlight2": "present",
       "after": "."
     },
-    "statusLine": "Quiet presence. Still forming."
+    "panel": "",
+    "statusLine": "Quietly luminous. Slow growth."
   }
 }

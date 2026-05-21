@@ -43,19 +43,13 @@
       "signal": "signal: unresolved"
     },
     "subtitle": {
-      "before": "先不要",
-      "highlight1": "定义",
-      "middle": "它，先让它",
-      "highlight2": "存在",
-      "after": "。"
-    },
-    "panel": {
       "before": "尚未",
       "highlight1": "完整",
       "middle": "，但已经",
       "highlight2": "存在",
       "after": "。"
     },
-    "statusLine": "一个仍在形成中的存在，安静发光，缓慢生长。"
+    "panel": "",
+    "statusLine": "安静发光，缓慢生长。"
   }
 }

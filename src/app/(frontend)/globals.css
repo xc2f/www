@@ -428,6 +428,12 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
   will-change: transform, opacity;
 }
 
+.home-bridge-haze {
+  filter: blur(34px);
+  will-change: transform, opacity;
+  animation: homeBridgeDrift 24s var(--home-motion-slow) infinite;
+}
+
 .home-haze-drift {
   animation: homeHazeDrift 30s var(--home-motion-slow) infinite;
 }
@@ -705,12 +711,12 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
 }
 
 .home-status-line-text {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.58);
   text-shadow:
-    0 0 10px rgba(255, 255, 255, 0.14),
-    0 0 20px rgba(255, 255, 255, 0.08),
-    0 0 28px rgba(125, 215, 255, 0.08);
-  filter: drop-shadow(0 0 10px rgba(125, 215, 255, 0.08));
+    0 0 8px rgba(255, 255, 255, 0.08),
+    0 0 16px rgba(255, 255, 255, 0.05),
+    0 0 22px rgba(125, 215, 255, 0.05);
+  filter: drop-shadow(0 0 8px rgba(125, 215, 255, 0.05));
   transition:
     color 260ms ease,
     text-shadow 320ms ease,
@@ -732,23 +738,7 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
 }
 
 .home-hover-lift {
-  transition:
-    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 300ms ease,
-    background-color 300ms ease,
-    opacity 280ms ease;
-}
-
-.home-hover-lift:hover {
-  transform: translate3d(0, -1px, 0);
-  box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.06),
-    0 0 26px rgba(125, 215, 255, 0.028),
-    inset 0 1px 0 rgba(255, 255, 255, 0.022),
-    inset 0 0 0 1px rgba(125, 215, 255, 0.024);
-  border-color: rgba(255, 255, 255, 0.04);
-  background-color: rgba(8, 16, 24, 0.4);
+  transition: opacity 280ms ease;
 }
 
 .home-token-hover {
@@ -772,11 +762,11 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
 .home-terminal {
   position: relative;
   background:
-    linear-gradient(180deg, rgba(5, 10, 18, 0.48), rgba(4, 8, 14, 0.28)),
+    linear-gradient(180deg, rgba(5, 10, 18, 0.42), rgba(4, 8, 14, 0.24)),
     radial-gradient(circle at top, rgba(125, 215, 255, 0.028), transparent 68%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.014),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.008);
+    inset 0 1px 0 rgba(255, 255, 255, 0.01),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.005);
 }
 
 .home-terminal::before {
@@ -817,11 +807,11 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
 
 .home-terminal-shell-glow {
   background:
-    radial-gradient(circle at 18% 18%, rgba(255, 143, 114, 0.03), transparent 30%),
-    radial-gradient(circle at 84% 18%, rgba(125, 215, 255, 0.034), transparent 34%),
-    radial-gradient(circle at 50% 52%, rgba(255, 255, 255, 0.018), transparent 42%);
-  opacity: 0.62;
-  filter: blur(26px);
+    radial-gradient(circle at 14% 20%, rgba(255, 143, 114, 0.028), transparent 34%),
+    radial-gradient(circle at 86% 18%, rgba(125, 215, 255, 0.03), transparent 38%),
+    radial-gradient(circle at 54% 58%, rgba(255, 255, 255, 0.014), transparent 46%);
+  opacity: 0.52;
+  filter: blur(32px);
   animation: homeTerminalGlowDrift 26s var(--home-motion-slow) infinite;
 }
 
@@ -838,6 +828,47 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
   opacity: 0.09;
   mix-blend-mode: soft-light;
   animation: homeTerminalNoise 28s linear infinite;
+}
+
+.home-terminal-shell-outline {
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.03) 18%, transparent 38%),
+    linear-gradient(90deg, transparent 58%, rgba(125, 215, 255, 0.025) 78%, transparent 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.022), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.012));
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  padding: 1px;
+  opacity: 0.42;
+  filter: blur(0.3px);
+}
+
+.home-terminal-shell::before {
+  content: '';
+  position: absolute;
+  inset: -6% -4% 12% -7%;
+  z-index: -1;
+  border-radius: 42% 58% 52% 48% / 46% 44% 56% 54%;
+  background: radial-gradient(circle at 32% 46%, rgba(125, 215, 255, 0.028), transparent 56%);
+  filter: blur(26px);
+  opacity: 0.34;
+}
+
+.home-terminal-shell::after {
+  content: '';
+  position: absolute;
+  inset: 14% -8% -10% 24%;
+  z-index: -1;
+  border-radius: 58% 42% 60% 40% / 48% 52% 44% 56%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.016), transparent 60%);
+  filter: blur(24px);
+  opacity: 0.26;
 }
 
 .home-terminal-slogan {
@@ -865,7 +896,10 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
 }
 
 .home-terminal-meta {
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
+  transition:
+    opacity 320ms ease,
+    transform 420ms var(--home-motion-slow);
 }
 
 .home-terminal-status {
@@ -1069,6 +1103,18 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
   }
 }
 
+@keyframes homeBridgeDrift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate3d(1.2%, -1%, 0) scale(1.04);
+    opacity: 0.58;
+  }
+}
+
 @keyframes homeLightBreathe {
   0%,
   100% {
@@ -1127,6 +1173,7 @@ body[data-homepage='true'] .home-footer-controls summary:hover {
   .home-atmosphere-drift-a,
   .home-atmosphere-drift-b,
   .home-haze-drift,
+  .home-bridge-haze,
   .home-light-breathe,
   .home-noise,
   .home-cursor,

@@ -57,9 +57,9 @@ const CODE_SAMPLE_LINES: CodeToken[][] = [
   ],
   [
     { text: '  ' },
-    { text: 'signal', className: 'text-[#9fe870]' },
+    { text: 'presence', className: 'text-[#9fe870]' },
     { text: ': ', className: 'text-white/60' },
-    { text: "'visible'", className: 'text-[#ffd479]' },
+    { text: "'present'", className: 'text-[#ffd479]' },
     { text: ',', className: 'text-white/60' },
   ],
   [{ text: '})', className: 'text-white/60' }],
@@ -121,21 +121,7 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
       },
       { text: t('subtitle.after') },
     ],
-    panelTitleSegments: [
-      { text: t('panel.before') },
-      {
-        text: t('panel.highlight1'),
-        highlight: true,
-        highlightClassName: 'bg-gradient-to-r from-[#ff8f72]/65 to-[#ff8f72]/65',
-      },
-      { text: t('panel.middle') },
-      {
-        text: t('panel.highlight2'),
-        highlight: true,
-        highlightClassName: 'bg-gradient-to-r from-[#7dd7ff]/60 to-[#7dd7ff]/60',
-      },
-      { text: t('panel.after') },
-    ],
+    panelTitleSegments: t('panel') ? [{ text: t('panel') }] : [],
   }
   const statusLine = t('statusLine')
 
@@ -154,13 +140,14 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
       <div className="home-atmosphere home-atmosphere-drift-a pointer-events-none absolute -left-[16%] top-[2%] h-[56rem] w-[54rem] rounded-full bg-[radial-gradient(circle,rgba(255,143,114,0.07),transparent_70%)] opacity-60" />
       <div className="home-atmosphere home-atmosphere-drift-b pointer-events-none absolute right-[-20%] top-[14%] h-[60rem] w-[56rem] rounded-full bg-[radial-gradient(circle,rgba(125,215,255,0.064),transparent_72%)] opacity-56" />
       <div className="home-haze home-haze-drift home-light-breathe pointer-events-none absolute inset-x-[8%] top-[14%] h-[24rem] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.028),transparent_70%)] opacity-45" />
+      <div className="home-bridge-haze pointer-events-none absolute left-[36%] top-[30%] h-[18rem] w-[28rem] bg-[radial-gradient(ellipse_at_center,rgba(140,169,189,0.05),transparent_72%)] opacity-60" />
       <div className="mux-grid pointer-events-none absolute inset-0 opacity-[0.34]" />
       <div className="home-noise pointer-events-none absolute inset-0 opacity-[0.1]" />
       <div className="home-vignette pointer-events-none absolute inset-0 opacity-[0.92]" />
 
       <section className="relative mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1.04fr)_minmax(340px,0.88fr)] lg:items-center lg:gap-12">
-          <div className="max-w-2xl lg:pt-14">
+          <div className="max-w-2xl lg:pt-4">
             <h1
               aria-label={copy.title}
               className="home-hero-anchor max-w-4xl font-sans text-[clamp(4.8rem,12vw,9.6rem)] leading-[0.78] font-black tracking-[-0.15em]"
@@ -217,36 +204,39 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
           <div className="relative">
             <div className="pointer-events-none absolute -left-16 top-8 h-48 w-48 rounded-full bg-[#ff8f72]/6 blur-[90px]" />
             <div className="pointer-events-none absolute -right-10 bottom-2 h-52 w-52 rounded-full bg-[#7dd7ff]/6 blur-[100px]" />
-            <div className="home-terminal-shell home-card-float home-hover-lift relative overflow-hidden rounded-[var(--home-radius-panel)] border border-white/[0.04] bg-[#081018]/38 shadow-[var(--home-shadow-soft)] backdrop-blur-xl">
+            <div className="home-terminal-shell home-card-float home-hover-lift relative overflow-hidden rounded-[var(--home-radius-panel)] border border-white/[0.025] bg-[#081018]/34 shadow-[var(--home-shadow-soft)] backdrop-blur-xl">
               <div className="home-terminal-shell-glow pointer-events-none absolute inset-0" />
               <div className="home-terminal-shell-noise pointer-events-none absolute inset-0" />
+              <div className="home-terminal-shell-outline pointer-events-none absolute inset-0" />
               <div className="pointer-events-none absolute inset-y-10 left-0 w-px bg-gradient-to-b from-transparent via-cyan-200/14 to-transparent" />
-              <div className="grid gap-4 p-5 lg:p-6">
-                <div className="home-terminal-slogan px-1 py-1 lg:px-2">
-                  <AnimatedText
-                    charClassName={isZh ? 'font-sans' : 'font-mono'}
-                    className={`text-lg text-white/88 sm:text-xl ${
-                      isZh ? 'font-medium tracking-[0.04em] leading-[1.7]' : 'tracking-[-0.02em]'
-                    }`}
-                    delayMs={420}
-                    enableHoverHighlight
-                    segments={copy.panelTitleSegments}
-                    staggerMs={28}
-                    text={copy.panelTitleSegments.map((segment) => segment.text).join('')}
-                  />
-                </div>
+              <div className="grid gap-0">
+                {copy.panelTitleSegments.length > 0 && (
+                  <div className="home-terminal-slogan px-5 pt-5 lg:px-6 lg:pt-6">
+                    <AnimatedText
+                      charClassName={isZh ? 'font-sans' : 'font-mono'}
+                      className={`text-lg text-white/88 sm:text-xl ${
+                        isZh ? 'font-medium tracking-[0.04em] leading-[1.7]' : 'tracking-[-0.02em]'
+                      }`}
+                      delayMs={420}
+                      enableHoverHighlight
+                      segments={copy.panelTitleSegments}
+                      staggerMs={28}
+                      text={copy.panelTitleSegments.map((segment) => segment.text).join('')}
+                    />
+                  </div>
+                )}
 
-                <div className="home-terminal overflow-hidden rounded-[calc(var(--home-radius-card)+0.1rem)] border border-white/[0.025]">
-                  <div className="home-terminal-meta flex items-center gap-3 px-5 pb-1.5 pt-3">
+                <div className="home-terminal overflow-hidden rounded-[calc(var(--home-radius-card)+0.1rem)] border border-white/[0.018]">
+                  <div className="home-terminal-meta flex items-center gap-3 px-[1.35rem] pb-1 pt-[0.8rem]">
                     <span className="home-signal-dot h-1.5 w-1.5 rounded-full bg-cyan-200/80" />
                     <p className="text-[10px] uppercase tracking-[0.32em] text-white/36">
                       {copy.terminalLabel}
                     </p>
-                    <span className="ml-auto text-[10px] uppercase tracking-[0.28em] text-white/24">
+                    <span className="ml-auto -translate-y-[0.02rem] text-[10px] uppercase tracking-[0.28em] text-white/24">
                       {copy.terminalStatus}
                     </span>
                   </div>
-                  <pre className="overflow-x-auto px-5 pb-6 pt-4 text-sm leading-7 text-white/80">
+                  <pre className="overflow-x-auto px-[1.45rem] pb-[1.6rem] pt-[1.05rem] text-sm leading-7 text-white/80">
                     <code>
                       {CODE_SAMPLE_LINES.map((line, lineIndex) => (
                         <span key={lineIndex} className="block">
@@ -264,7 +254,7 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
                           )}
                         </span>
                       ))}
-                      <span className="home-terminal-status mt-5 block font-mono text-[10px] uppercase tracking-[0.3em] text-white/24">
+                      <span className="home-terminal-status mt-[1.45rem] block font-mono text-[10px] uppercase tracking-[0.3em] text-white/24">
                         {copy.terminalSignal + ' '}
                         <span className="home-cursor inline-block h-[0.9em] w-[0.58ch] align-[-0.08em] bg-cyan-100/70" />
                       </span>
