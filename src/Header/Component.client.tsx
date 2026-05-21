@@ -37,8 +37,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div
-        className={`container flex justify-between ${
-          isHomePage ? 'items-start py-7 sm:py-8' : 'items-center py-8'
+        className={`container flex justify-between items-center ${
+          isHomePage ? 'py-7 sm:py-8' : 'py-8'
         }`}
       >
         <Link className="flex items-center" href="/">
