@@ -42,7 +42,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         }`}
       >
         <Link className="flex items-center" href="/">
-          <Logo className={isHomePage ? 'home-header-logo' : undefined} />
+          <Logo className={isHomePage ? 'home-header-logo' : undefined} variant="signal" />
         </Link>
         <HeaderNav data={data} isHomePage={isHomePage} />
       </div>

@@ -6,9 +6,10 @@ import { useEmojis } from '@/app/(frontend)/lib/hooks/useFeeds'
 
 interface Props {
   className?: string
+  variant?: 'form' | 'signal'
 }
 
-export const Logo = ({ className }: Props) => {
+export const Logo = ({ className, variant = 'signal' }: Props) => {
   const { data } = useEmojis()
   const emojis = useMemo(() => data ?? [], [data])
   const [emoji, setEmoji] = useState<string | null>(null)
@@ -23,7 +24,9 @@ export const Logo = ({ className }: Props) => {
   }, [emojis])
 
   useEffect(() => {
-    if (!hovered || emojis.length === 0) {
+    const canCycle = variant === 'signal' && hovered && emojis.length > 0
+
+    if (!canCycle) {
       if (timerRef.current) {
         clearInterval(timerRef.current)
         timerRef.current = null
@@ -39,7 +42,10 @@ export const Logo = ({ className }: Props) => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [hovered, emojis])
+  }, [variant, hovered, emojis])
+
+  const thirdChar = variant === 'form' ? '2' : '@'
+  const displayChar = variant === 'signal' && hovered && emoji ? emoji : thirdChar
 
   return (
     <span
@@ -47,18 +53,19 @@ export const Logo = ({ className }: Props) => {
         'text-2xl font-bold font-logo cursor-pointer select-none text-primary transition duration-300',
         className,
       )}
-      onMouseEnter={() => setHovered(!!emoji)}
+      onMouseEnter={() => {
+        if (variant === 'signal' && emoji) setHovered(true)
+      }}
       onMouseLeave={() => setHovered(false)}
     >
       XC
       <span
         className={clsx(
           'inline-flex w-[1em] justify-center leading-none',
-          hovered && 'scale-[0.9] relative bottom-[3px] right-px',
+          hovered && variant === 'signal' && 'relative bottom-[3px] right-px scale-[0.9]',
         )}
       >
-        {!hovered && '@'}
-        {hovered && emoji}
+        {displayChar}
       </span>
       F
     </span>
