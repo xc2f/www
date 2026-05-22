@@ -127,7 +127,7 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
 
   return (
     <main
-      className="relative flex min-h-0 flex-1 items-center overflow-hidden bg-[#06080A] text-white"
+      className="relative flex min-h-0 flex-1 items-start overflow-hidden bg-[#06080A] text-white lg:items-center"
       data-theme="dark"
     >
       <HomePageClient />
@@ -145,7 +145,7 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
       <div className="home-noise pointer-events-none absolute inset-0 opacity-[0.1]" />
       <div className="home-vignette pointer-events-none absolute inset-0 opacity-[0.92]" />
 
-      <section className="relative mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
+      <section className="relative mx-auto w-full max-w-6xl px-6 pb-44 pt-32 sm:px-8 sm:pb-32 sm:pt-36 lg:px-10 lg:py-20">
         <div className="grid gap-14 lg:grid-cols-[minmax(0,1.04fr)_minmax(340px,0.88fr)] lg:items-center lg:gap-12">
           <div className="max-w-2xl lg:pt-4">
             <h1
@@ -227,12 +227,12 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
                 )}
 
                 <div className="home-terminal overflow-hidden rounded-[calc(var(--home-radius-card)+0.1rem)] border border-white/[0.018]">
-                  <div className="home-terminal-meta flex items-center gap-3 px-[1.35rem] pb-1 pt-[0.8rem]">
-                    <span className="home-signal-dot h-1.5 w-1.5 rounded-full bg-cyan-200/80" />
-                    <p className="text-[10px] uppercase tracking-[0.32em] text-white/36">
+                  <div className="home-terminal-meta flex items-center gap-2 px-4 pb-1 pt-[0.8rem] sm:gap-3 sm:px-[1.35rem]">
+                    <span className="home-signal-dot h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-200/80" />
+                    <p className="min-w-0 flex-1 truncate whitespace-nowrap text-[9px] uppercase tracking-[0.16em] text-white/36 sm:text-[10px] sm:tracking-[0.32em]">
                       {copy.terminalLabel}
                     </p>
-                    <span className="ml-auto -translate-y-[0.02rem] text-[10px] uppercase tracking-[0.28em] text-white/24">
+                    <span className="ml-auto shrink-0 -translate-y-[0.02rem] whitespace-nowrap text-[9px] uppercase tracking-[0.14em] text-white/24 sm:text-[10px] sm:tracking-[0.28em]">
                       {copy.terminalStatus}
                     </span>
                   </div>

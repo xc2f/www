@@ -267,6 +267,7 @@ body[data-homepage='true'] footer[data-site-footer] {
   position: absolute;
   inset: auto 0 0 0;
   z-index: 20;
+  overflow: hidden;
   border-top-color: transparent;
   background: transparent;
 }
@@ -278,33 +279,11 @@ body[data-homepage='true'] footer[data-site-footer] > div {
 }
 
 body[data-homepage='true'] footer[data-site-footer] > div::before {
-  content: '';
-  position: absolute;
-  inset: auto 0 -1.2rem 0;
-  height: 8.5rem;
-  background:
-    radial-gradient(circle at 18% 100%, rgba(255, 143, 114, 0.045), transparent 24%),
-    radial-gradient(circle at 82% 100%, rgba(125, 215, 255, 0.05), transparent 26%),
-    linear-gradient(0deg, rgba(3, 6, 10, 0.32), rgba(3, 6, 10, 0));
-  filter: blur(18px);
-  opacity: 0.95;
-  pointer-events: none;
+  content: none;
 }
 
 body[data-homepage='true'] footer[data-site-footer] > div::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 6rem;
-  background:
-    linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.016),
-      rgba(255, 255, 255, 0.006) 32%,
-      transparent 100%
-    );
-  opacity: 0.4;
-  pointer-events: none;
+  content: none;
 }
 
 body[data-homepage='true'] .home-footer-logo {

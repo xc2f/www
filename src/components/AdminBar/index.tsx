@@ -63,6 +63,9 @@ export const AdminBar: React.FC<{
     }
   }, [show])
 
+  // Don't render the admin bar until we know whether to show it or not, to avoid hydration mismatches
+  return null
+
   return (
     <div
       className={cn(baseClass, 'bg-black text-white', {

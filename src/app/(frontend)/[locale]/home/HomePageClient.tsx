@@ -14,12 +14,10 @@ export const HomePageClient: React.FC = () => {
     const prevHtmlBg = html.style.backgroundColor
     const prevBodyBg = body.style.backgroundColor
     const prevHomepage = body.dataset.homepage
-    const prevNoScroll = body.dataset.noScroll
 
-    html.style.backgroundColor = '#02050b'
-    body.style.backgroundColor = '#02050b'
+    html.style.backgroundColor = '#06080a'
+    body.style.backgroundColor = '#06080a'
     body.dataset.homepage = 'true'
-    body.dataset.noScroll = 'true'
 
     return () => {
       html.style.backgroundColor = prevHtmlBg
@@ -29,12 +27,6 @@ export const HomePageClient: React.FC = () => {
         delete body.dataset.homepage
       } else {
         body.dataset.homepage = prevHomepage
-      }
-
-      if (prevNoScroll === undefined) {
-        delete body.dataset.noScroll
-      } else {
-        body.dataset.noScroll = prevNoScroll
       }
     }
   }, [setHeaderTheme])
