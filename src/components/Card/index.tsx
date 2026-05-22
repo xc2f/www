@@ -32,7 +32,7 @@ export const Card: React.FC<{
   return (
     <article
       className={cn(
-        'flex h-full flex-col overflow-hidden rounded-lg border border-border/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,255,255,0.92))] shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:cursor-pointer',
+        'flex h-full flex-col overflow-hidden rounded-lg border border-border/70 bg-card text-card-foreground shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:cursor-pointer dark:shadow-[0_10px_28px_rgba(0,0,0,0.32)]',
         className,
       )}
       ref={card.ref}
@@ -71,9 +71,9 @@ export const Card: React.FC<{
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col bg-[linear-gradient(180deg,rgba(255,255,255,0.76),rgba(255,255,255,0.92)_14%)] p-4 backdrop-blur-[2px]">
+      <div className="flex flex-1 flex-col bg-card p-4 text-card-foreground">
         {showCategories && hasCategories && (
-          <div className="uppercase text-sm mb-4">
+          <div className="mb-4 text-sm uppercase text-muted-foreground">
             {showCategories && hasCategories && (
               <div>
                 {categories?.map((category, index) => {
@@ -99,15 +99,23 @@ export const Card: React.FC<{
           </div>
         )}
         {titleToUse && (
-          <div className="prose">
-            <h3>
-              <Link className="not-prose" href={href} ref={link.ref}>
+          <div>
+            <h3 className="text-xl font-normal leading-snug text-card-foreground">
+              <Link
+                className="text-card-foreground transition-colors hover:text-muted-foreground"
+                href={href}
+                ref={link.ref}
+              >
                 {titleToUse}
               </Link>
             </h3>
           </div>
         )}
-        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
+        {description && (
+          <div className="mt-2 text-muted-foreground">
+            {description && <p>{sanitizedDescription}</p>}
+          </div>
+        )}
       </div>
     </article>
   )
