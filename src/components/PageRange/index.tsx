@@ -47,20 +47,31 @@ export const PageRange: React.FC<{
 
   void collectionLabels
 
+  const summary =
+    typeof totalDocs !== 'undefined' && totalDocs > 0
+      ? indexStart > 0
+        ? t('pagination', {
+            start: indexStart,
+            end: indexEnd,
+            total: totalDocs,
+          })
+        : t('pagination_0', {
+            total: totalDocs,
+          })
+      : 'Search produced no results.'
+
   return (
-    <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
-      {(typeof totalDocs === 'undefined' || totalDocs === 0) && 'Search produced no results.'}
-      {typeof totalDocs !== 'undefined' && totalDocs > 0
-        ? indexStart > 0
-          ? t('pagination', {
-              start: indexStart,
-              end: indexEnd,
-              total: totalDocs,
-            })
-          : t('pagination_0', {
-              total: totalDocs,
-            })
-        : null}
+    <div
+      className={[
+        className,
+        'max-w-full py-2 text-sm text-slate-600 dark:text-white/50',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <p className="text-[0.95rem] leading-6 tracking-[0.01em] text-slate-600 dark:text-white/52">
+        {summary}
+      </p>
     </div>
   )
 }

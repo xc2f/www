@@ -1002,6 +1002,7 @@ export interface Search {
     description?: string | null;
     image?: (number | null) | Media;
   };
+  publishedAt?: string | null;
   categories?:
     | {
         relationTo?: string | null;
@@ -1819,6 +1820,7 @@ export interface SearchSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  publishedAt?: T;
   categories?:
     | T
     | {

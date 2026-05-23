@@ -37,6 +37,13 @@ export const searchFields: Field[] = [
     ],
   },
   {
+    name: 'publishedAt',
+    type: 'date',
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
     label: 'Categories',
     name: 'categories',
     type: 'array',

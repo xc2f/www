@@ -8,6 +8,19 @@ const PageClient: React.FC = () => {
 
   useEffect(() => {
     setHeaderTheme('dark')
+
+    const body = document.body
+    const prevPostHero = body.dataset.postHero
+
+    body.dataset.postHero = 'true'
+
+    return () => {
+      if (prevPostHero === undefined) {
+        delete body.dataset.postHero
+      } else {
+        body.dataset.postHero = prevPostHero
+      }
+    }
   }, [setHeaderTheme])
   return <React.Fragment />
 }

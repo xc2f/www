@@ -9,7 +9,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { cn } from '@/utilities/ui'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
 export const Pagination: React.FC<{
@@ -18,6 +18,7 @@ export const Pagination: React.FC<{
   totalPages: number
 }> = (props) => {
   const router = useRouter()
+  const pathname = usePathname()
 
   const { className, page, totalPages } = props
   const hasNextPage = page < totalPages
@@ -25,16 +26,21 @@ export const Pagination: React.FC<{
 
   const hasExtraPrevPages = page - 1 > 1
   const hasExtraNextPages = page + 1 < totalPages
+  const localePrefix = pathname.match(/^\/(en|zh)(?=\/|$)/)?.[0] || ''
+
+  const getHref = (targetPage: number) =>
+    targetPage <= 1 ? `${localePrefix}/posts` || '/posts' : `${localePrefix}/posts/page/${targetPage}`
 
   return (
     <div className={cn('my-12', className)}>
       <PaginationComponent>
-        <PaginationContent>
+        <PaginationContent className="flex-wrap gap-2">
           <PaginationItem>
             <PaginationPrevious
+              className="rounded-full border border-black/8 bg-white/72 text-slate-700 shadow-[0_10px_28px_rgba(15,23,42,0.06)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-white/72 dark:shadow-[0_14px_40px_rgba(0,0,0,0.28)] dark:hover:bg-white/[0.06]"
               disabled={!hasPrevPage}
               onClick={() => {
-                router.push(`/posts/page/${page - 1}`)
+                router.push(getHref(page - 1))
               }}
             />
           </PaginationItem>
@@ -48,8 +54,9 @@ export const Pagination: React.FC<{
           {hasPrevPage && (
             <PaginationItem>
               <PaginationLink
+                className="rounded-full border border-transparent bg-transparent text-slate-600 transition hover:-translate-y-0.5 hover:border-black/8 hover:bg-white/72 hover:text-slate-900 dark:text-white/52 dark:hover:border-white/[0.08] dark:hover:bg-white/[0.04] dark:hover:text-white"
                 onClick={() => {
-                  router.push(`/posts/page/${page - 1}`)
+                  router.push(getHref(page - 1))
                 }}
               >
                 {page - 1}
@@ -59,9 +66,10 @@ export const Pagination: React.FC<{
 
           <PaginationItem>
             <PaginationLink
+              className="rounded-full border border-black/10 bg-white text-slate-950 shadow-[0_10px_24px_rgba(15,23,42,0.08)] dark:border-white/[0.12] dark:bg-white/[0.1] dark:text-white dark:shadow-[0_16px_42px_rgba(0,0,0,0.3)]"
               isActive
               onClick={() => {
-                router.push(`/posts/page/${page}`)
+                router.push(getHref(page))
               }}
             >
               {page}
@@ -71,8 +79,9 @@ export const Pagination: React.FC<{
           {hasNextPage && (
             <PaginationItem>
               <PaginationLink
+                className="rounded-full border border-transparent bg-transparent text-slate-600 transition hover:-translate-y-0.5 hover:border-black/8 hover:bg-white/72 hover:text-slate-900 dark:text-white/52 dark:hover:border-white/[0.08] dark:hover:bg-white/[0.04] dark:hover:text-white"
                 onClick={() => {
-                  router.push(`/posts/page/${page + 1}`)
+                  router.push(getHref(page + 1))
                 }}
               >
                 {page + 1}
@@ -88,9 +97,10 @@ export const Pagination: React.FC<{
 
           <PaginationItem>
             <PaginationNext
+              className="rounded-full border border-black/8 bg-white/72 text-slate-700 shadow-[0_10px_28px_rgba(15,23,42,0.06)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-white/72 dark:shadow-[0_14px_40px_rgba(0,0,0,0.28)] dark:hover:bg-white/[0.06]"
               disabled={!hasNextPage}
               onClick={() => {
-                router.push(`/posts/page/${page + 1}`)
+                router.push(getHref(page + 1))
               }}
             />
           </PaginationItem>

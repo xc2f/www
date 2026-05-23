@@ -37,10 +37,12 @@ export default async function Page({
     limit: 12,
     locale,
     select: {
+      doc: true,
       title: true,
       slug: true,
       categories: true,
       meta: true,
+      publishedAt: true,
     },
     // pagination: false reduces overhead if you don't need totalDocs
     pagination: false,
@@ -74,6 +76,56 @@ export default async function Page({
       : {}),
   })
 
+  const postIDs = posts.docs
+    .map((doc) => {
+      if (typeof doc.doc?.value === 'object') return doc.doc.value.id
+      return doc.doc?.value
+    })
+    .filter((value): value is number => typeof value === 'number')
+
+  const publishedAtByPostID = new Map<number, string | null | undefined>()
+
+  if (postIDs.length > 0) {
+    const indexedPosts = await payload.find({
+      collection: 'posts',
+      depth: 0,
+      limit: postIDs.length,
+      locale,
+      overrideAccess: false,
+      pagination: false,
+      select: {
+        publishedAt: true,
+      },
+      where: {
+        id: {
+          in: postIDs,
+        },
+      },
+    })
+
+    indexedPosts.docs.forEach((post) => {
+      publishedAtByPostID.set(post.id, post.publishedAt)
+    })
+  }
+
+  const archivePosts = posts.docs.map((doc) => {
+    const relationDoc = typeof doc.doc?.value === 'object' ? doc.doc.value : null
+    const relationID = relationDoc?.id || (typeof doc.doc?.value === 'number' ? doc.doc.value : null)
+
+    return {
+      categories: doc.categories?.map((category) => ({
+        title: category?.title || undefined,
+      })),
+      meta: doc.meta,
+      publishedAt:
+        doc.publishedAt ||
+        relationDoc?.publishedAt ||
+        (relationID ? publishedAtByPostID.get(relationID) : undefined),
+      slug: doc.slug || relationDoc?.slug || '',
+      title: doc.title || relationDoc?.title || undefined,
+    }
+  })
+
   return (
     <div className="pt-24 pb-24">
       <PageClient />
@@ -87,7 +139,7 @@ export default async function Page({
       </div>
 
       {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+        <CollectionArchive posts={archivePosts as CardPostData[]} />
       ) : (
         <div className="container text-center">{t('empty')}</div>
       )}

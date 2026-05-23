@@ -2,13 +2,16 @@
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
+import { useLocale } from 'next-intl'
 import React, { Fragment } from 'react'
 
 import type { Post } from '@/payload-types'
+import type { Locale } from '@/i18n/types'
 
 import { Media } from '@/components/Media'
+import { formatTime } from '@/utilities/formatTime'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'publishedAt'>
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -19,33 +22,42 @@ export const Card: React.FC<{
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
+  const locale = useLocale() as Locale
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title } = doc || {}
+  const { categories, meta, publishedAt, title } = doc || {}
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = `/${relationTo}/${slug}`
+  const href = `/${relationTo}/${doc?.slug}`
+  const publishedLabel = publishedAt ? formatTime(publishedAt, locale) : null
+  const metaLabel = locale === 'zh' ? '发布时间' : 'Published'
 
   return (
     <article
       className={cn(
-        'flex h-full flex-col overflow-hidden rounded-lg border border-border/70 bg-card text-card-foreground shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:cursor-pointer dark:shadow-[0_10px_28px_rgba(0,0,0,0.32)]',
+        'group relative flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-black/8 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(241,245,249,0.92))] text-card-foreground shadow-[0_14px_36px_rgba(15,23,42,0.08)] transition duration-300 ease-out hover:cursor-pointer hover:border-black/12 hover:shadow-[0_24px_60px_rgba(15,23,42,0.12)] dark:border-white/[0.07] dark:bg-[linear-gradient(180deg,rgba(8,13,18,0.94),rgba(5,9,14,0.98))] dark:shadow-[0_18px_56px_rgba(0,0,0,0.34)] dark:hover:border-white/[0.12] dark:hover:shadow-[0_28px_76px_rgba(0,0,0,0.46),0_0_24px_rgba(125,215,255,0.05)]',
         className,
       )}
       ref={card.ref}
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/5">
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[linear-gradient(180deg,rgba(255,255,255,0.28),rgba(255,255,255,0)_18%,rgba(255,255,255,0)_82%,rgba(15,23,42,0.03))] opacity-80 dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.045),rgba(255,255,255,0)_20%,rgba(255,255,255,0)_72%,rgba(125,215,255,0.03))]" />
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/30 dark:ring-white/[0.03]" />
+      <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-black/6 bg-black/5 dark:border-white/[0.06] dark:bg-[#05080d]">
         {metaImage && typeof metaImage !== 'string' && (
-          <Media
-            fill
-            imgClassName="object-cover"
-            pictureClassName="absolute inset-0"
-            resource={metaImage}
-            size="33vw"
-          />
+          <>
+            <Media
+              fill
+              imgClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              pictureClassName="absolute inset-0"
+              resource={metaImage}
+              size="(max-width: 1024px) 100vw, 33vw"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(15,23,42,0.02)_24%,rgba(15,23,42,0.22)_72%,rgba(15,23,42,0.46)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,5,9,0.03),rgba(2,5,9,0.1)_22%,rgba(2,5,9,0.36)_72%,rgba(2,5,9,0.72)_100%)]" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.06))] dark:bg-[linear-gradient(180deg,transparent,rgba(125,215,255,0.06))]" />
+          </>
         )}
         {(!metaImage || typeof metaImage === 'string') && (
           <div className="absolute inset-0 overflow-hidden bg-[linear-gradient(180deg,rgba(7,10,16,0.96),rgba(10,14,22,0.88)_54%,rgba(14,18,24,0.74)_100%)]">
@@ -71,11 +83,13 @@ export const Card: React.FC<{
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col bg-card p-4 text-card-foreground">
+      <div className="relative flex flex-1 flex-col gap-5 px-5 py-5 sm:px-6 sm:py-6">
+        <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(15,23,42,0.08),transparent)] dark:bg-[linear-gradient(90deg,transparent,rgba(125,215,255,0.12),transparent)]" />
         {showCategories && hasCategories && (
-          <div className="mb-4 text-sm uppercase text-muted-foreground">
+          <div className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-muted-foreground/80 dark:text-white/42">
             {showCategories && hasCategories && (
-              <div>
+              <div className="flex items-center gap-2">
+                <span className="h-px w-5 shrink-0 bg-gradient-to-r from-[#7dd7ff]/55 to-[#ff8f72]/45" />
                 {categories?.map((category, index) => {
                   if (typeof category === 'object') {
                     const { title: titleFromCategory } = category
@@ -87,7 +101,7 @@ export const Card: React.FC<{
                     return (
                       <Fragment key={index}>
                         {categoryTitle}
-                        {!isLast && <Fragment>, &nbsp;</Fragment>}
+                        {!isLast && <Fragment>&nbsp;/&nbsp;</Fragment>}
                       </Fragment>
                     )
                   }
@@ -98,24 +112,37 @@ export const Card: React.FC<{
             )}
           </div>
         )}
-        {titleToUse && (
-          <div>
-            <h3 className="text-xl font-normal leading-snug text-card-foreground">
-              <Link
-                className="text-card-foreground transition-colors hover:text-muted-foreground"
-                href={href}
-                ref={link.ref}
-              >
-                {titleToUse}
-              </Link>
-            </h3>
-          </div>
-        )}
-        {description && (
-          <div className="mt-2 text-muted-foreground">
-            {description && <p>{sanitizedDescription}</p>}
-          </div>
-        )}
+        <div className="flex flex-1 flex-col">
+          {titleToUse && (
+            <div>
+              <h3 className="text-[1.18rem] font-medium leading-[1.35] text-card-foreground transition-colors duration-300 dark:text-white/88">
+                <Link
+                  className="text-card-foreground transition-colors duration-300 hover:text-foreground dark:text-white/88 dark:hover:text-white"
+                  href={href}
+                  ref={link.ref}
+                >
+                  {titleToUse}
+                </Link>
+              </h3>
+            </div>
+          )}
+          {description && (
+            <div className="mt-3 text-sm leading-6 text-muted-foreground dark:text-white/48">
+              <p className="line-clamp-3">{sanitizedDescription}</p>
+            </div>
+          )}
+        </div>
+        <div className="flex min-h-[1.25rem] items-center justify-between gap-4 border-t border-black/6 pt-4 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground dark:border-white/[0.07] dark:text-white/38">
+          <span className="font-mono text-muted-foreground/55 dark:text-white/24">{metaLabel}</span>
+          {publishedLabel && (
+            <time
+              className="shrink-0 font-mono text-card-foreground/72 dark:text-white/52"
+              dateTime={publishedAt ?? undefined}
+            >
+              {publishedLabel}
+            </time>
+          )}
+        </div>
       </div>
     </article>
   )

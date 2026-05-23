@@ -12,6 +12,7 @@ import { notFound } from 'next/navigation'
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
+import { PostsArchiveIntro } from '../../PostsArchiveIntro'
 
 export const revalidate = 600
 
@@ -41,31 +42,38 @@ export default async function Page({ params: paramsPromise }: Args) {
     page: sanitizedPageNumber,
     overrideAccess: false,
     locale,
+    select: {
+      title: true,
+      slug: true,
+      categories: true,
+      meta: true,
+      publishedAt: true,
+    },
   })
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pb-24">
       <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1>{t('posts')}</h1>
+      <PostsArchiveIntro locale={locale} title={t('posts')} />
+
+      <div className="container mt-6 sm:mt-7">
+        <div className="grid grid-cols-4 gap-x-4 sm:grid-cols-8 lg:grid-cols-12 lg:gap-x-6 xl:gap-x-7">
+          <div className="col-span-4 md:col-span-4 lg:col-span-6 xl:col-span-4">
+            <PageRange
+              collection="posts"
+              currentPage={posts.page}
+              limit={12}
+              totalDocs={posts.totalDocs}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          currentPage={posts.page}
-          limit={12}
-          totalDocs={posts.totalDocs}
-        />
-      </div>
-
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive className="mt-6 sm:mt-7" posts={posts.docs} />
 
       <div className="container">
         {posts?.page && posts?.totalPages > 1 && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+          <Pagination className="mt-14" page={posts.page} totalPages={posts.totalPages} />
         )}
       </div>
     </div>

@@ -2,6 +2,9 @@
   "Posts": {
     "posts": "Posts",
     "join_the_discussion_on_github": "Join the discussion on GitHub",
+    "discussion": "Discuss",
+    "discussion_description": "If you have a different take, a useful addition, or related experience, continue the thread on GitHub.",
+    "open_on_github": "Open on GitHub",
     "author": "Author",
     "published_at": "Published At",
     "source": "Source",

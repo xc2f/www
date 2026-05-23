@@ -2,6 +2,9 @@
   "Posts": {
     "posts": "文章",
     "join_the_discussion_on_github": "在 GitHub 参与讨论",
+    "discussion": "讨论",
+    "discussion_description": "如果你有不同的看法、补充，或者相关经验，欢迎继续在 GitHub 里展开。",
+    "open_on_github": "前往 GitHub",
     "author": "作者",
     "published_at": "发布时间",
     "source": "数据来源",

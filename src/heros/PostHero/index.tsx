@@ -4,7 +4,6 @@ import type { Post } from '@/payload-types'
 
 import { LocalTime } from '@/components/LocalTime'
 import { Media } from '@/components/Media'
-import { formatAuthors } from '@/utilities/formatAuthors'
 
 import { useTranslations } from 'next-intl'
 
@@ -13,66 +12,76 @@ export const PostHero: React.FC<{
 }> = ({ post }) => {
   const t = useTranslations('Posts')
 
-  const { categories, heroImage, populatedAuthors, publishedAt, title } = post
-
-  const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+  const { categories, heroImage, meta, publishedAt, title } = post
+  const summary = meta?.description?.trim()
 
   return (
-    <div className="relative -mt-[10.4rem] flex items-end">
-      <div className="container z-10 relative lg:grid lg:grid-cols-[1fr_48rem_1fr] text-white pb-8">
-        <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
-          <div className="uppercase text-sm mb-6">
-            {categories?.map((category, index) => {
-              if (typeof category === 'object' && category !== null) {
-                const { title: categoryTitle } = category
+    <div className="relative -mt-[10.4rem] overflow-hidden bg-[#06080A] text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_24%,rgba(255,143,114,0.12),transparent_30%),radial-gradient(circle_at_78%_20%,rgba(125,215,255,0.1),transparent_36%),linear-gradient(180deg,rgba(4,7,11,0.05),rgba(4,7,11,0.24)_54%,rgba(4,7,11,0.56)_100%)]" />
+      <div className="mux-grid pointer-events-none absolute inset-0 opacity-[0.18]" />
+      <div className="home-noise pointer-events-none absolute inset-0 opacity-[0.08]" />
+      <div className="home-vignette pointer-events-none absolute inset-0 opacity-[0.96]" />
 
-                const titleToUse = categoryTitle || 'Untitled category'
+      <div className="container relative z-10 grid min-h-[84vh] items-end pb-12 pt-40 sm:pb-14 sm:pt-44 lg:grid-cols-[minmax(0,52rem)_minmax(0,1fr)] lg:pb-16 lg:pt-48">
+        <div className="max-w-4xl">
+          {categories && categories.length > 0 && (
+            <div className="mb-7 flex flex-wrap items-center gap-3">
+              {categories?.map((category, index) => {
+                if (typeof category === 'object' && category !== null) {
+                  const { title: categoryTitle } = category
 
-                const isLast = index === categories.length - 1
+                  const titleToUse = categoryTitle || 'Untitled category'
 
-                return (
-                  <React.Fragment key={index}>
-                    {titleToUse}
-                    {!isLast && <React.Fragment>, &nbsp;</React.Fragment>}
-                  </React.Fragment>
-                )
-              }
-              return null
-            })}
-          </div>
+                  return (
+                    <span
+                      key={index}
+                      className="inline-flex items-center rounded-full border border-white/12 bg-white/[0.04] px-3 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.24em] text-white/68 backdrop-blur-sm"
+                    >
+                      {titleToUse}
+                    </span>
+                  )
+                }
+                return null
+              })}
+            </div>
+          )}
 
-          <div className="">
-            <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{title}</h1>
-          </div>
+          <h1 className="max-w-5xl text-[2.8rem] font-medium leading-[0.94] tracking-[-0.05em] text-white sm:text-[4.25rem] lg:text-[5.4rem]">
+            {title}
+          </h1>
 
-          <div className="flex flex-col md:flex-row gap-4 md:gap-16">
-            {hasAuthors && (
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <p className="text-sm">{t('author')}</p>
+          {summary && (
+            <p className="mt-6 max-w-2xl text-[1rem] leading-7 text-white/64 sm:text-[1.12rem] sm:leading-8">
+              {summary}
+            </p>
+          )}
 
-                  <p>{formatAuthors(populatedAuthors)}</p>
-                </div>
-              </div>
-            )}
-            {publishedAt && (
-              <div className="flex flex-col gap-1">
-                <p className="text-sm">{t('published_at')}</p>
-
-                <time dateTime={publishedAt}>
+          {publishedAt && (
+            <div className="mt-10 flex text-white/72">
+              <div className="flex items-baseline gap-3 sm:gap-4">
+                <p className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/38">
+                  {t('published_at')}
+                </p>
+                <time className="text-sm text-white/78 sm:text-[0.95rem]" dateTime={publishedAt}>
                   <LocalTime time={publishedAt} />
                 </time>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
-      <div className="min-h-[80vh] select-none">
+
+      <div className="absolute inset-0 min-h-[84vh] select-none">
         {heroImage && typeof heroImage !== 'string' && (
-          <Media fill priority imgClassName="-z-10 object-cover" resource={heroImage} />
+          <Media
+            fill
+            priority
+            imgClassName="object-cover object-center opacity-[0.82]"
+            resource={heroImage}
+          />
         )}
-        <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,9,0.06),rgba(3,6,10,0.14)_26%,rgba(3,6,10,0.22)_66%,rgba(4,7,11,0.32)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,transparent_0%,transparent_26%,rgba(3,6,10,0.04)_46%,rgba(3,6,10,0.12)_78%,rgba(3,6,10,0.22)_100%)]" />
       </div>
     </div>
   )
