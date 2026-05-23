@@ -14,9 +14,18 @@
   },
   "Search": {
     "search": "Search",
-    "enter": "Please Enter",
+    "eyebrow": "XC2F / SEARCH",
+    "intro_description": "Search the archive.",
+    "intro_description_second_line": "Search titles, descriptions, and slugs.",
+    "enter": "Search titles, excerpts, or slugs",
     "submit": "Submit",
-    "empty": "No results found."
+    "signal": "Scanning",
+    "idle": "Search titles, descriptions, and slugs across the archive.",
+    "query_label": "Query",
+    "results_for": "{count} results for “{query}”.",
+    "no_results": "Search produced no results.",
+    "empty": "Enter a query to begin exploring the archive.",
+    "empty_with_query": "No matching results for “{query}”."
   },
   "Moments": {
     "moments": "Moments",

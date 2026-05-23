@@ -25,6 +25,7 @@ export const PageRange: React.FC<{
   totalDocs?: number
 }> = (props) => {
   const t = useTranslations('Posts')
+  const searchT = useTranslations('Search')
   const {
     className,
     collection,
@@ -58,7 +59,7 @@ export const PageRange: React.FC<{
         : t('pagination_0', {
             total: totalDocs,
           })
-      : 'Search produced no results.'
+      : searchT('no_results')
 
   return (
     <div

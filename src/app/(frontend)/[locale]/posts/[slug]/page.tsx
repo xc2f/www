@@ -79,7 +79,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
       <PostHero post={post} />
 
-      <div className="relative z-20 -mt-10 pt-0 sm:-mt-14">
+      <div className="relative z-20 -mt-4 pt-0 sm:-mt-8">
         <div className="container">
           <div className="relative mx-auto max-w-[58rem]">
             <div className="relative overflow-hidden rounded-[1.35rem] border border-black/[0.045] bg-white/72 px-6 py-8 shadow-[0_8px_24px_rgba(15,23,42,0.035)] backdrop-blur-[6px] sm:px-10 sm:py-12 lg:px-12 dark:border-white/[0.045] dark:bg-[linear-gradient(180deg,rgba(8,13,18,0.72),rgba(6,10,15,0.84))] dark:shadow-[0_12px_32px_rgba(0,0,0,0.2)]">

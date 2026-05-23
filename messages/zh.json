@@ -14,9 +14,18 @@
   },
   "Search": {
     "search": "搜索",
-    "enter": "请输入",
+    "eyebrow": "XC2F / SEARCH",
+    "intro_description": "检索归档内容。",
+    "intro_description_second_line": "搜索标题、摘要与 slug。",
+    "enter": "输入关键词、标题或路径",
     "submit": "提交",
-    "empty": "未找到匹配的结果。"
+    "signal": "检索中",
+    "idle": "搜索标题、摘要与 slug，快速定位归档内容。",
+    "query_label": "关键词",
+    "results_for": "共找到 {count} 条与“{query}”相关的结果。",
+    "no_results": "未找到结果。",
+    "empty": "输入内容后即可开始检索。",
+    "empty_with_query": "未找到与“{query}”匹配的结果。"
   },
   "Moments": {
     "moments": "瞬间",

@@ -6,6 +6,7 @@ import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
+import { BackToTop } from '@/components/BackToTop'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -55,6 +56,7 @@ export default async function LocaleLayout({
           />
           <Header />
           {children}
+          <BackToTop />
           <Footer />
         </Providers>
       </body>

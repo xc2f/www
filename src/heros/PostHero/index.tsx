@@ -22,8 +22,8 @@ export const PostHero: React.FC<{
       <div className="home-noise pointer-events-none absolute inset-0 opacity-[0.08]" />
       <div className="home-vignette pointer-events-none absolute inset-0 opacity-[0.96]" />
 
-      <div className="container relative z-10 grid min-h-[84vh] items-end pb-12 pt-40 sm:pb-14 sm:pt-44 lg:grid-cols-[minmax(0,52rem)_minmax(0,1fr)] lg:pb-16 lg:pt-48">
-        <div className="max-w-4xl">
+      <div className="container relative z-10 grid min-h-[84vh] items-end pb-12 pt-40 sm:pb-14 sm:pt-44 lg:grid-cols-[minmax(0,72rem)_minmax(0,1fr)] lg:pb-16 lg:pt-48">
+        <div className="max-w-[72rem]">
           {categories && categories.length > 0 && (
             <div className="mb-7 flex flex-wrap items-center gap-3">
               {categories?.map((category, index) => {
@@ -46,7 +46,7 @@ export const PostHero: React.FC<{
             </div>
           )}
 
-          <h1 className="max-w-5xl text-[2.8rem] font-medium leading-[0.94] tracking-[-0.05em] text-white sm:text-[4.25rem] lg:text-[5.4rem]">
+          <h1 className="max-w-none text-[2.8rem] font-medium leading-[1.05] tracking-[-0.05em] text-white sm:text-[4.25rem] lg:text-[5.4rem]">
             {title}
           </h1>
 
@@ -59,7 +59,7 @@ export const PostHero: React.FC<{
           {publishedAt && (
             <div className="mt-10 flex text-white/72">
               <div className="flex items-baseline gap-3 sm:gap-4">
-                <p className="font-mono text-[0.68rem] uppercase tracking-[0.22em] text-white/38">
+                <p className="font-mono text-sm uppercase tracking-[0.22em] text-white/38">
                   {t('published_at')}
                 </p>
                 <time className="text-sm text-white/78 sm:text-[0.95rem]" dateTime={publishedAt}>
