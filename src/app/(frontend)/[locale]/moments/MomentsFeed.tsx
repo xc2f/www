@@ -5,6 +5,7 @@ import MomentCard from './MomentCard'
 import type { Media, Moment } from '@/payload-types'
 
 export type MomentFeedItem = Pick<Moment, 'id' | 'content' | 'mood' | 'publishedAt'> & {
+  title?: string | null
   images: {
     id: string
     image: Media
@@ -17,15 +18,21 @@ interface MomentsFeedProps {
 
 export default function MomentsFeed({ moments }: MomentsFeedProps) {
   if (!moments?.length) {
-    return <div className="py-16 text-center text-sm text-gray-500">暂无内容</div>
+    return (
+      <div className="py-16 text-center text-sm text-slate-500 dark:text-white/42">
+        暂无内容
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-12">
+    <div>
       {moments.map((moment, index) => (
         <React.Fragment key={moment.id}>
-          {index > 0 && <div className="h-px w-full bg-gray-200 dark:bg-gray-700" />}
           <MomentCard moment={moment} />
+          {index < moments.length - 1 && (
+            <div className="pointer-events-none h-px bg-[linear-gradient(90deg,rgba(148,163,184,0),rgba(148,163,184,0.14)_8%,rgba(148,163,184,0.24)_50%,rgba(148,163,184,0.14)_92%,rgba(148,163,184,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.06)_8%,rgba(255,255,255,0.12)_50%,rgba(255,255,255,0.06)_92%,rgba(255,255,255,0))]" />
+          )}
         </React.Fragment>
       ))}
     </div>

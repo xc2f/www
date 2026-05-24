@@ -38,8 +38,6 @@ type CustomVideoSlide = SlideVideo &
 
 export type MomentSlide = CustomImageSlide | CustomVideoSlide
 
-const IMAGE_BASE_HEIGHT = 200
-
 export default function ImageGrid({ images }: ImageGridProps) {
   const [index, setIndex] = useState(-1)
 
@@ -88,33 +86,64 @@ export default function ImageGrid({ images }: ImageGridProps) {
     return { photos: processedPhotos, sliders: processedSliders }
   }, [images])
 
+  if (!photos.length) {
+    return null
+  }
+
+  const photoCount = photos.length
+  const visiblePhotos = photoCount > 3 ? photos.slice(0, 3) : photos
+  const remainingCount = photoCount - 3
+
+  const getTileClassName = (photoIndex: number) => {
+    if (photoCount === 1) {
+      return 'col-span-2 aspect-[4/3]'
+    }
+
+    if (photoCount === 2) {
+      return 'aspect-[3/4] md:aspect-[4/5]'
+    }
+
+    if (photoIndex === 0) {
+      return 'col-span-2 aspect-[4/3]'
+    }
+
+    return 'aspect-square'
+  }
+
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        {photos.map((photo, photoIndex) => {
-          const aspectRatio = photo.aspectRatio
+      <div className="grid grid-cols-2 gap-2">
+        {visiblePhotos.map((photo, photoIndex) => {
+          const showRemainingOverlay = photoCount > 3 && photoIndex === 2
           return (
             <div
               key={photo.key}
-              className="relative overflow-hidden rounded-lg group cursor-pointer h-[160px] md:h-[200px]"
-              style={{
-                aspectRatio,
-                flexGrow: aspectRatio,
-                flexShrink: 0,
-                flexBasis: `${IMAGE_BASE_HEIGHT * photo.aspectRatio}px`,
-                // 限制最大宽度，防止单张图片过宽
-                maxWidth: `${IMAGE_BASE_HEIGHT * aspectRatio * 1.2}px`,
-              }}
+              className={[
+                'group relative cursor-zoom-in overflow-hidden rounded-[0.9rem] bg-transparent',
+                getTileClassName(photoIndex),
+              ].join(' ')}
               onClick={() => {
                 setIndex(photoIndex)
               }}
             >
               <Media
+                fill
                 resource={photo}
                 alt={photo.alt || ''}
                 pictureClassName="mt-0 mb-0"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 flex justify-center items-center"
+                className="absolute inset-0"
+                imgClassName="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
               />
+
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_0%,rgba(15,23,42,0.06)_100%)] dark:bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.04)_100%)]" />
+
+              {showRemainingOverlay && (
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.04)_0%,rgba(15,23,42,0.12)_100%)]">
+                  <div className="absolute right-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[0.78rem] font-medium tracking-[0.04em] text-white shadow-[0_8px_18px_rgba(0,0,0,0.22)] backdrop-blur-sm">
+                    +{remainingCount}
+                  </div>
+                </div>
+              )}
             </div>
           )
         })}

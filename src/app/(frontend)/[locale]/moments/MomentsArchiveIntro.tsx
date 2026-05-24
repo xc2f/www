@@ -1,36 +1,20 @@
 import React from 'react'
-import type { Locale } from '@/i18n/types'
 
-type PostsArchiveIntroProps = {
-  locale: Locale
+type MomentsArchiveIntroProps = {
+  eyebrow: string
   title: string
+  description: string
+  descriptionSecondLine: string
 }
 
-const copyByLocale: Record<
-  Locale,
-  {
-    description: string
-    descriptionSecondLine: string
-    eyebrow: string
-  }
-> = {
-  en: {
-    eyebrow: 'XC2F / POSTS',
-    description: 'A record of experiments, technical notes, and phased reflections.',
-    descriptionSecondLine: 'Keep building, slowly forward.',
-  },
-  zh: {
-    eyebrow: 'XC2F / POSTS',
-    description: '记录实验、技术与阶段性思考。',
-    descriptionSecondLine: '持续积累，缓慢向前。',
-  },
-}
-
-export function PostsArchiveIntro({ locale, title }: PostsArchiveIntroProps) {
-  const copy = copyByLocale[locale] ?? copyByLocale.en
-
+export function MomentsArchiveIntro({
+  eyebrow,
+  title,
+  description,
+  descriptionSecondLine,
+}: MomentsArchiveIntroProps) {
   return (
-    <section className="posts-archive-intro relative isolate overflow-hidden bg-white text-slate-950 dark:bg-black dark:text-white">
+    <section className="relative isolate overflow-hidden bg-white text-slate-950 dark:bg-black dark:text-white">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#f6f8fb_0%,#edf2f7_18%,#e6edf4_42%,#e8eef5_68%,#f2f5f8_86%,#ffffff_100%)] dark:bg-[linear-gradient(180deg,#000000_0%,#050a10_18%,#0a121a_42%,#0b131b_62%,#070b10_84%,#000000_100%)]" />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_26%,rgba(255,143,114,0.08),transparent_24%),radial-gradient(circle_at_82%_22%,rgba(125,215,255,0.09),transparent_26%),radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.32),transparent_34%)] dark:bg-[radial-gradient(circle_at_16%_26%,rgba(255,143,114,0.08),transparent_26%),radial-gradient(circle_at_82%_22%,rgba(125,215,255,0.09),transparent_30%),radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.025),transparent_34%)]" />
@@ -58,7 +42,7 @@ export function PostsArchiveIntro({ locale, title }: PostsArchiveIntroProps) {
       <div className="container relative z-10 pb-4 pt-16 sm:pb-4 sm:pt-20 lg:pb-4 lg:pt-24">
         <div className="max-w-4xl">
           <p className="posts-archive-intro-eyebrow font-mono text-[0.7rem] uppercase tracking-[0.34em]">
-            {copy.eyebrow}
+            {eyebrow}
           </p>
 
           <div className="mt-6">
@@ -67,9 +51,9 @@ export function PostsArchiveIntro({ locale, title }: PostsArchiveIntroProps) {
             </h1>
 
             <p className="posts-archive-intro-description mt-5 max-w-2xl text-[0.98rem] leading-7 sm:text-[1.02rem]">
-              <span className="block">{copy.description}</span>
+              <span className="block">{description}</span>
               <span className="posts-archive-intro-description-secondary mt-1.5 block">
-                {copy.descriptionSecondLine}
+                {descriptionSecondLine}
               </span>
             </p>
           </div>

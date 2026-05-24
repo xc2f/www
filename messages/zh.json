@@ -29,15 +29,18 @@
   },
   "Moments": {
     "moments": "瞬间",
+    "eyebrow": "XC2F / MOMENTS",
+    "intro_description": "记录那些容易被忽略的微小片段。",
+    "intro_description_second_line": "关于工作、生活，以及一闪而过的情绪。",
     "mood": {
       "happy": "开心",
-      "calm": "平静",
-      "thoughtful": "思考",
-      "tired": "疲惫",
+      "calm": "放松",
+      "thoughtful": "想事情",
+      "tired": "有点累",
       "sad": "低落",
-      "energized": "充实",
+      "energized": "状态拉满",
       "content": "满足",
-      "neutral": "无感"
+      "neutral": "日常"
     }
   },
   "Theme": {

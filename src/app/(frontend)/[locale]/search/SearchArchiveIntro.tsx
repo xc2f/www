@@ -41,7 +41,7 @@ export function SearchArchiveIntro({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_100%,rgba(255,255,255,0.96),transparent_34%),radial-gradient(circle_at_48%_108%,rgba(255,255,255,0.82),transparent_42%),radial-gradient(circle_at_84%_100%,rgba(255,255,255,0.94),transparent_36%)] dark:bg-[radial-gradient(circle_at_12%_100%,rgba(0,0,0,0.96),transparent_34%),radial-gradient(circle_at_48%_108%,rgba(0,0,0,0.82),transparent_42%),radial-gradient(circle_at_84%_100%,rgba(0,0,0,0.94),transparent_36%)] blur-[24px]" />
       </div>
 
-      <div className="container relative z-10 pb-14 pt-16 sm:pb-16 sm:pt-20 lg:pb-18 lg:pt-24">
+      <div className="container relative z-10 pb-4 pt-16 sm:pb-4 sm:pt-20 lg:pb-4 lg:pt-24">
         <div className="grid grid-cols-4 gap-x-4 sm:grid-cols-8 lg:grid-cols-12 lg:gap-x-6 xl:gap-x-7">
           <div className="col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-6">
             <p className="posts-archive-intro-eyebrow font-mono text-[0.7rem] uppercase tracking-[0.34em]">

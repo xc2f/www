@@ -2,4 +2,6 @@
 - [x] 详情页内容卡片/文字下降
 - [x] 回到顶部
 - [x] 搜索页UI
-- [ ] Moment页面UI
+- [x] Moment页面UI
+- [x] /posts和/search页面减小Hero下边距
+- [x] 启动报错问题

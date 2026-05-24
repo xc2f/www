@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import { useTranslations } from 'next-intl'
 
 type MoodKey = keyof typeof MOOD_MAP
@@ -12,33 +12,22 @@ const MOOD_MAP: Record<string, string> = {
   calm: '😌',
   thoughtful: '🤔',
   tired: '😴',
-  sad: '😢',
-  energized: '🔥',
+  sad: '😔',
+  energized: '⚡️',
   content: '😎',
-  neutral: '😐',
+  neutral: '🙂',
 }
-const MOOD_MAP_KEY_LIST = Object.keys(MOOD_MAP)
 
 const Mood: React.FC<MoodProps> = ({ mood }) => {
   const t = useTranslations('Moments')
-
-  const [currentMood, setCurrentMood] = useState(mood)
-
-  const handleClickMood = () => {
-    // const toChange = Math.random() > 0.7
-    // if (toChange) {
-    const randomIndex = Math.floor(Math.random() * MOOD_MAP_KEY_LIST.length)
-    setCurrentMood(MOOD_MAP_KEY_LIST[randomIndex])
-    // }
-  }
+  const emoji = MOOD_MAP[mood] ?? MOOD_MAP.neutral
 
   return (
-    <span
-      className="flex items-center gap-1 transition-transform duration-300 hover:scale-150 cursor-pointer select-none"
-      onClick={handleClickMood}
-      title={t(`mood.${currentMood}`)}
-    >
-      {MOOD_MAP[currentMood]}
+    <span className="inline-flex items-center gap-2 text-[0.82rem] text-slate-500 dark:text-white/46">
+      <span aria-hidden="true" className="text-[0.95rem] leading-none">
+        {emoji}
+      </span>
+      <span>{t(`mood.${mood}`)}</span>
     </span>
   )
 }

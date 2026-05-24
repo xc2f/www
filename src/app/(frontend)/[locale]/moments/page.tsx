@@ -11,6 +11,7 @@ import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import type { Media } from '@/payload-types'
+import { MomentsArchiveIntro } from './MomentsArchiveIntro'
 
 export const revalidate = 600
 
@@ -34,6 +35,7 @@ export default async function Page({ params }: Args) {
   const moments = await queryMoments({ locale })
 
   const url = '/moments'
+  const t = await getTranslations('Moments')
 
   return (
     <>
@@ -43,8 +45,15 @@ export default async function Page({ params }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <div className="container mt-10 mb-10">
-        <div className="prose dark:prose-invert max-w-none">
+      <div className="pb-24">
+        <MomentsArchiveIntro
+          eyebrow={t('eyebrow')}
+          title={t('moments')}
+          description={t('intro_description')}
+          descriptionSecondLine={t('intro_description_second_line')}
+        />
+
+        <div className="container mt-6 sm:mt-7">
           <MomentsFeed moments={moments} />
         </div>
       </div>
@@ -87,6 +96,7 @@ const queryMoments = cache(async ({ locale }: { locale: Locale }) => {
 
   return (moments.docs || []).map((moment): MomentFeedItem => ({
     id: moment.id,
+    title: moment.title,
     content: moment.content,
     mood: moment.mood,
     publishedAt: moment.publishedAt,

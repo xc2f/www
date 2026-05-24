@@ -29,15 +29,18 @@
   },
   "Moments": {
     "moments": "Moments",
+    "eyebrow": "XC2F / MOMENTS",
+    "intro_description": "A record of the small fragments that are easy to miss.",
+    "intro_description_second_line": "About work, life, and emotions that pass in a flash.",
     "mood": {
-      "happy": "happy",
-      "calm": "calm",
-      "thoughtful": "thoughtful",
-      "tired": "tired",
-      "sad": "sad",
-      "energized": "energized",
-      "content": "content",
-      "neutral": "neutral"
+      "happy": "Happy",
+      "calm": "Calm",
+      "thoughtful": "Reflective",
+      "tired": "Tired",
+      "sad": "Down",
+      "energized": "Energized",
+      "content": "Content",
+      "neutral": "Neutral"
     }
   },
   "Theme": {
