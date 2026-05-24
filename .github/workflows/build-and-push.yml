@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: true
@@ -62,8 +62,14 @@ jobs:
             fi
           done < .env.example
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -84,7 +90,7 @@ jobs:
           cat .dockerignore
 
       - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ env.AWS_OIDC_ROLE }}
           aws-region: us-east-1 # Public ECR is fixed to this region
@@ -95,10 +101,10 @@ jobs:
           registry-type: public
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and Push Docker image (ARM64 only)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile.prod
