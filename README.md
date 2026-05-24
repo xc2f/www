@@ -151,7 +151,5 @@ cd ~/www-code
 git pull
 cp -r ~/www/migrations/* ./src/migrations/
 git status
-git add -A
-git commit -m "create migrations"
-git push
+git add -A && git commit -m "chore: generate payload migrations" && git push
 ```
