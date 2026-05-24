@@ -95,8 +95,10 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Enable pnpm via Corepack
+        run: |
+          corepack enable
+          corepack prepare "$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).packageManager.split('+')[0]")" --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
