@@ -42,6 +42,7 @@ export const Moments: CollectionConfig = {
           name: 'title',
           type: 'text',
           required: false,
+          localized: true,
         },
         {
           name: 'mood',
