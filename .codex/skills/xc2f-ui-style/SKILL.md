@@ -2,242 +2,256 @@
 
 ## Description
 
-This skill defines the visual language and interaction style for XC2F.
+This skill defines XC2F's long-term visual language, interaction style, and copy tone.
 
-XC2F is not a corporate website, SaaS landing page, or marketing product page.
+XC2F is not a corporate website, SaaS landing page, admin dashboard, or marketing product page.
 
 It should feel like:
 
 - a personal technical lab
-- an experimental space
-- a future-oriented notebook
-- calm and restrained
-- technical but artistic
-- a quiet dark-room interface where code, signal, and identity coexist
+- an experimental notebook
+- a quiet future-facing archive
+- calm, restrained, and exploratory
+- technical, but not cold
+- atmospheric, but not decorative
+- personal, but not diaristic in a sentimental way
 
-The atmosphere should communicate:
+The guiding phrase is:
 
 Explore unknown. Create future.
 
-The current homepage is the primary atmospheric reference for the brand,
-not a strict layout template.
-
-Current atmospheric references include:
-
-- near-black immersive background
-- subtle grid, haze, noise, and vignette
-- oversized expressive XC2F wordmark
-- restrained coral and soft cyan signal accents
-- quiet terminal/code panel
-- sparse navigation and footer chrome
-- slow breathing motion rather than showy animation
+The current homepage, posts archive, post detail, search, and moments pages are the primary visual references. Preserve their shared atmosphere before introducing new UI patterns.
 
 ---
 
-# Core Design Principles
+## Current Page References
+
+### Homepage
+
+The homepage is the strongest identity moment.
+
+Current traits:
+
+- immersive single-scene composition
+- near-black dark-room foundation around `#06080A`
+- foggy cool-white light mode around `#f8fbfc`
+- oversized expressive `XC2F` wordmark
+- subtle letter rotation, offsets, channel ghosts, grain, and soft stroke treatment
+- coral signal on `C`, cyan signal on `F`, subdued or outlined `2`
+- restrained technical subtitle and status line
+- one quiet terminal/code artifact beside the identity
+- sparse header and footer integrated into the atmosphere
+- radial haze, grid, noise, vignette, and slow breathing motion
+
+Use the homepage treatment selectively. It is an identity scene, not a general component recipe.
+
+### Posts Archive
+
+The posts archive establishes the listing-page pattern.
+
+Current traits:
+
+- short atmospheric archive hero, not a landing-page hero
+- light theme uses fog-like white, cool gray, and low-contrast slate text
+- dark theme uses black-to-blue-black gradients with the same restrained signal haze
+- grid, noise, vignette, top fade, and bottom fade bridge the hero into the list
+- mono uppercase eyebrow such as `XC2F / POSTS`
+- large but controlled title, around `clamp(2.35rem, 6vw, 4.25rem)`
+- concise two-line description
+- quiet pagination/range note aligned with the first card column
+- card grid in 4/8/12-column structure
+- cards are stable, image-led, softly layered, and only gently interactive
+
+Archive pages should feel like a calm catalog of signals, not a marketing index.
+
+### Post Detail
+
+Post detail pages establish the reading pattern.
+
+Current traits:
+
+- dark immersive image hero begins behind the transparent header
+- hero uses grid, noise, vignette, coral/cyan radial signal, and image overlays
+- category chips are quiet mono capsules, not loud tags
+- title is large, expressive, and low-tight in tracking
+- summary and published metadata are secondary and soft
+- body overlaps the hero slightly and continues the hero column
+- reading layer is translucent and calm, not a detached card
+- reading width is generous but practical
+- related posts and discussion areas use thin separators and soft closing-note surfaces
+
+Detail pages should feel composed and continuous: atmosphere above, readable layer below.
+
+### Search
+
+Search shares the archive-page atmosphere, with the search field embedded in the hero.
+
+Current traits:
+
+- same fog/black atmospheric archive hero system as posts
+- title and helper copy align to a grid column
+- search input sits below intro copy in the same column structure
+- input is a translucent rounded surface with a tiny icon and quiet focus state
+- results range appears close to the list and aligned with the search column
+- results use the same card archive language as posts
+
+Search should feel like querying the archive, not like a utility page bolted onto the site.
+
+### Moments
+
+Moments shares the archive intro but uses a feed/timeline body instead of cards.
+
+Current traits:
+
+- same atmospheric archive hero as posts/search
+- feed begins close to the hero with minimal transition
+- timeline rail appears only from medium screens upward
+- entries use time, mood, title, rich text, and optional image grid
+- text content stays quiet and readable
+- images use rounded, compact mosaic tiles
+- image hover is limited to a very slight scale
+- separators are fine gradient rules rather than heavy cards
+
+Moments should feel like field notes from the lab: temporal, lightweight, and observational.
+
+---
+
+## Core Principles
 
 - restrained
 - technical
 - minimal
 - exploratory
 - calm
-- futuristic
+- future-oriented
 - personal
-- clear hierarchy
-- spacious layout
-- atmospheric, but not decorative
+- readable
+- spacious
+- atmospheric with purpose
 - expressive identity, restrained interface
 
 Avoid:
 
 - corporate SaaS feeling
-- over-marketing visuals
-- template-style AI websites
-- excessive cyberpunk aesthetics
-- overly decorative UI
-- noisy gradients
-- visual clutter
+- startup landing-page tropes
 - generic shadcn dashboard styling
+- template-like AI website patterns
+- loud cyberpunk aesthetics
+- bright neon-on-black clichés
+- noisy gradients
+- excessive cards, chips, badges, and counters
 - boxed product-feature layouts
-- bright neon-on-black sci-fi clichés
+- decorative UI that does not clarify structure
 
 Design should feel like:
 
 "a personal future lab"
-instead of
+
+not:
+
 "a startup landing page".
 
-Artistic expression should emerge from:
-
-- atmosphere
-- typography
-- spacing
-- restraint
-
-—not from excessive visual experimentation.
-
-The expressive identity treatment is reserved primarily for:
-
-- homepage hero sections
-- branding moments
-- major landing visuals
-
-The rest of the interface should remain restrained and minimal.
+Artistic expression should come from atmosphere, typography, spacing, and restraint, not from adding more components.
 
 ---
 
-# Theme System
+## Theme System
 
-All UI must support both Light Theme and Dark Theme.
+All UI must support both light and dark themes.
 
-Dark theme is the primary visual language.
-Light theme must preserve the same atmosphere without becoming a generic white SaaS interface.
+Dark theme is the primary emotional reference. Light theme must preserve the same foggy technical atmosphere without becoming a generic white SaaS interface.
 
-## Dark Theme
+### Dark Theme
 
 Use:
 
-- near-black foundation close to `#06080A`
-- dark gray, slate, and blue-black layers
-- soft glow
-- subtle grid, haze, noise texture, and vignette
-- low contrast surfaces
+- near-black foundations close to `#06080A`
+- black, slate, zinc, and blue-black layers
+- soft glow and radial haze
+- subtle grid, noise, and vignette
 - restrained coral highlights
 - soft cyan signal light
+- low-contrast translucent surfaces
 
 Avoid:
 
-- pure black everywhere
-- high saturation neon
+- pure flat black everywhere
+- high-saturation neon
 - aggressive cyberpunk effects
-- large saturated gradients
-- high contrast panels that fight the atmosphere
+- large loud gradients
+- high-contrast panels that fight the atmosphere
 
-The interface should feel calm, breathable, and low-lit.
+Dark theme should feel low-lit, breathable, and precise.
 
-## Light Theme
+### Light Theme
 
 Use:
 
-- cool white
-- soft gray
-- fog-like background tones
+- cool white and fog-like gray
+- soft slate text
 - subtle layering
-- clean spacing
-- muted slate text
-- very soft cyan/coral accents
+- low-contrast shadows and borders
+- muted cyan/coral signal accents
+- atmospheric gradients that taper into white
 
 Avoid:
 
-- traditional admin dashboard white
-- enterprise SaaS style
-- overly flat sterile layouts
+- plain white enterprise dashboard styling
+- sterile flat UI
 - warm cream editorial styling
+- copying dark-theme contrast rules directly into light mode
 
-Light theme should still feel technical and experimental.
+Light theme should feel like a bright lab fog, not a product dashboard.
 
-Atmospheric effects must never reduce readability or interaction clarity.
-
-Content, navigation, and usability always take priority over visual atmosphere.
+Theme parity does not require identical visuals. It requires equivalent atmosphere, hierarchy, and usability.
 
 ---
 
-# Layout Rules
+## Layout Rules
 
-- generous whitespace
+Use:
+
+- generous but purposeful whitespace
 - clear visual hierarchy
-- avoid crowded sections
-- content should breathe
-- prefer asymmetrical balance when appropriate
-- avoid overly boxed layouts
-- use strong first-screen identity moments when appropriate
-- keep navigation and footer quiet, sparse, and lightly integrated into the atmosphere
+- asymmetrical balance where it improves atmosphere
+- quiet navigation and footer chrome
+- modular sections that blend into the surrounding field
+- direct transitions from hero to content
 
-Sections should feel modular and lightweight.
+Avoid:
 
-Modular does not mean dashboard-like.
+- crowded sections
+- oversized empty gaps
+- heavy standalone panels
+- hard section breaks unless the content truly needs them
+- center-aligned blocks that ignore the page's grid logic
+- decorative counters or archive stats unless they add real value
 
-Sections should blend into the surrounding atmosphere rather than feel isolated as separate blocks.
-
-For homepage and identity-led pages:
+Homepage layout:
 
 - preserve the immersive single-scene feeling
-- avoid turning the page into stacked marketing sections
-- keep the main composition focused on identity plus one technical artifact
-- let background atmosphere bridge areas instead of using heavy section dividers
+- keep the composition focused on identity plus one technical artifact
+- avoid stacking generic marketing sections
+- let background atmosphere bridge the whole viewport
 
-For reading-heavy detail pages such as article/post pages:
+Archive/search/moments layout:
 
-- preserve a clear relationship between the hero area and the reading area
-- avoid making the body feel like a detached floating card dropped onto the page
-- align the reading column with the hero information column whenever possible
-- prefer overlap and continuity over hard section breaks
-- use atmosphere at the top, then taper gently into a calm reading surface
-- keep the main reading width practical and slightly generous, not narrow-editorial and not full-width
-- avoid large empty side gutters that make the content feel undersized
-- article pages should feel composed, not dramatic
+- keep the hero shorter and calmer than the homepage
+- align intro copy, search controls, range notes, and first content column intentionally
+- keep helper text close to the content it describes
+- transition from hero to list/feed with continuity, not a strong divider
 
-Hero-to-body transitions on detail pages should feel:
+Post detail layout:
 
-- continuous
-- lightly layered
-- structurally intentional
-
-Avoid:
-
-- abrupt dark-to-light breaks
-- heavy bottom shadows under the hero image
-- fog bands or gray transition strips between hero and content
-- centered body blocks that ignore the hero alignment
-- oversized overlap that feels decorative rather than structural
-
-For archive/listing pages such as post indexes:
-
-- keep the page header simpler and shorter than the homepage hero
-- preserve atmosphere, but reduce drama
-- the listing hero should feel like a page header, not a promotional banner
-- align listing metadata and helper text with the first card column
-- keep the transition from hero to list direct and calm
-- prefer continuity with the page background over strong hero separation
-
-Archive/listing hero-to-list transitions should feel:
-
-- integrated
-- lightly atmospheric
-- structurally aligned
-- quiet
-
-Avoid:
-
-- a large standalone dark panel dropped onto a light page
-- a hero that looks detached from the list below it
-- floating summary bars that feel like external widgets
-- decorative counters or archive stats unless they add real value
-- multiple competing metadata rows above the list
+- keep the hero image visible through the header
+- align reading content with the hero information column
+- prefer slight overlap and continuity over detached cards
+- keep reading width practical and slightly generous
+- taper atmosphere into readability rather than abruptly switching modes
 
 ---
 
-# Density & Information Balance
-
-Interfaces should feel spacious, but never empty.
-
-Avoid:
-
-- oversized empty gaps
-- excessive vertical spacing
-- ultra-minimal layouts with weak information density
-
-Balance:
-
-- atmosphere
-- usability
-- information clarity
-
-The interface should remain expressive while still feeling practical and usable.
-
----
-
-# Typography
+## Typography & Copy
 
 Typography should feel:
 
@@ -245,50 +259,43 @@ Typography should feel:
 - modern
 - readable
 - understated
+- human without becoming chatty
 
-Rules:
+Use:
 
 - large clean headings for page identity
-- expressive display treatment is allowed for XC2F itself
-- concise copywriting
-- avoid long marketing paragraphs
-- use short statements when possible
-- English copy may be preferred for hero sections
-- uppercase microcopy may be used for labels, status, navigation, and terminal metadata
-- monospace is appropriate for code, signal, system, and terminal areas
-
-Preferred tone:
-
-- exploratory
-- calm
-- thoughtful
-- engineering-oriented
+- expressive display treatment only for major identity moments
+- medium-weight titles with tight negative tracking
+- mono uppercase microcopy for labels, metadata, status, category chips, and terminal chrome
+- concise descriptions, often one or two short lines
+- English where it strengthens identity or signal language
+- Chinese copy that remains short, calm, and precise
 
 Avoid:
 
 - hype marketing language
 - startup buzzwords
-- overly emotional wording
-- verbose explanations of the interface itself
+- verbose explanations of the interface
+- overly emotional CTA copy
+- metadata presented as boxed widgets
 
-For article detail pages:
+Article detail copy:
 
-- the title may be expressive in scale, but the rest of the text hierarchy should calm down quickly
-- metadata should be quiet and secondary
-- avoid boxed metadata cards
-- prefer a single lightweight metadata row or a minimal inline treatment
-- discussion prompts and tail sections should sound like an invitation, not a CTA banner
-- supporting copy should be concise, human, and low-pressure
+- let the title be expressive, then calm the hierarchy quickly
+- keep metadata secondary
+- make discussion prompts feel like invitations, not conversion banners
+
+Moments copy:
+
+- treat entries as field notes
+- preserve directness and observation
+- avoid over-polishing into marketing prose
 
 ---
 
-# Color System
+## Color System
 
-Prefer semantic color tokens.
-
-Avoid hardcoded colors whenever possible in reusable components.
-
-Homepage-specific atmospheric layers may use carefully chosen values when tokens would reduce precision.
+Prefer semantic tokens in reusable components. Page-specific atmospheric layers may use explicit values when precision matters.
 
 Primary palette direction:
 
@@ -296,13 +303,12 @@ Primary palette direction:
 - slate
 - zinc
 - cool gray
+- fog white
 - soft cyan
-- muted blue-purple accents
 - restrained coral / warm signal orange
+- occasional code green and amber in terminal/code contexts
 
-Accent colors should remain subtle.
-
-Current homepage atmosphere references:
+Reference values:
 
 - base dark: `#06080A`
 - coral signal: `#ff8f72`
@@ -310,91 +316,115 @@ Current homepage atmosphere references:
 - code green: `#9fe870`
 - code amber: `#ffd479`
 
-Use these as atmosphere references,
-not as a license to make the UI colorful.
-
-Do not overuse gradients.
+Use these as signal references, not permission to make the UI colorful.
 
 Prefer:
 
 - radial haze
 - low-opacity glow
 - thin light traces
+- subtle translucent overlays
 
-over loud gradient fills.
+Avoid:
+
+- loud gradient fills
+- saturated rainbow accents
+- strong color-coded UI unless it communicates state
 
 ---
 
-# Cards & Surfaces
+## Surfaces & Components
 
-Cards should feel:
+Surfaces should feel lightweight, layered, and quiet.
 
-- lightweight
-- subtle
-- slightly transparent when appropriate
+Use:
 
-Rules:
-
-- moderate border radius
+- moderate-to-large radius where it already exists
 - thin borders
-- soft shadows only
-- subtle glass effect allowed
-- avoid heavy glassmorphism
-- low contrast against the dark field
-- transparent or translucent surfaces are preferred over opaque blocks when readability allows
+- low-opacity backgrounds
+- soft shadows
+- subtle backdrop blur when useful
+- inset rings or top highlights sparingly
 
-Homepage-style panels:
+Avoid:
 
-- may use larger radius panels
-- may include thin inner outlines
-- may include soft cyan/coral ambient glow
-- should remain quieter than the XC2F identity mark
-- should not resemble generic dashboard cards
+- heavy glassmorphism
+- bright opaque white panels in atmospheric contexts
+- generic dashboard cards
+- excessive badges, pills, and stat blocks
+- nested surfaces that make the page feel busy
 
-Reading surfaces for article/detail pages:
+### Homepage Panels
 
-- may use a very light container to preserve rhythm and readability
-- should feel more like a reading layer than a component card
-- should use softer radius, thinner borders, lighter shadows, and lower contrast than homepage panels
-- should never appear as a random centered card unrelated to the hero composition
-- should avoid thick glassmorphism, strong blur, bright white fills, or obvious panel chrome
-- when possible, let the reading surface visually continue the hero column instead of floating independently
+Homepage panels may be more atmospheric:
 
-Metadata surfaces on article/detail pages:
+- larger radii
+- thin inner outlines
+- terminal-like chrome
+- soft cyan/coral ambient glow
+- scanline or noise texture only when subtle
 
-- default to no background card
-- use spacing, microcopy, and fine separators before adding a container
-- if a surface is truly needed, it should be extremely quiet
+They should remain quieter than the `XC2F` identity mark.
 
-Archive/listing surfaces:
+### Archive Cards
 
-- prefer fewer surfaces than on article pages
-- hero support information should usually be text-only
-- avoid summary cards, stat cards, or floating info pills by default
-- if pagination context is shown above a list, it should read like a quiet note, not a component
-- list chrome should not compete with the cards themselves
+Archive cards should be stable and image-led:
 
-Discussion / participation surfaces:
+- rounded card around `1.4rem`
+- thin light/dark border
+- gradient surface instead of flat fill
+- image or generated atmospheric placeholder
+- subtle image scale on hover
+- border/shadow/text-color hover changes over spatial movement
+- compact mono metadata row at the bottom
 
-- should read like a soft closing note
-- should be lighter than cards used in archives or listings
-- should invite continuation, not conversion
-- avoid button-like blocks unless the page specifically needs strong action emphasis
+Avoid hover lift by default on archive cards.
+
+### Reading Surfaces
+
+Reading surfaces may use a light translucent container for rhythm and readability:
+
+- softer radius
+- thinner borders
+- lighter shadows
+- lower contrast than homepage panels
+- visually connected to the hero
+
+They should not feel like a random centered card dropped onto the page.
+
+### Search Inputs
+
+Search inputs should feel like archive instrumentation:
+
+- rounded translucent surface
+- quiet search icon
+- no heavy button chrome
+- soft focus border and shadow
+- no aggressive autocomplete or command-palette styling unless explicitly required
+
+### Moments Feed
+
+Moments feed should stay lighter than archive cards:
+
+- timeline rail on wider screens
+- fine gradient separators
+- no enclosing card around each entry by default
+- image mosaic tiles with compact gaps and rounded corners
+- minimal hover motion
 
 ---
 
-# Motion & Interaction
+## Motion & Interaction
 
-Animation should be subtle.
+Animation should be subtle and slow enough to feel atmospheric.
 
 Use:
 
 - smooth hover transitions
 - soft opacity changes
 - slight glow
-- lightweight motion
 - slow breathing atmosphere
-- tiny vertical lift on hover
+- tiny image scale
 - gentle terminal cursor or signal pulse
 - reduced-motion fallbacks
 
@@ -402,164 +432,100 @@ Avoid:
 
 - large animated effects
 - excessive parallax
-- distracting transitions
-- over-designed interactions
-- fast kinetic hero effects
 - bouncy product animations
+- fast kinetic hero effects
+- hover motion that makes lists feel unstable
 
-For archive/listing cards:
-
-- avoid hover lift by default
-- prefer subtle border, shadow, image-scale, or text-color changes over spatial movement
-- cards should feel stable and grounded in the list
-
-Interaction should feel quiet and refined.
+Interaction should feel quiet, refined, and grounded.
 
 ---
 
-# Code / Terminal Areas
+## Code / Terminal Areas
 
-Code blocks should resemble:
+Code and terminal areas should resemble real developer tooling without fake clutter.
 
-- real editors
-- terminal interfaces
-- developer tooling
+Use:
+
+- low-contrast chrome
+- tiny uppercase metadata
+- restrained syntax colors
+- readable monospace code
+- soft scanline or line texture only when subtle
+- minimal cursor/signal pulse
 
 Avoid:
 
 - excessive fake decorations
 - too many badges/icons
-- cluttered chrome
-
-The code area should remain readable and elegant.
-
-Homepage terminal language:
-
-- low-contrast chrome
-- tiny uppercase metadata
-- soft scanline or line texture only when subtle
-- restrained syntax colors based on existing cyan, coral, green, amber, and cool white
-- no fake window traffic lights unless context truly requires them
+- fake window traffic lights unless context truly needs them
+- novelty terminal styling
 
 ---
 
-# Branding
+## Branding
 
 Brand symbols:
 
-- XC2F
-- XC@F
+- `XC2F`
+- `XC@F`
 
 Both may coexist.
 
-XC@F may be used as a symbolic/logo-style element.
-XC2F remains the primary readable site identity.
+`XC2F` is the primary readable site identity. `XC@F` may be used as a symbolic/logo-style element.
 
-The homepage wordmark establishes an expressive XC2F treatment:
+The homepage wordmark establishes the expressive `XC2F` treatment:
 
 - very large scale
 - slight letter rotation and offset
 - ghosted color channels
 - grain/noise overlay
-- coral on C
-- cyan on F
-- subdued or outlined treatment for 2
+- coral on `C`
+- cyan on `F`
+- subdued or outlined `2`
 - soft white and low-opacity shadows
 
-Use this treatment selectively.
-
-It is an identity moment,
-not a repeating UI pattern.
+Use this treatment only for identity moments, branding scenes, or major landing visuals. Do not repeat it as routine UI decoration.
 
 ---
 
-# Implementation Guidance
+## Implementation Guidance
 
 When optimizing UI:
 
-- preserve existing atmosphere first
-- preserve simplicity second
-- preserve readability third
-
-Do not redesign sections unnecessarily.
-
-Prefer refinement over replacement.
+1. Preserve usability and readability.
+2. Preserve the existing atmosphere.
+3. Preserve simplicity.
+4. Refine before replacing.
 
 When uncertain:
 
 less, calmer, cleaner.
 
-When working from the homepage atmosphere:
+Practical guidance:
 
-- keep the low-lit immersive scene
-- preserve identity-focused composition unless the task explicitly changes structure
-- refine opacity, spacing, hierarchy, and motion before introducing new components
-- avoid replacing atmospheric CSS with generic component-library defaults
-- preserve transparent header/footer behavior on immersive pages
+- prefer removing optional UI before adding new decoration
+- fix alignment and hierarchy before adding surface styling
+- fix background continuity before adding hero decoration
 - keep copy short, signal-like, and thoughtful
-
-When working on article/detail pages:
-
-- keep the hero image visible through the header when the page uses an immersive hero
-- solve contrast with light overlays and text treatment before adding solid header blocks
-- refine the relationship between title, metadata, reading column, and tail sections as one composition
-- prefer removing decoration rather than adding more layers when something feels unnatural
-- if a section feels randomly placed, fix alignment and hierarchy first, not surface styling first
-- use fewer cards than your first instinct suggests
-
-When working on archive/listing pages:
-
-- start by fixing background continuity before adding more hero decoration
-- if the hero feels too visible, reduce contrast before reducing content
-- if pagination feels awkward, simplify it before styling it
-- keep pagination and archive helper text close to the list they describe
-- align helper text with the list column, not merely with the outer container
-- bright-page and dark-page versions must use different text contrast rules when needed
+- use theme-specific contrast rules when needed
 - do not force one text color strategy to work for both themes
-- if a theme-specific visual treatment feels detached, theme parity does not require visual sameness
-- remove optional UI first: counters, chips, separators, and decorative panels should justify themselves
+- avoid replacing atmospheric CSS with generic component-library defaults
+- preserve transparent header behavior on immersive homepage and post detail pages
+- regenerate import maps after adding or modifying Payload admin components
+- run `tsc --noEmit` after TypeScript changes
+- run Payload type generation after schema changes
 
-Conflict resolution for future decisions:
+For archive/search/moments pages:
 
-- if a design choice improves atmosphere but weakens reading continuity, continuity wins on detail pages
-- if a card/surface makes structure clearer but feels detached from the page flow, reduce the card treatment
-- if metadata, discussion links, or helper blocks compete with the article body, simplify them until the article remains dominant
-- homepage expressiveness is a reference, not a template to copy directly onto post pages
+- reuse the established atmospheric archive hero pattern unless there is a strong reason not to
+- keep pagination/range/helper text quiet and close to the content
+- keep cards/feed entries stable and grounded
+- do not add summary cards, counters, or extra chips by default
 
----
+For post detail pages:
 
-# Technical Preferences
-
-Preferred stack assumptions:
-
-- Next.js
-- React
-- Tailwind CSS
-- shadcn/ui
-- Framer Motion (minimal usage)
-
-Preferred styling direction:
-
-- semantic tokens
-- reusable UI primitives
-- responsive by default
-- accessible interactions
-- dark/light theme parity
-- CSS variables for repeated atmospheric values
-- `prefers-reduced-motion` support for all ambient animation
-
----
-
-# Output Behavior
-
-For future UI optimization tasks:
-
-- first evaluate whether the design matches XC2F style
-- preserve existing good atmosphere
-- improve consistency instead of redesigning everything
-- avoid introducing generic SaaS aesthetics
-- avoid visual overengineering
-- treat the homepage atmosphere as the canonical emotional reference
-- make small, intentional refinements before larger redesigns
-
-Every design decision should feel intentional and restrained.
+- solve header/hero contrast with overlays and text treatment before adding solid header blocks
+- keep the reading layer visually connected to the hero
+- avoid abrupt dark-to-light breaks
+- use fewer cards than your first instinct suggests
+- make tail sections feel like soft continuation, not CTA modules
