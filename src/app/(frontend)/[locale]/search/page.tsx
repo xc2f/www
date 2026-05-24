@@ -71,6 +71,11 @@ export default async function Page({
                   like: query,
                 },
               },
+              {
+                'categories.title': {
+                  like: query,
+                },
+              },
             ],
           },
         }
@@ -84,18 +89,22 @@ export default async function Page({
     })
     .filter((value): value is number => typeof value === 'number')
 
-  const publishedAtByPostID = new Map<number, string | null | undefined>()
+  const postDataByID = new Map<number, CardPostData>()
 
   if (postIDs.length > 0) {
     const indexedPosts = await payload.find({
       collection: 'posts',
-      depth: 0,
+      depth: 1,
       limit: postIDs.length,
       locale,
       overrideAccess: false,
       pagination: false,
       select: {
+        categories: true,
+        meta: true,
         publishedAt: true,
+        slug: true,
+        title: true,
       },
       where: {
         id: {
@@ -105,25 +114,32 @@ export default async function Page({
     })
 
     indexedPosts.docs.forEach((post) => {
-      publishedAtByPostID.set(post.id, post.publishedAt)
+      postDataByID.set(post.id, {
+        categories: post.categories,
+        meta: post.meta,
+        publishedAt: post.publishedAt,
+        slug: post.slug,
+        title: post.title,
+      })
     })
   }
 
   const archivePosts = posts.docs.map((doc) => {
     const relationDoc = typeof doc.doc?.value === 'object' ? doc.doc.value : null
     const relationID = relationDoc?.id || (typeof doc.doc?.value === 'number' ? doc.doc.value : null)
+    const localizedPost = relationID ? postDataByID.get(relationID) : undefined
 
     return {
-      categories: doc.categories?.map((category) => ({
-        title: category?.title || undefined,
-      })),
-      meta: doc.meta,
+      categories:
+        localizedPost?.categories ||
+        doc.categories?.map((category) => ({
+          title: category?.title || undefined,
+        })),
+      meta: localizedPost?.meta || doc.meta,
       publishedAt:
-        doc.publishedAt ||
-        relationDoc?.publishedAt ||
-        (relationID ? publishedAtByPostID.get(relationID) : undefined),
-      slug: doc.slug || relationDoc?.slug || '',
-      title: doc.title || relationDoc?.title || undefined,
+        localizedPost?.publishedAt || doc.publishedAt || relationDoc?.publishedAt,
+      slug: localizedPost?.slug || doc.slug || relationDoc?.slug || '',
+      title: localizedPost?.title || doc.title || relationDoc?.title || undefined,
     }
   })
 

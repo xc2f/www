@@ -3,7 +3,7 @@ import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import type { Post } from '@/payload-types'
 import type { Locale } from '@/i18n/types'
@@ -33,7 +33,15 @@ export const Card: React.FC<{
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
   const href = `/${relationTo}/${doc?.slug}`
   const publishedLabel = publishedAt ? formatTime(publishedAt, locale) : null
-  const metaLabel = locale === 'zh' ? '发布时间' : 'Published'
+  const categoryTitles =
+    categories?.flatMap((category) => {
+      if (typeof category !== 'object') return []
+
+      const categoryTitle = category.title || (locale === 'zh' ? '未命名分类' : 'Untitled category')
+
+      return [categoryTitle]
+    }) || []
+  const categorySummary = categoryTitles.join(' / ')
 
   return (
     <article
@@ -86,33 +94,6 @@ export const Card: React.FC<{
       </div>
       <div className="relative flex flex-1 flex-col gap-5 px-5 py-5 sm:px-6 sm:py-6">
         <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,rgba(15,23,42,0),rgba(15,23,42,0.05)_14%,rgba(15,23,42,0.08)_50%,rgba(15,23,42,0.05)_86%,rgba(15,23,42,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.03)_14%,rgba(125,215,255,0.08)_50%,rgba(255,255,255,0.03)_86%,rgba(255,255,255,0))]" />
-        {showCategories && hasCategories && (
-          <div className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-muted-foreground/80 dark:text-white/42">
-            {showCategories && hasCategories && (
-              <div className="flex items-center gap-2">
-                <span className="h-px w-5 shrink-0 bg-gradient-to-r from-[#7dd7ff]/55 to-[#ff8f72]/45" />
-                {categories?.map((category, index) => {
-                  if (typeof category === 'object') {
-                    const { title: titleFromCategory } = category
-
-                    const categoryTitle = titleFromCategory || 'Untitled category'
-
-                    const isLast = index === categories.length - 1
-
-                    return (
-                      <Fragment key={index}>
-                        {categoryTitle}
-                        {!isLast && <Fragment>&nbsp;/&nbsp;</Fragment>}
-                      </Fragment>
-                    )
-                  }
-
-                  return null
-                })}
-              </div>
-            )}
-          </div>
-        )}
         <div className="flex flex-1 flex-col">
           {titleToUse && (
             <div>
@@ -135,7 +116,9 @@ export const Card: React.FC<{
         </div>
         <div className="relative flex min-h-[1.25rem] items-center justify-between gap-4 pt-4 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground dark:text-white/38">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,rgba(15,23,42,0),rgba(15,23,42,0.07)_10%,rgba(15,23,42,0.1)_50%,rgba(15,23,42,0.07)_90%,rgba(15,23,42,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.035)_10%,rgba(125,215,255,0.09)_50%,rgba(255,255,255,0.035)_90%,rgba(255,255,255,0))]" />
-          <span className="font-mono text-muted-foreground/55 dark:text-white/24">{metaLabel}</span>
+          <span className="min-w-0 truncate font-mono text-card-foreground/72 dark:text-white/52">
+            {showCategories && hasCategories ? categorySummary : ''}
+          </span>
           {publishedLabel && (
             <time
               className="shrink-0 font-mono text-card-foreground/72 dark:text-white/52"

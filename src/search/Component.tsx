@@ -1,7 +1,7 @@
 'use client'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useDebounce } from '@/utilities/useDebounce'
 import { useLocale, useTranslations } from 'next-intl'
 
@@ -18,9 +18,12 @@ export const Search: React.FC<SearchProps> = ({ className, defaultValue = '' }) 
   const t = useTranslations('Search')
   const locale = useLocale()
   const [value, setValue] = useState(defaultValue)
+  const [queryValue, setQueryValue] = useState(defaultValue)
+  const [isComposing, setIsComposing] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
-  const debouncedValue = useDebounce(value)
+  const debouncedValue = useDebounce(queryValue)
 
   useEffect(() => {
     const nextQuery = debouncedValue.trim()
@@ -30,8 +33,10 @@ export const Search: React.FC<SearchProps> = ({ className, defaultValue = '' }) 
   }, [debouncedValue, locale, router])
 
   useEffect(() => {
+    if (isComposing) return
     setValue(defaultValue)
-  }, [defaultValue])
+    setQueryValue(defaultValue)
+  }, [defaultValue, isComposing])
 
   return (
     <div className={cn('w-full', className)}>
@@ -53,8 +58,26 @@ export const Search: React.FC<SearchProps> = ({ className, defaultValue = '' }) 
           <Input
             id="search"
             className="h-12 rounded-none border-0 bg-transparent px-0 py-0 text-[0.98rem] text-slate-950 placeholder:text-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-white/90 dark:placeholder:text-white/24"
+            ref={inputRef}
             onChange={(event) => {
-              setValue(event.target.value)
+              const nextValue = event.target.value
+              setValue(nextValue)
+
+              if (!isComposing) {
+                setQueryValue(nextValue)
+              }
+            }}
+            onCompositionEnd={() => {
+              setIsComposing(false)
+
+              queueMicrotask(() => {
+                const committedValue = inputRef.current?.value ?? ''
+                setValue(committedValue)
+                setQueryValue(committedValue)
+              })
+            }}
+            onCompositionStart={() => {
+              setIsComposing(true)
             }}
             placeholder={t('enter')}
             value={value}
