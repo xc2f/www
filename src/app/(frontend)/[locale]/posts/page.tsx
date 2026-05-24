@@ -43,7 +43,7 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
   return (
     <div className="pb-24">
       <PageClient />
-      <PostsArchiveIntro locale={locale} title={t('posts')} />
+      <PostsArchiveIntro title={t('posts')} />
 
       <div className="container mt-6 sm:mt-7">
         <div className="grid grid-cols-4 gap-x-4 sm:grid-cols-8 lg:grid-cols-12 lg:gap-x-6 xl:gap-x-7">

@@ -1,6 +1,9 @@
 {
   "Posts": {
     "posts": "Posts",
+    "eyebrow": "XC2F / POSTS",
+    "intro_description": "A record of experiments, technical notes, and phased reflections.",
+    "intro_description_second_line": "Keep building, slowly forward.",
     "join_the_discussion_on_github": "Join the discussion on GitHub",
     "discussion": "Discuss",
     "discussion_description": "If you have a different take, a useful addition, or related experience, continue the thread on GitHub.",

@@ -38,14 +38,14 @@ export const Card: React.FC<{
   return (
     <article
       className={cn(
-        'group relative flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-black/8 bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(241,245,249,0.92))] text-card-foreground shadow-[0_14px_36px_rgba(15,23,42,0.08)] transition duration-300 ease-out hover:cursor-pointer hover:border-black/12 hover:shadow-[0_24px_60px_rgba(15,23,42,0.12)] dark:border-white/[0.07] dark:bg-[linear-gradient(180deg,rgba(8,13,18,0.94),rgba(5,9,14,0.98))] dark:shadow-[0_18px_56px_rgba(0,0,0,0.34)] dark:hover:border-white/[0.12] dark:hover:shadow-[0_28px_76px_rgba(0,0,0,0.46),0_0_24px_rgba(125,215,255,0.05)]',
+        'group relative flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-transparent bg-[linear-gradient(180deg,rgba(248,250,252,0.98),rgba(241,245,249,0.94))] text-card-foreground shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition duration-300 ease-out hover:cursor-pointer dark:bg-[linear-gradient(180deg,rgba(8,13,18,0.94),rgba(5,9,14,0.985))] dark:shadow-[0_16px_48px_rgba(0,0,0,0.3)]',
         className,
       )}
       ref={card.ref}
     >
       <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[linear-gradient(180deg,rgba(255,255,255,0.28),rgba(255,255,255,0)_18%,rgba(255,255,255,0)_82%,rgba(15,23,42,0.03))] opacity-80 dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.045),rgba(255,255,255,0)_20%,rgba(255,255,255,0)_72%,rgba(125,215,255,0.03))]" />
-      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/30 dark:ring-white/[0.03]" />
-      <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-black/6 bg-black/5 dark:border-white/[0.06] dark:bg-[#05080d]">
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-black/[0.04] dark:ring-white/[0.02]" />
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/5 dark:bg-[#05080d]">
         {metaImage && typeof metaImage !== 'string' && (
           <>
             <Media
@@ -82,9 +82,10 @@ export const Card: React.FC<{
             <div className="absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(180deg,transparent,rgba(255,255,255,0.04)_72%,rgba(255,255,255,0.08))]" />
           </div>
         )}
+        <div className="pointer-events-none absolute inset-x-5 bottom-0 h-px bg-[linear-gradient(90deg,rgba(15,23,42,0),rgba(15,23,42,0.08)_12%,rgba(15,23,42,0.12)_50%,rgba(15,23,42,0.08)_88%,rgba(15,23,42,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.05)_12%,rgba(125,215,255,0.1)_50%,rgba(255,255,255,0.05)_88%,rgba(255,255,255,0))]" />
       </div>
       <div className="relative flex flex-1 flex-col gap-5 px-5 py-5 sm:px-6 sm:py-6">
-        <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(15,23,42,0.08),transparent)] dark:bg-[linear-gradient(90deg,transparent,rgba(125,215,255,0.12),transparent)]" />
+        <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-[linear-gradient(90deg,rgba(15,23,42,0),rgba(15,23,42,0.05)_14%,rgba(15,23,42,0.08)_50%,rgba(15,23,42,0.05)_86%,rgba(15,23,42,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.03)_14%,rgba(125,215,255,0.08)_50%,rgba(255,255,255,0.03)_86%,rgba(255,255,255,0))]" />
         {showCategories && hasCategories && (
           <div className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-muted-foreground/80 dark:text-white/42">
             {showCategories && hasCategories && (
@@ -132,7 +133,8 @@ export const Card: React.FC<{
             </div>
           )}
         </div>
-        <div className="flex min-h-[1.25rem] items-center justify-between gap-4 border-t border-black/6 pt-4 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground dark:border-white/[0.07] dark:text-white/38">
+        <div className="relative flex min-h-[1.25rem] items-center justify-between gap-4 pt-4 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground dark:text-white/38">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,rgba(15,23,42,0),rgba(15,23,42,0.07)_10%,rgba(15,23,42,0.1)_50%,rgba(15,23,42,0.07)_90%,rgba(15,23,42,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.035)_10%,rgba(125,215,255,0.09)_50%,rgba(255,255,255,0.035)_90%,rgba(255,255,255,0))]" />
           <span className="font-mono text-muted-foreground/55 dark:text-white/24">{metaLabel}</span>
           {publishedLabel && (
             <time

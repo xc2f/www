@@ -1,6 +1,9 @@
 {
   "Posts": {
     "posts": "文章",
+    "eyebrow": "XC2F / POSTS",
+    "intro_description": "记录实验、技术与阶段性思考。",
+    "intro_description_second_line": "持续积累，缓慢向前。",
     "join_the_discussion_on_github": "在 GitHub 参与讨论",
     "discussion": "讨论",
     "discussion_description": "如果你有不同的看法、补充，或者相关经验，欢迎继续在 GitHub 里展开。",

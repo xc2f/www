@@ -43,7 +43,7 @@ export function BackToTop() {
   return (
     <button
       aria-label="Back to top"
-      className={`group fixed bottom-5 right-5 z-40 inline-flex items-center gap-3 rounded-full border border-black/[0.08] bg-white px-3 py-2 text-foreground/72 shadow-[0_6px_18px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-0.5 hover:border-black/[0.12] hover:text-foreground dark:border-white/[0.07] dark:bg-[#0a0e12] dark:text-white/66 dark:shadow-[0_10px_24px_rgba(0,0,0,0.18)] dark:hover:border-white/[0.14] dark:hover:text-white ${
+      className={`group fixed bottom-4 right-4 z-40 inline-flex items-center gap-0 rounded-full px-2 py-2 text-white [mix-blend-mode:difference] transition-all duration-300 hover:-translate-y-0.5 sm:bottom-5 sm:right-5 sm:gap-2.5 sm:px-2.5 ${
         isVisible
           ? 'pointer-events-auto translate-y-0 opacity-100'
           : 'pointer-events-none translate-y-3 opacity-0'
@@ -51,17 +51,14 @@ export function BackToTop() {
       onClick={handleClick}
       type="button"
     >
-      <span className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-black/[0.08] bg-black/[0.03] dark:border-white/[0.08] dark:bg-white/[0.03]">
-        <span className="absolute inset-y-[22%] left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-[#ff8f72]/0 via-[#ff8f72]/50 to-[#7dd7ff]/75 dark:from-[#ff8f72]/10 dark:via-[#ff8f72]/55 dark:to-[#7dd7ff]/80" />
-        <ArrowUp
-          aria-hidden="true"
-          className="relative h-3.5 w-3.5 -translate-y-[1px] transition-transform duration-300 group-hover:-translate-y-0.5"
-          strokeWidth={1.8}
-        />
-      </span>
+      <ArrowUp
+        aria-hidden="true"
+        className="h-4 w-4 -translate-y-[1px] transition-transform duration-300 group-hover:-translate-y-0.5"
+        strokeWidth={1.7}
+      />
       <span
         aria-hidden="true"
-        className="font-mono text-[0.64rem] uppercase tracking-[0.28em] text-current/78"
+        className="hidden font-mono text-[0.6rem] uppercase tracking-[0.24em] text-current/72 sm:inline"
       >
         Top
       </span>
