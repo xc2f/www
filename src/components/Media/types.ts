@@ -3,6 +3,8 @@ import type { ElementType, Ref } from 'react'
 
 import type { Media as MediaType } from '@/payload-types'
 
+type MediaSizeName = keyof NonNullable<MediaType['sizes']>
+
 export interface Props {
   alt?: string
   className?: string
@@ -16,6 +18,7 @@ export interface Props {
   priority?: boolean // for NextImage only
   ref?: Ref<HTMLImageElement | HTMLVideoElement | null>
   resource?: MediaType | string | number | null // for Payload media
+  resourceSize?: MediaSizeName // preferred Payload generated image size
   size?: string // for NextImage only
   src?: StaticImageData // for static media
   videoClassName?: string

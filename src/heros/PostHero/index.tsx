@@ -65,6 +65,7 @@ export const PostHero: React.FC<{
             priority
             imgClassName="object-cover object-center opacity-[0.82]"
             resource={heroImage}
+            resourceSize="large"
           />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,5,9,0.06),rgba(3,6,10,0.14)_26%,rgba(3,6,10,0.22)_66%,rgba(4,7,11,0.32)_100%)]" />

@@ -3,6 +3,7 @@ import { useState, useMemo } from 'react'
 import { Media } from '@/components/Media'
 import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
 import type { SlideImage, SlideVideo } from 'yet-another-react-lightbox'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 import ImageLightbox from './ImageLightbox'
 
@@ -38,6 +39,16 @@ type CustomVideoSlide = SlideVideo &
 
 export type MomentSlide = CustomImageSlide | CustomVideoSlide
 
+const getSizedMediaSource = (image: MediaType, size: 'thumbnail' | 'medium' | 'large') => {
+  const variant = image.sizes?.[size]
+
+  return {
+    src: getMediaUrl(variant?.url || image.url, image.updatedAt),
+    width: variant?.width || image.width || undefined,
+    height: variant?.height || image.height || undefined,
+  }
+}
+
 export default function ImageGrid({ images }: ImageGridProps) {
   const [index, setIndex] = useState(-1)
 
@@ -55,11 +66,12 @@ export default function ImageGrid({ images }: ImageGridProps) {
       const description = photo.caption
         ? convertLexicalToPlaintext({ data: photo.caption }).trim()
         : ''
+      const lightboxSource = getSizedMediaSource(photo, 'large')
       const slide: BaseSlide = {
         key: photo.key,
-        src: photo.url || '',
-        width: photo.width ?? undefined,
-        height: photo.height ?? undefined,
+        src: lightboxSource.src,
+        width: lightboxSource.width,
+        height: lightboxSource.height,
         alt,
         title: alt,
         description,
@@ -129,6 +141,7 @@ export default function ImageGrid({ images }: ImageGridProps) {
               <Media
                 fill
                 resource={photo}
+                resourceSize="medium"
                 alt={photo.alt || ''}
                 pictureClassName="mt-0 mb-0"
                 className="absolute inset-0"

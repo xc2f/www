@@ -61,6 +61,7 @@ export const Card: React.FC<{
               imgClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
               pictureClassName="absolute inset-0"
               resource={metaImage}
+              resourceSize="medium"
               size="(max-width: 1024px) 100vw, 33vw"
             />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(15,23,42,0.02)_24%,rgba(15,23,42,0.22)_72%,rgba(15,23,42,0.46)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,5,9,0.03),rgba(2,5,9,0.1)_22%,rgba(2,5,9,0.36)_72%,rgba(2,5,9,0.72)_100%)]" />
