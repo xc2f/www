@@ -363,7 +363,7 @@ body:has(main[data-homepage]) footer[data-site-footer] > div {
 body:has(main[data-homepage]),
 main[data-homepage] {
   position: relative;
-  --home-page-bg: #06080a;
+  --home-page-bg: #05070b;
   --home-page-fg: rgba(248, 251, 255, 0.96);
   --home-subtitle-color: rgba(255, 255, 255, 0.96);
   --home-status-muted: rgba(255, 255, 255, 0.48);
@@ -379,23 +379,23 @@ main[data-homepage] {
     0 0 40px rgba(125, 215, 255, 0.16);
   --home-status-filter: drop-shadow(0 0 8px rgba(125, 215, 255, 0.05));
   --home-status-filter-hover: drop-shadow(0 0 16px rgba(125, 215, 255, 0.16));
-  --home-top-fade: linear-gradient(180deg, rgba(2, 5, 11, 0.92), transparent);
-  --home-bottom-fade: linear-gradient(0deg, rgba(10, 10, 10, 0.94), transparent);
+  --home-top-fade: linear-gradient(180deg, rgba(2, 5, 10, 0.9), transparent);
+  --home-bottom-fade: linear-gradient(0deg, rgba(5, 7, 10, 0.94), transparent);
   --home-scene-overlay:
-    radial-gradient(circle at 28% 34%, rgba(255, 143, 114, 0.042), transparent 40%),
-    radial-gradient(circle at 74% 42%, rgba(125, 215, 255, 0.03), transparent 46%),
-    radial-gradient(circle at 56% 86%, rgba(255, 255, 255, 0.024), transparent 42%),
-    linear-gradient(180deg, rgba(4, 7, 11, 0.22), rgba(3, 5, 8, 0.05) 38%, rgba(2, 4, 7, 0.24) 100%);
-  --home-atmosphere-coral: radial-gradient(circle, rgba(255, 143, 114, 0.07), transparent 70%);
-  --home-atmosphere-cyan: radial-gradient(circle, rgba(125, 215, 255, 0.064), transparent 72%);
-  --home-haze-glow: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.028), transparent 70%);
-  --home-bridge-glow: radial-gradient(ellipse at center, rgba(140, 169, 189, 0.05), transparent 72%);
+    radial-gradient(circle at 28% 34%, rgba(255, 143, 114, 0.032), transparent 42%),
+    radial-gradient(circle at 74% 42%, rgba(125, 215, 255, 0.026), transparent 48%),
+    radial-gradient(circle at 56% 86%, rgba(215, 235, 248, 0.014), transparent 44%),
+    linear-gradient(180deg, rgba(3, 6, 12, 0.18), rgba(3, 5, 9, 0.035) 38%, rgba(2, 4, 8, 0.22) 100%);
+  --home-atmosphere-coral: radial-gradient(circle, rgba(255, 143, 114, 0.052), transparent 72%);
+  --home-atmosphere-cyan: radial-gradient(circle, rgba(125, 215, 255, 0.05), transparent 74%);
+  --home-haze-glow: radial-gradient(ellipse at center, rgba(220, 238, 248, 0.018), transparent 72%);
+  --home-bridge-glow: radial-gradient(ellipse at center, rgba(125, 165, 190, 0.032), transparent 74%);
   --home-vignette-bg:
-    radial-gradient(circle at 50% 42%, transparent 0%, transparent 54%, rgba(3, 6, 10, 0.16) 78%, rgba(3, 6, 10, 0.34) 100%),
-    linear-gradient(90deg, rgba(3, 6, 10, 0.18), transparent 16%, transparent 84%, rgba(3, 6, 10, 0.16));
-  --home-grid-opacity: 0.34;
-  --home-noise-opacity: 0.1;
-  --home-vignette-opacity: 0.92;
+    radial-gradient(circle at 50% 42%, transparent 0%, transparent 58%, rgba(2, 5, 10, 0.12) 80%, rgba(2, 5, 10, 0.28) 100%),
+    linear-gradient(90deg, rgba(2, 5, 10, 0.14), transparent 18%, transparent 82%, rgba(2, 5, 10, 0.12));
+  --home-grid-opacity: 0.24;
+  --home-noise-opacity: 0.055;
+  --home-vignette-opacity: 0.76;
   --home-inline-highlight-blend: screen;
   --home-title-x: rgba(255, 255, 255, 0.98);
   --home-title-c: #ff8f72;
@@ -458,18 +458,18 @@ main[data-homepage] {
   --home-header-logo: rgba(244, 248, 255, 0.78);
   --home-header-logo-hover: rgba(250, 252, 255, 0.9);
   --home-header-top-bg:
-    radial-gradient(circle at 12% 24%, rgba(255, 143, 114, 0.06), transparent 26%),
-    radial-gradient(circle at 78% 18%, rgba(125, 215, 255, 0.065), transparent 28%),
-    linear-gradient(180deg, rgba(3, 6, 10, 0.28), rgba(3, 6, 10, 0));
-  --home-header-top-opacity: 0.92;
+    radial-gradient(ellipse at 14% 10%, rgba(255, 143, 114, 0.028), transparent 34%),
+    radial-gradient(ellipse at 78% 8%, rgba(125, 215, 255, 0.032), transparent 36%),
+    linear-gradient(180deg, rgba(3, 6, 11, 0.34), rgba(3, 6, 11, 0.08) 58%, rgba(3, 6, 11, 0));
+  --home-header-top-opacity: 0.58;
   --home-header-sheen-bg:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.02),
-      rgba(255, 255, 255, 0.008) 34%,
+      rgba(210, 232, 245, 0.008),
+      rgba(210, 232, 245, 0.003) 34%,
       transparent 100%
     );
-  --home-header-sheen-opacity: 0.45;
+  --home-header-sheen-opacity: 0.22;
   --home-header-logo-shadow:
     0 0 10px rgba(255, 255, 255, 0.03),
     0 0 18px rgba(125, 215, 255, 0.04);
@@ -513,6 +513,7 @@ main[data-homepage] {
   --home-shadow-ao: 0 2px 10px rgba(0, 0, 0, 0.18);
   --home-shadow-glow: 0 0 34px rgba(125, 215, 255, 0.06);
   --home-motion-slow: cubic-bezier(0.42, 0, 0.2, 1);
+  --home-motion-hover: cubic-bezier(0.33, 0, 0.18, 1);
 }
 
 html[data-theme='light'] body:has(main[data-homepage]),
@@ -888,8 +889,8 @@ body:has(main[data-homepage]) .home-footer-controls summary:hover {
   filter: blur(28px);
   opacity: 0;
   transition:
-    opacity 420ms var(--home-motion-slow),
-    transform 420ms var(--home-motion-slow);
+    opacity 520ms var(--home-motion-hover),
+    transform 640ms var(--home-motion-hover);
   transform: scale(0.96);
   pointer-events: none;
 }
@@ -910,7 +911,7 @@ body:has(main[data-homepage]) .home-footer-controls summary:hover {
 
 .group\/title:hover .home-title-shell::after {
   opacity: 1;
-  transform: scale(1.02);
+  transform: scale(1.022) translate3d(0.012em, -0.006em, 0);
 }
 
 .home-title-shell:hover .home-title-grain {
@@ -934,26 +935,26 @@ body:has(main[data-homepage]) .home-footer-controls summary:hover {
     5px 5px,
     7px 7px;
   filter: blur(0.1px);
-  transition: opacity 320ms ease;
+  transition: opacity 480ms var(--home-motion-hover);
 }
 
 .home-title-letter {
   transform-style: preserve-3d;
   transition:
-    transform 520ms var(--home-motion-slow),
-    filter 520ms var(--home-motion-slow),
-    opacity 320ms ease;
+    transform 580ms var(--home-motion-hover),
+    filter 680ms var(--home-motion-hover),
+    opacity 420ms ease;
   will-change: transform;
 }
 
-.home-title-letter:nth-child(1) {
+.home-title-letter[data-letter='X'] {
   transform: translate3d(0, 0, 0) rotateY(-10deg) rotateX(1deg);
   filter:
     drop-shadow(0 2px 6px rgba(0, 0, 0, 0.16))
     drop-shadow(0 0 10px rgba(255, 255, 255, 0.03));
 }
 
-.home-title-letter:nth-child(2) {
+.home-title-letter[data-letter='C'] {
   transform: translate3d(-0.01em, 0.02em, 8px) rotateY(4deg) rotateX(-1deg);
   filter:
     blur(0.16px)
@@ -961,7 +962,7 @@ body:has(main[data-homepage]) .home-footer-controls summary:hover {
     drop-shadow(0 0 12px rgba(255, 143, 114, 0.035));
 }
 
-.home-title-letter:nth-child(3) {
+.home-title-letter[data-letter='2'] {
   transform: translate3d(0.01em, -0.015em, 16px) rotateY(-5deg) rotateX(2deg);
   opacity: 0.7;
   filter:
@@ -971,7 +972,7 @@ body:has(main[data-homepage]) .home-footer-controls summary:hover {
     drop-shadow(0 0 12px rgba(255, 255, 255, 0.04));
 }
 
-html[data-theme='light'] .home-title-letter:nth-child(3) {
+html[data-theme='light'] .home-title-letter[data-letter='2'] {
   opacity: 0.9;
   transform: translate3d(0.012em, -0.015em, 18px) rotateY(-5deg) rotateX(2deg);
   filter:
@@ -981,7 +982,7 @@ html[data-theme='light'] .home-title-letter:nth-child(3) {
     drop-shadow(0 0 12px rgba(125, 215, 255, 0.08));
 }
 
-html[data-theme='light'] .home-title-letter:nth-child(2) {
+html[data-theme='light'] .home-title-letter[data-letter='C'] {
   transform: translate3d(-0.008em, 0.018em, 10px) rotateY(4deg) rotateX(-1deg);
   filter:
     blur(0.08px)
@@ -989,7 +990,7 @@ html[data-theme='light'] .home-title-letter:nth-child(2) {
     drop-shadow(0 6px 14px rgba(240, 126, 97, 0.1));
 }
 
-html[data-theme='light'] .group\/title:hover .home-title-letter:nth-child(2) {
+html[data-theme='light'] .group\/title:hover .home-title-letter[data-letter='C'] {
   transform: translate3d(0.008em, -0.036em, 14px) rotateY(5deg) rotateX(-1deg);
   filter:
     blur(0.1px)
@@ -997,7 +998,7 @@ html[data-theme='light'] .group\/title:hover .home-title-letter:nth-child(2) {
     drop-shadow(0 8px 16px rgba(240, 126, 97, 0.12));
 }
 
-html[data-theme='light'] .group\/title:hover .home-title-letter:nth-child(3) {
+html[data-theme='light'] .group\/title:hover .home-title-letter[data-letter='2'] {
   transform: translate3d(0.015em, -0.048em, 22px) rotateY(-6deg) rotateX(2deg);
   filter:
     blur(0.12px)
@@ -1006,7 +1007,7 @@ html[data-theme='light'] .group\/title:hover .home-title-letter:nth-child(3) {
     drop-shadow(0 0 14px rgba(125, 215, 255, 0.095));
 }
 
-.home-title-letter:nth-child(4) {
+.home-title-letter[data-letter='F'] {
   transform: translate3d(-0.012em, 0.015em, 6px) rotateY(7deg) rotateX(-1deg);
   opacity: 0.88;
   filter:
@@ -1017,24 +1018,27 @@ html[data-theme='light'] .group\/title:hover .home-title-letter:nth-child(3) {
   animation: homeTitleFDrift 11.5s var(--home-motion-slow) infinite;
 }
 
-.group\/title:hover .home-title-letter:nth-child(1) {
-  transform: translate3d(0, -0.03em, 2px) rotateY(-11deg) rotateX(1deg);
+.group\/title:hover .home-title-letter[data-letter='X'] {
+  transition-delay: 0ms;
+  transform: translate3d(0.002em, -0.034em, 3px) rotateY(-11deg) rotateX(1.4deg);
   filter:
     drop-shadow(0 3px 8px rgba(0, 0, 0, 0.18))
     drop-shadow(0 0 12px rgba(255, 255, 255, 0.04));
 }
 
-.group\/title:hover .home-title-letter:nth-child(2) {
-  transform: translate3d(0.008em, -0.04em, 12px) rotateY(5deg) rotateX(-1deg);
+.group\/title:hover .home-title-letter[data-letter='C'] {
+  transition-delay: 18ms;
+  transform: translate3d(0.012em, -0.048em, 14px) rotateY(5.6deg) rotateX(-1.2deg);
   filter:
     blur(0.18px)
     drop-shadow(0 4px 9px rgba(0, 0, 0, 0.2))
     drop-shadow(0 0 14px rgba(255, 143, 114, 0.045));
 }
 
-.group\/title:hover .home-title-letter:nth-child(3) {
-  transform: translate3d(0.015em, -0.05em, 20px) rotateY(-6deg) rotateX(2deg);
-  opacity: 0.76;
+.group\/title:hover .home-title-letter[data-letter='2'] {
+  transition-delay: 34ms;
+  transform: translate3d(0.018em, -0.056em, 23px) rotateY(-6.4deg) rotateX(2.4deg);
+  opacity: 0.78;
   filter:
     blur(0.28px)
     drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2))
@@ -1042,8 +1046,10 @@ html[data-theme='light'] .group\/title:hover .home-title-letter:nth-child(3) {
     drop-shadow(0 0 12px rgba(255, 255, 255, 0.05));
 }
 
-.group\/title:hover .home-title-letter:nth-child(4) {
-  transform: translate3d(0.008em, -0.04em, 11px) rotateY(8deg) rotateX(-1deg);
+.group\/title:hover .home-title-letter[data-letter='F'] {
+  transition-delay: 50ms;
+  animation-play-state: paused;
+  transform: translate3d(0.014em, -0.052em, 13px) rotateY(8.4deg) rotateX(-1.3deg);
   filter:
     blur(0.2px)
     drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18))
@@ -1111,46 +1117,46 @@ html[data-theme='light'] .home-title-tone-f {
   transform: translate3d(0.012em, -0.002em, 0);
 }
 
-.home-title-letter:nth-child(1) .home-title-face::before,
-.home-title-letter:nth-child(1) .home-title-face::after {
+.home-title-letter[data-letter='X'] .home-title-face::before,
+.home-title-letter[data-letter='X'] .home-title-face::after {
   opacity: 0.06;
 }
 
-.home-title-letter:nth-child(2) .home-title-face::before,
-.home-title-letter:nth-child(2) .home-title-face::after {
+.home-title-letter[data-letter='C'] .home-title-face::before,
+.home-title-letter[data-letter='C'] .home-title-face::after {
   opacity: 0.1;
 }
 
-.home-title-letter:nth-child(3) .home-title-face::before,
-.home-title-letter:nth-child(3) .home-title-face::after {
+.home-title-letter[data-letter='2'] .home-title-face::before,
+.home-title-letter[data-letter='2'] .home-title-face::after {
   opacity: 0.1;
 }
 
-html[data-theme='light'] .home-title-letter:nth-child(3) .home-title-face::before,
-html[data-theme='light'] .home-title-letter:nth-child(3) .home-title-face::after {
+html[data-theme='light'] .home-title-letter[data-letter='2'] .home-title-face::before,
+html[data-theme='light'] .home-title-letter[data-letter='2'] .home-title-face::after {
   opacity: 0.16;
 }
 
-.home-title-letter:nth-child(4) .home-title-face::before,
-.home-title-letter:nth-child(4) .home-title-face::after {
+.home-title-letter[data-letter='F'] .home-title-face::before,
+.home-title-letter[data-letter='F'] .home-title-face::after {
   opacity: 0.11;
 }
 
-.home-title-letter:nth-child(3) .home-title-face::before {
+.home-title-letter[data-letter='2'] .home-title-face::before {
   color: rgba(255, 255, 255, 0.82);
   transform: translate3d(-0.018em, 0.006em, 0);
 }
 
-.home-title-letter:nth-child(3) .home-title-face::after {
+.home-title-letter[data-letter='2'] .home-title-face::after {
   color: rgba(125, 215, 255, 0.88);
   transform: translate3d(0.018em, -0.004em, 0);
 }
 
-.home-title-letter:nth-child(4) .home-title-face::before {
+.home-title-letter[data-letter='F'] .home-title-face::before {
   transform: translate3d(-0.014em, 0.004em, 0);
 }
 
-.home-title-letter:nth-child(4) .home-title-face::after {
+.home-title-letter[data-letter='F'] .home-title-face::after {
   transform: translate3d(0.016em, -0.003em, 0);
 }
 
@@ -1159,16 +1165,17 @@ html[data-theme='light'] .home-title-letter:nth-child(3) .home-title-face::after
 }
 
 .home-status-line-text {
+  display: inline-block;
   color: var(--home-status-text);
   text-shadow: var(--home-status-shadow);
   filter: var(--home-status-filter);
   transition:
-    color 260ms ease,
-    text-shadow 320ms ease,
-    filter 320ms ease;
+    color 520ms var(--home-motion-hover),
+    filter 620ms var(--home-motion-hover),
+    text-shadow 680ms var(--home-motion-hover);
 }
 
-.home-status-line:hover .home-status-line-text {
+.home-status-line-text:hover {
   color: var(--home-status-text-hover);
   text-shadow: var(--home-status-shadow-hover);
   filter: var(--home-status-filter-hover);
@@ -1186,11 +1193,11 @@ html[data-theme='light'] .home-title-letter:nth-child(3) .home-title-face::after
 .home-token-hover {
   position: relative;
   transition:
-    background-color 220ms ease,
-    color 220ms ease,
-    opacity 220ms ease,
-    transform 220ms ease,
-    box-shadow 220ms ease;
+    background-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease,
+    box-shadow 180ms ease;
 }
 
 .home-token-hover:hover {
@@ -1521,7 +1528,7 @@ html[data-theme='light'] .home-title-letter:nth-child(3) .home-title-face::after
 
 @media (prefers-reduced-motion: reduce) {
   .home-title-breathe,
-  .home-title-letter:nth-child(4),
+  .home-title-letter[data-letter='F'],
   .home-card-float,
   .home-atmosphere-drift-a,
   .home-atmosphere-drift-b,

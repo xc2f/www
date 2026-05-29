@@ -184,11 +184,12 @@ export async function HomePage({ draft, page }: HomePageProps) {
                 {TITLE_LETTERS.map((letter) => (
                   <span
                     key={letter.text}
-                    className="home-title-letter relative inline-block transition-transform duration-500 ease-out"
+                    data-letter={letter.text}
+                    className="home-title-letter relative inline-block transition-transform duration-[520ms] ease-out"
                   >
                     <span
                       aria-hidden="true"
-                      className={`home-title-ghost pointer-events-none absolute inset-0 inline-block blur-[0.8px] transition duration-500 ease-out group-hover/title:scale-[1.04] group-hover/title:opacity-100 ${letter.ghostClassName}`}
+                      className={`home-title-ghost pointer-events-none absolute inset-0 inline-block blur-[0.8px] transition-[opacity,transform] duration-[540ms] ease-out group-hover/title:scale-[1.035] group-hover/title:opacity-100 ${letter.ghostClassName}`}
                     >
                       {letter.text}
                     </span>
@@ -198,7 +199,7 @@ export async function HomePage({ draft, page }: HomePageProps) {
                         letter.text === '2'
                           ? '[text-shadow:0_10px_30px_rgba(255,255,255,0.18),0_0_28px_rgba(125,215,255,0.12)]'
                           : '[text-shadow:0_10px_24px_rgba(0,0,0,0.22),0_0_18px_rgba(255,255,255,0.07)]'
-                      } home-title-face transition duration-500 ease-out group-hover/title:scale-[1.02]`}
+                      } home-title-face transition-transform duration-[480ms] ease-out group-hover/title:scale-[1.016]`}
                       style={{
                         WebkitTextStroke:
                           letter.text === '2' ? '1px var(--home-title-2-stroke)' : undefined,

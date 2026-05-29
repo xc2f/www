@@ -81,14 +81,14 @@ export function AnimatedText({
               key={`${segment.text}-${segmentIndex}`}
               className={
                 segment.highlight
-                  ? `inline-block rounded px-1 bg-no-repeat transition-[background-size] duration-300 ease-out ${segment.highlightClassName ?? ''}`
+                  ? `inline-block rounded px-1 bg-no-repeat transition-[background-size] duration-[520ms] ease-out ${segment.highlightClassName ?? ''}`
                   : undefined
               }
               style={
                 segment.highlight
                   ? {
                       backgroundSize: isHovered ? '100% 100%' : '0% 100%',
-                      transitionDelay: isHovered ? `${segmentIndex * 90}ms` : '0ms',
+                      transitionDelay: isHovered ? `${segmentIndex * 80}ms` : '0ms',
                     }
                   : undefined
               }
