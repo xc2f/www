@@ -71,5 +71,20 @@
     },
     "panel": "",
     "statusLine": "安静发光，缓慢生长。"
+  },
+  "Status": {
+    "notFound": {
+      "eyebrow": "XC2F / SIGNAL LOST",
+      "title": "这条路径暂时没有回声。",
+      "description": "当前地址不在归档里，或者信号在抵达之前已经移动。",
+      "action": "回到首页"
+    },
+    "error": {
+      "eyebrow": "XC2F / SYSTEM INTERRUPTION",
+      "title": "有些东西短暂失相了。",
+      "description": "页面没有完成这次读取。可以重新尝试，也可以回到主场域。",
+      "action": "回到首页",
+      "reset": "重试"
+    }
   }
 }

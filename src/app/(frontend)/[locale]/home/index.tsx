@@ -128,6 +128,7 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
   return (
     <main
       className="relative flex min-h-0 flex-1 items-start overflow-hidden bg-[var(--home-page-bg)] text-[var(--home-page-fg)] lg:items-center"
+      data-homepage
     >
       <HomePageClient />
       <PayloadRedirects disableNotFound url={url} />

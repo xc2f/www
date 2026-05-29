@@ -11,7 +11,6 @@ export const HomePageClient: React.FC = () => {
     const body = document.body
     const prevHtmlBg = html.style.backgroundColor
     const prevBodyBg = body.style.backgroundColor
-    const prevHomepage = body.dataset.homepage
     const syncTheme = () => {
       const theme = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
       const backgroundColor = theme === 'dark' ? '#06080a' : '#eef3f6'
@@ -21,7 +20,6 @@ export const HomePageClient: React.FC = () => {
       body.style.backgroundColor = backgroundColor
     }
 
-    body.dataset.homepage = 'true'
     syncTheme()
 
     const observer = new MutationObserver(syncTheme)
@@ -32,12 +30,6 @@ export const HomePageClient: React.FC = () => {
       setHeaderTheme(null)
       html.style.backgroundColor = prevHtmlBg
       body.style.backgroundColor = prevBodyBg
-
-      if (prevHomepage === undefined) {
-        delete body.dataset.homepage
-      } else {
-        body.dataset.homepage = prevHomepage
-      }
     }
   }, [setHeaderTheme])
 

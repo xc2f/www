@@ -71,5 +71,20 @@
     },
     "panel": "",
     "statusLine": "Quietly luminous. Slow growth."
+  },
+  "Status": {
+    "notFound": {
+      "eyebrow": "XC2F / SIGNAL LOST",
+      "title": "The route has gone quiet.",
+      "description": "This address is not part of the current archive, or the signal moved before it could settle.",
+      "action": "Return home"
+    },
+    "error": {
+      "eyebrow": "XC2F / SYSTEM INTERRUPTION",
+      "title": "Something fell out of phase.",
+      "description": "The page could not complete this pass. You can retry the same signal or return to the main field.",
+      "action": "Return home",
+      "reset": "Retry"
+    }
   }
 }
