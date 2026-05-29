@@ -55,6 +55,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const decodedSlug = decodeURIComponent(slug)
   const url = '/' + decodedSlug
+
+  if (decodedSlug === 'home') {
+    return <HomePage draft={draft} page={{ slug: 'home' } as RequiredDataFromCollectionSlug<'pages'>} />
+  }
+
   const page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
     slug: decodedSlug,
   })
@@ -66,7 +71,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   if (page.slug === 'home') {
-    return <HomePage draft={draft} page={page} url={url} />
+    return <HomePage draft={draft} page={page} />
   }
 
   return (
@@ -85,6 +90,10 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   setRequestLocale(locale)
 
   const decodedSlug = decodeURIComponent(slug)
+  if (decodedSlug === 'home') {
+    return {}
+  }
+
   const page = await queryPageBySlug({
     slug: decodedSlug,
   })

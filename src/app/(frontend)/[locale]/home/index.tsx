@@ -4,14 +4,12 @@ import { getLocale, getTranslations } from 'next-intl/server'
 import React from 'react'
 
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { AnimatedText } from './AnimatedText.client'
 import { HomePageClient } from './HomePageClient'
 
 type HomePageProps = {
   draft: boolean
   page: RequiredDataFromCollectionSlug<'pages'>
-  url: string
 }
 
 type HomeCopy = {
@@ -95,7 +93,7 @@ const TITLE_LETTERS = [
   },
 ] as const
 
-export async function HomePage({ draft, page, url }: HomePageProps) {
+export async function HomePage({ draft, page }: HomePageProps) {
   void page
 
   const locale = await getLocale()
@@ -131,7 +129,6 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
       data-homepage
     >
       <HomePageClient />
-      <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
 
       <div
@@ -240,7 +237,7 @@ export async function HomePage({ draft, page, url }: HomePageProps) {
           <div className="relative">
             <div className="pointer-events-none absolute -left-16 top-8 h-48 w-48 rounded-full bg-[#ff8f72]/6 blur-[90px]" />
             <div className="pointer-events-none absolute -right-10 bottom-2 h-52 w-52 rounded-full bg-[#7dd7ff]/6 blur-[100px]" />
-            <div className="home-terminal-shell home-card-float home-hover-lift relative overflow-hidden rounded-[var(--home-radius-panel)] border shadow-[var(--home-shadow-soft)] backdrop-blur-xl">
+            <div className="home-terminal-shell home-card-float relative overflow-hidden rounded-[var(--home-radius-panel)] border shadow-[var(--home-shadow-soft)] backdrop-blur-xl">
               <div className="home-terminal-shell-glow pointer-events-none absolute inset-0" />
               <div className="home-terminal-shell-noise pointer-events-none absolute inset-0" />
               <div className="home-terminal-shell-outline pointer-events-none absolute inset-0" />

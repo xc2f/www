@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 
 type AnimatedTextProps = {
+  animateOnLoad?: boolean
   charClassName?: string
   className?: string
   delayMs?: number
@@ -17,6 +18,7 @@ type AnimatedTextProps = {
 }
 
 export function AnimatedText({
+  animateOnLoad = false,
   charClassName,
   className,
   delayMs = 0,
@@ -25,12 +27,17 @@ export function AnimatedText({
   staggerMs = 36,
   text,
 }: AnimatedTextProps) {
-  const [visibleCount, setVisibleCount] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
   const resolvedSegments = segments ?? [{ text }]
   const resolvedText = resolvedSegments.map((segment) => segment.text).join('')
+  const [visibleCount, setVisibleCount] = useState(() => (animateOnLoad ? 0 : resolvedText.length))
+  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
+    if (!animateOnLoad) {
+      setVisibleCount(resolvedText.length)
+      return
+    }
+
     setVisibleCount(0)
     let interval: number | undefined
 
@@ -53,7 +60,7 @@ export function AnimatedText({
         window.clearInterval(interval)
       }
     }
-  }, [delayMs, resolvedText, staggerMs])
+  }, [animateOnLoad, delayMs, resolvedText, staggerMs])
 
   let globalIndex = 0
 
