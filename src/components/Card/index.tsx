@@ -117,9 +117,6 @@ export const Card: React.FC<{
         </div>
         <div className="relative flex min-h-[1.25rem] items-center justify-between gap-4 pt-4 text-[0.68rem] uppercase tracking-[0.18em] text-muted-foreground dark:text-white/38">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,rgba(15,23,42,0),rgba(15,23,42,0.07)_10%,rgba(15,23,42,0.1)_50%,rgba(15,23,42,0.07)_90%,rgba(15,23,42,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.035)_10%,rgba(125,215,255,0.09)_50%,rgba(255,255,255,0.035)_90%,rgba(255,255,255,0))]" />
-          <span className="min-w-0 truncate font-mono text-card-foreground/72 dark:text-white/52">
-            {showCategories && hasCategories ? categorySummary : ''}
-          </span>
           {publishedLabel && (
             <time
               className="shrink-0 font-mono text-card-foreground/72 dark:text-white/52"
@@ -128,6 +125,9 @@ export const Card: React.FC<{
               {publishedLabel}
             </time>
           )}
+          <span className="min-w-0 truncate font-mono text-card-foreground/72 dark:text-white/52">
+            {showCategories && hasCategories ? categorySummary : ''}
+          </span>
         </div>
       </div>
     </article>

@@ -44,14 +44,14 @@ export const PostHero: React.FC<{
           {publishedAt && (
             <div className="mt-10 flex text-white/72">
               <div className="flex items-baseline gap-3 sm:gap-4">
+                <time className="text-sm text-white/78 sm:text-[0.95rem]" dateTime={publishedAt}>
+                  <LocalTime time={publishedAt} />
+                </time>
                 {categorySummary ? (
                   <p className="min-w-0 truncate font-mono text-sm uppercase tracking-[0.22em] text-white/48">
                     {categorySummary}
                   </p>
                 ) : null}
-                <time className="text-sm text-white/78 sm:text-[0.95rem]" dateTime={publishedAt}>
-                  <LocalTime time={publishedAt} />
-                </time>
               </div>
             </div>
           )}
