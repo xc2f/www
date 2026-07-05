@@ -22,18 +22,20 @@ export const PageRange: React.FC<{
   }
   currentPage?: number
   limit?: number
+  namespace?: 'Posts' | 'Search' | 'Videos'
   totalDocs?: number
 }> = (props) => {
-  const t = useTranslations('Posts')
-  const searchT = useTranslations('Search')
   const {
     className,
     collection,
     collectionLabels: collectionLabelsFromProps,
     currentPage,
     limit,
+    namespace = 'Posts',
     totalDocs,
   } = props
+  const t = useTranslations(namespace)
+  const searchT = useTranslations('Search')
 
   let indexStart = (currentPage ? currentPage - 1 : 1) * (limit || 1) + 1
   if (totalDocs && indexStart > totalDocs) indexStart = 0

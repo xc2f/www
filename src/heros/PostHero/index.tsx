@@ -36,13 +36,13 @@ export const PostHero: React.FC<{
           </h1>
 
           {summary && (
-            <p className="mt-6 max-w-2xl text-[1rem] leading-7 text-white/64 sm:text-[1.12rem] sm:leading-8">
+            <p className="mt-6 line-clamp-4 max-w-2xl text-[1rem] leading-7 text-white/64 sm:line-clamp-3 sm:text-[1.12rem] sm:leading-8">
               {summary}
             </p>
           )}
 
           {publishedAt && (
-            <div className="mt-10 flex text-white/72">
+            <div className="mt-8 flex text-white/72 sm:mt-10">
               <div className="flex items-baseline gap-3 sm:gap-4">
                 <time className="text-sm text-white/78 sm:text-[0.95rem]" dateTime={publishedAt}>
                   <LocalTime time={publishedAt} />

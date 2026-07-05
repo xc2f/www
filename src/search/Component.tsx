@@ -27,9 +27,15 @@ export const Search: React.FC<SearchProps> = ({ className, defaultValue = '' }) 
 
   useEffect(() => {
     const nextQuery = debouncedValue.trim()
-    router.replace(`/${locale}/search${nextQuery ? `?q=${encodeURIComponent(nextQuery)}` : ''}`, {
-      scroll: false,
-    })
+    const params = new URLSearchParams()
+
+    if (nextQuery) {
+      params.set('q', nextQuery)
+    }
+
+    const query = params.toString()
+
+    router.replace(`/${locale}/search${query ? `?${query}` : ''}`, { scroll: false })
   }, [debouncedValue, locale, router])
 
   useEffect(() => {

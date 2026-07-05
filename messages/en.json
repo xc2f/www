@@ -29,6 +29,8 @@
     "query_label": "Query",
     "results_for": "{count} results for “{query}”.",
     "no_results": "Search produced no results.",
+    "pagination": "Showing {start} - {end} of {total, plural, one {# Result} other {# Results}}",
+    "pagination_0": "Showing 0 of {total, plural, one {# Result} other {# Results}}",
     "empty": "Enter a query to begin exploring the archive.",
     "empty_with_query": "No matching results for “{query}”."
   },
@@ -37,6 +39,9 @@
     "eyebrow": "XC2F / MOMENTS",
     "intro_description": "A record of the small signals that are easy to miss.",
     "intro_description_second_line": "About work, life, and emotions that pass in a flash.",
+    "empty": "No moments yet.",
+    "loading": "Loading",
+    "load_retry": "Load failed. Retry",
     "mood": {
       "happy": "Happy",
       "calm": "Calm",
@@ -47,6 +52,29 @@
       "content": "Content",
       "neutral": "Neutral"
     }
+  },
+  "Videos": {
+    "videos": "Videos",
+    "video": "Video",
+    "eyebrow": "XC2F / VIDEOS",
+    "topic_eyebrow": "XC2F / VIDEO TOPIC",
+    "detail_eyebrow": "XC2F / VIDEO",
+    "intro_description": "A quiet archive of talks, demos, launches, and technical signals.",
+    "intro_description_second_line": "Watch the traces that point toward what is forming next.",
+    "topic_intro_description": "A focused slice of the video archive.",
+    "topic_intro_description_second_line": "Collected as signals, not as noise.",
+    "count": "{count, plural, =0 {No videos yet.} one {Showing # video.} other {Showing # videos.}}",
+    "pagination": "Showing {start} - {end} of {total, plural, one {# Video} other {# Videos}}",
+    "pagination_0": "Showing 0 of {total, plural, one {# Video} other {# Videos}}",
+    "page": "Videos Page {pageNumber}",
+    "topic": "Topic",
+    "original_title": "Original title",
+    "source": "Source",
+    "original_published_at": "Original published",
+    "published_at": "Published",
+    "tags": "Tags",
+    "original_url": "Original URL",
+    "watch_url": "Watch URL"
   },
   "Theme": {
     "mode": {

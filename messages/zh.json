@@ -29,6 +29,8 @@
     "query_label": "关键词",
     "results_for": "共找到 {count} 条与“{query}”相关的结果。",
     "no_results": "未找到结果。",
+    "pagination": "显示第 {start} - {end} 条，共 {total} 条结果",
+    "pagination_0": "显示 0 条，共 {total} 条结果",
     "empty": "输入内容后即可开始检索。",
     "empty_with_query": "未找到与“{query}”匹配的结果。"
   },
@@ -37,6 +39,9 @@
     "eyebrow": "XC2F / MOMENTS",
     "intro_description": "记录那些容易被忽略的微小信号。",
     "intro_description_second_line": "关于工作、生活，以及一闪而过的情绪。",
+    "empty": "暂无内容",
+    "loading": "加载中",
+    "load_retry": "加载失败，重试",
     "mood": {
       "happy": "开心",
       "calm": "放松",
@@ -47,6 +52,29 @@
       "content": "满足",
       "neutral": "日常"
     }
+  },
+  "Videos": {
+    "videos": "视频",
+    "video": "视频",
+    "eyebrow": "XC2F / VIDEOS",
+    "topic_eyebrow": "XC2F / VIDEO TOPIC",
+    "detail_eyebrow": "XC2F / VIDEO",
+    "intro_description": "安静收录演讲、演示、发布会与技术信号。",
+    "intro_description_second_line": "观看那些指向未来形态的痕迹。",
+    "topic_intro_description": "视频归档中的一个主题切片。",
+    "topic_intro_description_second_line": "把信号留下，而不是制造噪音。",
+    "count": "共 {count} 条视频。",
+    "pagination": "显示第 {start} - {end} 条，共 {total} 条",
+    "pagination_0": "显示 0 条，共 {total} 条",
+    "page": "视频第 {pageNumber} 页",
+    "topic": "主题",
+    "original_title": "原始标题",
+    "source": "来源",
+    "original_published_at": "原始发布时间",
+    "published_at": "发布时间",
+    "tags": "标签",
+    "original_url": "原始链接",
+    "watch_url": "观看链接"
   },
   "Theme": {
     "mode": {

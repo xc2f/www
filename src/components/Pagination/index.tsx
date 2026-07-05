@@ -13,14 +13,17 @@ import { usePathname, useRouter } from 'next/navigation'
 import React from 'react'
 
 export const Pagination: React.FC<{
+  basePath?: string
   className?: string
   page: number
+  pageParam?: string
+  queryParams?: Record<string, string | number | undefined>
   totalPages: number
 }> = (props) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  const { className, page, totalPages } = props
+  const { basePath = '/posts', className, page, pageParam, queryParams, totalPages } = props
   const hasNextPage = page < totalPages
   const hasPrevPage = page > 1
 
@@ -28,8 +31,29 @@ export const Pagination: React.FC<{
   const hasExtraNextPages = page + 1 < totalPages
   const localePrefix = pathname.match(/^\/(en|zh)(?=\/|$)/)?.[0] || ''
 
-  const getHref = (targetPage: number) =>
-    targetPage <= 1 ? `${localePrefix}/posts` || '/posts' : `${localePrefix}/posts/page/${targetPage}`
+  const normalizedBasePath = basePath.startsWith('/') ? basePath : `/${basePath}`
+  const getHref = (targetPage: number) => {
+    const pathname =
+      targetPage <= 1 || pageParam
+        ? `${localePrefix}${normalizedBasePath}` || normalizedBasePath
+        : `${localePrefix}${normalizedBasePath}/page/${targetPage}`
+
+    const params = new URLSearchParams()
+
+    Object.entries(queryParams || {}).forEach(([key, value]) => {
+      if (value !== undefined && value !== '') {
+        params.set(key, String(value))
+      }
+    })
+
+    if (pageParam && targetPage > 1) {
+      params.set(pageParam, String(targetPage))
+    }
+
+    const query = params.toString()
+
+    return query ? `${pathname}?${query}` : pathname
+  }
 
   return (
     <div className={cn('my-12', className)}>

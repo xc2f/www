@@ -1,17 +1,15 @@
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
+import React from 'react'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import MomentsFeed, { type MomentFeedItem } from './MomentsFeed'
+import MomentsFeed from './MomentsFeed'
 
 import { Locale } from '@/i18n/types'
 import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import type { Media } from '@/payload-types'
 import { MomentsArchiveIntro } from './MomentsArchiveIntro'
+import { queryMomentsPage } from './queries'
 
 export const revalidate = 600
 
@@ -32,7 +30,7 @@ export default async function Page({ params }: Args) {
 
   // Enable static rendering
   setRequestLocale(locale)
-  const moments = await queryMoments({ locale })
+  const moments = await queryMomentsPage({ locale })
 
   const url = '/moments'
   const t = await getTranslations('Moments')
@@ -54,7 +52,11 @@ export default async function Page({ params }: Args) {
         />
 
         <div className="container mt-6 sm:mt-7">
-          <MomentsFeed moments={moments} />
+          <MomentsFeed
+            initialMoments={moments.docs}
+            initialNextPage={moments.nextPage}
+            initialHasNextPage={moments.hasNextPage}
+          />
         </div>
       </div>
     </>
@@ -69,48 +71,3 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     title: t('moments'),
   }
 }
-
-const queryMoments = cache(async ({ locale }: { locale: Locale }) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config: configPromise })
-
-  const moments = await payload.find({
-    collection: 'moments',
-    draft,
-    depth: 1,
-    limit: 50,
-    overrideAccess: draft,
-    locale,
-    select: {
-      title: true,
-      mood: true,
-      images: true,
-      content: true,
-      publishedAt: true,
-    },
-    where: {
-      _status: { equals: 'published' },
-    },
-  })
-
-  return (moments.docs || []).map((moment): MomentFeedItem => ({
-    id: moment.id,
-    title: moment.title,
-    content: moment.content,
-    mood: moment.mood,
-    publishedAt: moment.publishedAt,
-    images: (moment.images ?? []).flatMap((item) => {
-      if (!item?.image || typeof item.image === 'number') {
-        return []
-      }
-
-      return [
-        {
-          id: item.id ?? String(item.image.id),
-          image: item.image as Media,
-        },
-      ]
-    }),
-  }))
-})

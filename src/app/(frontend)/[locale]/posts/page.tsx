@@ -35,8 +35,10 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
       title: true,
       slug: true,
       categories: true,
+      heroImage: true,
       meta: true,
       publishedAt: true,
+      tags: true,
     },
   })
 
