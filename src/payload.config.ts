@@ -12,6 +12,9 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Videos } from './collections/Videos'
+import { VideoTopics } from './collections/VideoTopics'
+import { Tags } from './collections/Tags'
 import { Notes } from './collections/Notes'
 import { Feeds } from './collections/Feeds'
 import { Mails } from './collections/Mails'
@@ -89,7 +92,20 @@ export default buildConfig({
     // push: true,
     // prodMigrations: migrations,
   }),
-  collections: [Media, Pages, Posts, Categories, Moments, Notes, Feeds, Mails, Users],
+  collections: [
+    Media,
+    Pages,
+    Posts,
+    Categories,
+    Moments,
+    VideoTopics,
+    Tags,
+    Videos,
+    Notes,
+    Feeds,
+    Mails,
+    Users,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

@@ -72,6 +72,9 @@ export interface Config {
     posts: Post;
     categories: Category;
     moments: Moment;
+    'video-topics': VideoTopic;
+    tags: Tag;
+    videos: Video;
     notes: Note;
     feeds: Feed;
     mails: Mail;
@@ -98,6 +101,9 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     moments: MomentsSelect<false> | MomentsSelect<true>;
+    'video-topics': VideoTopicsSelect<false> | VideoTopicsSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
     notes: NotesSelect<false> | NotesSelect<true>;
     feeds: FeedsSelect<false> | FeedsSelect<true>;
     mails: MailsSelect<false> | MailsSelect<true>;
@@ -813,6 +819,92 @@ export interface Moment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-topics".
+ */
+export interface VideoTopic {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  topic: number | VideoTopic;
+  originalTitle?: string | null;
+  originalAuthor?: string | null;
+  /**
+   * Original video or source URL.
+   */
+  originalUrl?: string | null;
+  /**
+   * Primary watch URL for the XC2F archive page. Keep this platform-neutral.
+   */
+  videoUrl?: string | null;
+  /**
+   * Store only the iframe src URL, not the complete iframe HTML.
+   */
+  embedUrl?: string | null;
+  cover?: (number | null) | Media;
+  originalPublishedAt?: string | null;
+  publishedAt?: string | null;
+  /**
+   * Short description for lists, SEO, Open Graph, and sharing.
+   */
+  summary?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  tags?: (number | Tag)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "notes".
  */
 export interface Note {
@@ -1158,6 +1250,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'moments';
         value: number | Moment;
+      } | null)
+    | ({
+        relationTo: 'video-topics';
+        value: number | VideoTopic;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: number | Video;
       } | null)
     | ({
         relationTo: 'notes';
@@ -1507,6 +1611,54 @@ export interface MomentsSelect<T extends boolean = true> {
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "video-topics_select".
+ */
+export interface VideoTopicsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  topic?: T;
+  originalTitle?: T;
+  originalAuthor?: T;
+  originalUrl?: T;
+  videoUrl?: T;
+  embedUrl?: T;
+  cover?: T;
+  originalPublishedAt?: T;
+  publishedAt?: T;
+  summary?: T;
+  content?: T;
+  tags?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
