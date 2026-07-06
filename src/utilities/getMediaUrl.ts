@@ -1,5 +1,3 @@
-import { getClientSideURL } from '@/utilities/getURL'
-
 /**
  * Processes media resource URL to ensure proper formatting
  * @param url The original URL from the resource
@@ -9,14 +7,17 @@ import { getClientSideURL } from '@/utilities/getURL'
 export const getMediaUrl = (url: string | null | undefined, cacheTag?: string | null): string => {
   if (!url) return ''
 
-  const cacheQuery = cacheTag ? `${url.includes('?') ? '&' : '?'}${encodeURIComponent(cacheTag)}` : ''
+  if (!cacheTag) return url
 
-  // Check if URL already has http/https protocol
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return `${url}${cacheQuery}`
+  const appendCacheTag = (input: URL) => {
+    input.searchParams.set('v', cacheTag)
+    return input
   }
 
-  // Otherwise prepend client-side URL
-  const baseUrl = getClientSideURL()
-  return `${baseUrl}${url}${cacheQuery}`
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return appendCacheTag(new URL(url)).toString()
+  }
+
+  const relativeUrl = appendCacheTag(new URL(url, 'http://local.invalid'))
+  return `${relativeUrl.pathname}${relativeUrl.search}${relativeUrl.hash}`
 }
