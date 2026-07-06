@@ -98,6 +98,27 @@ jobs:
             echo "No .dockerignore file found."
           fi
 
+      - name: Validate public build variables
+        shell: bash
+        run: |
+          if [ -z "$NEXT_PUBLIC_SERVER_URL" ]; then
+            echo "NEXT_PUBLIC_SERVER_URL is required for the standalone production image."
+            exit 1
+          fi
+
+          if [[ "$NEXT_PUBLIC_SERVER_URL" == *"localhost"* || "$NEXT_PUBLIC_SERVER_URL" == *"127.0.0.1"* ]]; then
+            echo "NEXT_PUBLIC_SERVER_URL must be the production URL, got: $NEXT_PUBLIC_SERVER_URL"
+            exit 1
+          fi
+
+          if [ -z "$NEXT_PUBLIC_SITE_NAME" ]; then
+            echo "NEXT_PUBLIC_SITE_NAME is required for the standalone production image."
+            exit 1
+          fi
+
+          echo "NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL"
+          echo "NEXT_PUBLIC_SITE_NAME=$NEXT_PUBLIC_SITE_NAME"
+
       - name: Build and Push Docker image
         run: |
           # 1. Extract Short SHA
