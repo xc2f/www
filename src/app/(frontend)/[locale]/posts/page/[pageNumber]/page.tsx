@@ -10,11 +10,8 @@ import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 
 import { Locale } from '@/i18n/types'
-import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { PostsArchiveIntro } from '../../PostsArchiveIntro'
-
-export const revalidate = 600
 
 type Args = {
   params: Promise<{
@@ -91,25 +88,4 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       pageNumber,
     }),
   }
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({
-    collection: 'posts',
-    overrideAccess: false,
-  })
-
-  const totalPages = Math.ceil(totalDocs / 12)
-
-  return routing.locales.flatMap((locale) => {
-    const pages = []
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push({
-        locale,
-        pageNumber: String(i),
-      })
-    }
-    return pages
-  })
 }

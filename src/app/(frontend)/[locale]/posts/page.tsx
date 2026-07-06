@@ -7,15 +7,8 @@ import React from 'react'
 import PageClient from './page.client'
 
 import { Locale } from '@/i18n/types'
-import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { PostsArchiveIntro } from './PostsArchiveIntro'
-
-export const revalidate = 600
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }))
-}
 
 export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params

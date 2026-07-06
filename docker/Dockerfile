@@ -21,7 +21,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # 安装字体
-COPY src/app/(frontend)/fonts/PressStart2P-Regular.ttf /usr/share/fonts/truetype/
+COPY ["src/app/(frontend)/fonts/PressStart2P-Regular.ttf", "/usr/share/fonts/truetype/"]
 RUN fc-cache -f -v
 # ================== postgres client install end ==================
 
@@ -32,8 +32,8 @@ ENV PATH="$PNPM_HOME:$PATH"
 # 创建 pnpm store 并赋权
 RUN mkdir -p /home/node/.pnpm-store && chown -R node:node /home/node/.pnpm-store
 
-# 安装 pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Enable pnpm via the packageManager field in package.json.
+RUN corepack enable
 
 # 依赖安装阶段
 FROM base AS deps
@@ -54,3 +54,5 @@ COPY --from=deps --chown=node:node /app/node_modules ./node_modules
 COPY --chown=node:node . .
 
 EXPOSE 3000
+
+CMD ["pnpm", "dev"]

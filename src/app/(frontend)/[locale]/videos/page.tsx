@@ -7,18 +7,11 @@ import type { Locale } from '@/i18n/types'
 
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
-import { routing } from '@/i18n/routing'
 import PageClient from './page.client'
 import { queryPublishedVideos } from './queries'
 import { createVideosMetadata } from './videoMeta'
 import { VideoArchiveIntro } from './VideoArchiveIntro'
 import { VideoGrid } from './VideoGrid'
-
-export const revalidate = 600
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }))
-}
 
 export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params

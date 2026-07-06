@@ -6,16 +6,9 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import MomentsFeed from './MomentsFeed'
 
 import { Locale } from '@/i18n/types'
-import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { MomentsArchiveIntro } from './MomentsArchiveIntro'
 import { queryMomentsPage } from './queries'
-
-export const revalidate = 600
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }))
-}
 
 type Args = {
   params: Promise<{

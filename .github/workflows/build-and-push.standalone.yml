@@ -34,33 +34,19 @@ permissions:
   contents: read
 
 env:
-  DATABASE_URL: postgres://payload:payload@localhost:5432/payload
+  # Build should not connect to Postgres. This sentinel URL fails fast if a
+  # future change reintroduces build-time database access.
+  DATABASE_URL: postgres://build:build@127.0.0.1:1/build
   AWS_OIDC_ROLE: ${{ vars.AWS_OIDC_ROLE }}
   AWS_ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
   NEXT_PUBLIC_SITE_NAME: ${{ vars.NEXT_PUBLIC_SITE_NAME }}
-  BUILD_OUTPUT: standalone
 
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
     # runs-on: ubuntu-latest
     environment: production
-
-    services:
-      postgres:
-        image: postgres:16
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: payload
-          POSTGRES_USER: payload
-          POSTGRES_PASSWORD: payload
-        options: >-
-          --health-cmd="pg_isready -U payload"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout source
@@ -70,14 +56,17 @@ jobs:
           persist-credentials: true
 
       - name: Load environment variables as defaults
+        shell: bash
         run: |
           while IFS='=' read -r key value || [ -n "$key" ]; do
             # 1. Ignore comments and empty lines
             [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
 
             # 2. Trim whitespace from key and value
-            key=$(echo "$key" | xargs)
-            value=$(echo "$value" | xargs)
+            key="${key#"${key%%[![:space:]]*}"}"
+            key="${key%"${key##*[![:space:]]}"}"
+            value="${value#"${value%%[![:space:]]*}"}"
+            value="${value%"${value##*[![:space:]]}"}"
 
             # 3. Check if the environment variable already exists
             # If the key already has a value (from YAML top-level env), skip it
@@ -88,48 +77,6 @@ jobs:
               echo "Skipping $key: Using value from YAML override"
             fi
           done < .env.example
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          package-manager-cache: false
-
-      - name: Enable pnpm via Corepack
-        run: |
-          corepack enable
-          corepack prepare "$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).packageManager.split('+')[0]")" --activate
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Migrate database
-        run: pnpm payload migrate
-
-      - name: Print BUILD_OUTPUT
-        run: echo "BUILD_OUTPUT=${{ env.BUILD_OUTPUT }}"
-
-      - name: Build Next (standalone)
-        run: pnpm build
-
-      - name: Verify Build Artifacts
-        run: |
-          echo "==== [1/3] Standalone Directory ===="
-          if [ -d ".next/standalone" ]; then
-            ls -F .next/standalone | head -n 10
-            [ -f ".next/standalone/server.js" ] && echo "✅ server.js found" || echo "❌ server.js MISSING"
-          else
-            echo "❌ .next/standalone directory not found!"
-          fi
-
-          echo -e "\n==== [2/3] Static Assets ===="
-          [ -d ".next/static" ] && echo "✅ .next/static exists" || echo "❌ .next/static MISSING"
-
-          echo -e "\n==== [3/3] Public Assets ===="
-          [ -d "public" ] && echo "✅ public exists" || echo "❌ public MISSING"
-
-          echo -e "\n==== Build Context Summary ===="
-          du -sh .next/standalone .next/static public 2>/dev/null
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v6
@@ -159,6 +106,10 @@ jobs:
 
           # 2. Build image
           docker build -f docker/Dockerfile.prod.standalone \
+            --build-arg DATABASE_URL="$DATABASE_URL" \
+            --build-arg NEXT_PUBLIC_SERVER_URL="$NEXT_PUBLIC_SERVER_URL" \
+            --build-arg NEXT_PUBLIC_SITE_NAME="$NEXT_PUBLIC_SITE_NAME" \
+            --build-arg S3_ENDPOINT="$S3_ENDPOINT" \
             -t $REGISTRY:latest \
             -t $REGISTRY:${SHORT_SHA} .
 

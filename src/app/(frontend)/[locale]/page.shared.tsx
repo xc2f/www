@@ -14,7 +14,6 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { HomePage } from './home'
 
 import { Locale } from '@/i18n/types'
-import { routing } from '@/i18n/routing'
 import { setRequestLocale } from 'next-intl/server'
 
 type Args = {
@@ -22,29 +21,6 @@ type Args = {
     slug?: string
     locale: Locale
   }>
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = []
-  for (const locale of routing.locales) {
-    for (const { slug } of pages.docs) {
-      params.push({ slug, locale })
-    }
-  }
-
-  return params
 }
 
 export default async function Page({ params: paramsPromise }: Args) {

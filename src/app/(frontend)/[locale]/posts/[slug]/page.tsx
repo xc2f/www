@@ -16,31 +16,7 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 import { Locale } from '@/i18n/types'
-import { routing } from '@/i18n/routing'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const posts = await payload.find({
-    collection: 'posts',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = []
-  for (const locale of routing.locales) {
-    for (const { slug } of posts.docs) {
-      params.push({ slug, locale })
-    }
-  }
-
-  return params
-}
 
 type Args = {
   params: Promise<{

@@ -8,7 +8,9 @@ permissions:
   contents: read
 
 env:
-  DATABASE_URL: postgres://payload:payload@localhost:5432/payload
+  # Build should not connect to Postgres. This sentinel URL fails fast if a
+  # future change reintroduces build-time database access.
+  DATABASE_URL: postgres://build:build@127.0.0.1:1/build
   AWS_OIDC_ROLE: ${{ vars.AWS_OIDC_ROLE }}
   AWS_ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
@@ -20,21 +22,6 @@ jobs:
     # runs-on: ubuntu-latest
     environment: production
 
-    services:
-      postgres:
-        image: postgres:16
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: payload
-          POSTGRES_USER: payload
-          POSTGRES_PASSWORD: payload
-        options: >-
-          --health-cmd="pg_isready -U payload"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v5
@@ -43,14 +30,17 @@ jobs:
           persist-credentials: true
 
       - name: Load environment variables as defaults
+        shell: bash
         run: |
           while IFS='=' read -r key value || [ -n "$key" ]; do
             # 1. Ignore comments and empty lines
             [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
 
             # 2. Trim whitespace from key and value
-            key=$(echo "$key" | xargs)
-            value=$(echo "$value" | xargs)
+            key="${key#"${key%%[![:space:]]*}"}"
+            key="${key%"${key##*[![:space:]]}"}"
+            value="${value#"${value%%[![:space:]]*}"}"
+            value="${value%"${value##*[![:space:]]}"}"
 
             # 3. Check if the environment variable already exists
             # If the key already has a value (from YAML top-level env), skip it
@@ -76,9 +66,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Migrate database
-        run: pnpm payload migrate
-
       - name: Build Next
         run: pnpm build
 
@@ -86,8 +73,18 @@ jobs:
         run: |
           # Include node_modules and all source code in the image
           echo ".git" > .dockerignore
+          echo ".gitignore" >> .dockerignore
           echo ".next/cache" >> .dockerignore
+          echo ".env" >> .dockerignore
+          echo ".env.*" >> .dockerignore
+          echo "uploads" >> .dockerignore
+          echo "media" >> .dockerignore
+          echo "node_modules" >> .dockerignore
+          echo ".pnpm-store" >> .dockerignore
           echo "node_modules/.cache" >> .dockerignore
+          echo "npm-debug.log*" >> .dockerignore
+          echo "pnpm-debug.log*" >> .dockerignore
+          echo ".DS_Store" >> .dockerignore
           echo "==== Current .dockerignore ===="
           cat .dockerignore
 

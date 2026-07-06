@@ -1,23 +1,18 @@
 import type { Metadata } from 'next'
 
-import configPromise from '@payload-config'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
 import React from 'react'
 
 import type { Locale } from '@/i18n/types'
 
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
-import { routing } from '@/i18n/routing'
 import PageClient from '../../page.client'
 import { queryPublishedVideos } from '../../queries'
 import { createVideosMetadata } from '../../videoMeta'
 import { VideoArchiveIntro } from '../../VideoArchiveIntro'
 import { VideoGrid } from '../../VideoGrid'
-
-export const revalidate = 600
 
 type Args = {
   params: Promise<{
@@ -88,33 +83,5 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     description: t('intro_description'),
     title: t('page', { pageNumber }),
     url: `/${locale}/videos/page/${pageNumber}`,
-  })
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({
-    collection: 'videos',
-    overrideAccess: false,
-    where: {
-      _status: {
-        equals: 'published',
-      },
-    },
-  })
-
-  const totalPages = Math.ceil(totalDocs / 12)
-
-  return routing.locales.flatMap((locale) => {
-    const pages = []
-
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push({
-        locale,
-        pageNumber: String(i),
-      })
-    }
-
-    return pages
   })
 }

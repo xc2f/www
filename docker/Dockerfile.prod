@@ -1,34 +1,34 @@
 FROM node:24-slim
 
-# ================== postgres client install begin ==================
-# 安装基础依赖
+WORKDIR /app
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+
 RUN apt-get update && apt-get install -y \
     curl \
     ca-certificates \
     gnupg \
     lsb-release \
     fontconfig \
-    --no-install-recommends
-
-# 导入 PostgreSQL 官方 GPG 密钥并设置存储库
-RUN curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-
-# 安装 PostgreSQL 18 客户端
-RUN apt-get update && \
+    --no-install-recommends && \
+    curl -fSsL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
     apt-get install -y postgresql-client-18 && \
     rm -rf /var/lib/apt/lists/*
 
-# 安装字体
-COPY src/app/(frontend)/fonts/PressStart2P-Regular.ttf /usr/share/fonts/truetype/
-RUN fc-cache -f -v
-# ================== postgres client install end ==================
+COPY ["src/app/(frontend)/fonts/PressStart2P-Regular.ttf", "/usr/share/fonts/truetype/"]
+RUN fc-cache -f
 
-WORKDIR /app
-ENV NODE_ENV=production
+RUN corepack enable
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod=false
+
 COPY . .
 
 EXPOSE 3000
+
 CMD ["pnpm", "start"]

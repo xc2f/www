@@ -3,8 +3,13 @@ name: Build and Push to Build Branch
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
-  DATABASE_URL: postgres://payload:payload@localhost:5432/payload
+  # Build should not connect to Postgres. This sentinel URL fails fast if a
+  # future change reintroduces build-time database access.
+  DATABASE_URL: postgres://build:build@127.0.0.1:1/build
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
   NEXT_PUBLIC_SITE_NAME: ${{ vars.NEXT_PUBLIC_SITE_NAME }}
 
@@ -12,21 +17,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: production
-
-    services:
-      postgres:
-        image: postgres:16
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: payload
-          POSTGRES_USER: payload
-          POSTGRES_PASSWORD: payload
-        options: >-
-          --health-cmd="pg_isready -U payload"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout source
@@ -36,14 +26,17 @@ jobs:
           persist-credentials: true
 
       - name: Load environment variables as defaults
+        shell: bash
         run: |
           while IFS='=' read -r key value || [ -n "$key" ]; do
             # 1. Ignore comments and empty lines
             [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue
 
             # 2. Trim whitespace from key and value
-            key=$(echo "$key" | xargs)
-            value=$(echo "$value" | xargs)
+            key="${key#"${key%%[![:space:]]*}"}"
+            key="${key%"${key##*[![:space:]]}"}"
+            value="${value#"${value%%[![:space:]]*}"}"
+            value="${value%"${value##*[![:space:]]}"}"
 
             # 3. Check if the environment variable already exists
             # If the key already has a value (from YAML top-level env), skip it
@@ -68,9 +61,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Migrate database
-        run: pnpm payload migrate
 
       - name: Build Next
         run: pnpm build

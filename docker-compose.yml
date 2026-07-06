@@ -3,12 +3,10 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-      # dockerfile: ./docker/Dockerfile.local
     image: payload
     container_name: payload
     restart: unless-stopped
     command: sh -c "pnpm ${APP_CMD:-dev}"
-    # command: sh -c "pnpm build && pnpm ${APP_CMD:-start}"  # for local build
     ports:
       - '127.0.0.1:3000:3000'
     volumes:
@@ -16,17 +14,15 @@ services:
       - /app/node_modules
       - pnpm_store:/home/node/.pnpm-store
       - ~/.aws:/home/node/.aws
-        # - ~/.npmrc:/home/node/.npmrc:ro'
     environment:
       NODE_ENV: development
-      # NODE_ENV: production  # for local build
     env_file:
       - .env
     depends_on:
       - postgres
 
   postgres:
-    image: postgres:latest
+    image: postgres:18
     container_name: postgres
     restart: always
     command: postgres -c config_file=/var/lib/postgresql/postgresql.conf

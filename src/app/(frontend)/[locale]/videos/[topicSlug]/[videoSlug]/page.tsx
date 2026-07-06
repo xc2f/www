@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 
-import configPromise from '@payload-config'
 import { draftMode } from 'next/headers'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
 import React from 'react'
 
 import type { Locale } from '@/i18n/types'
@@ -12,49 +10,11 @@ import type { Locale } from '@/i18n/types'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
-import { routing } from '@/i18n/routing'
 import { formatTime } from '@/utilities/formatTime'
 import PageClient from './page.client'
 import { queryVideoBySlugAndTopic, queryVideoTopicBySlug } from '../../queries'
 import { createVideosMetadata } from '../../videoMeta'
 import { getVideoCover, getVideoTags, getVideoTopic } from '../../videoUtils'
-
-export const revalidate = 600
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const videos = await payload.find({
-    collection: 'videos',
-    depth: 1,
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-      topic: true,
-    },
-    where: {
-      _status: {
-        equals: 'published',
-      },
-    },
-  })
-
-  return routing.locales.flatMap((locale) =>
-    videos.docs.flatMap((video) => {
-      if (typeof video.topic !== 'object' || video.topic === null) return []
-
-      return [
-        {
-          locale,
-          topicSlug: video.topic.slug,
-          videoSlug: video.slug,
-        },
-      ]
-    }),
-  )
-}
 
 type Args = {
   params: Promise<{

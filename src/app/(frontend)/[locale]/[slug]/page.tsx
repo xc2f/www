@@ -1,1 +1,1 @@
-export { default, generateMetadata, generateStaticParams } from '../page.shared'
+export { default, generateMetadata } from '../page.shared'

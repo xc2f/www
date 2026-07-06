@@ -1,41 +1,16 @@
 import type { Metadata } from 'next'
 
-import configPromise from '@payload-config'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
 import React from 'react'
 
 import type { Locale } from '@/i18n/types'
 
-import { routing } from '@/i18n/routing'
 import PageClient from '../page.client'
 import { queryPublishedVideos, queryVideoTopicBySlug } from '../queries'
 import { createVideosMetadata } from '../videoMeta'
 import { VideoArchiveIntro } from '../VideoArchiveIntro'
 import { VideoGrid } from '../VideoGrid'
-
-export const revalidate = 600
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const topics = await payload.find({
-    collection: 'video-topics',
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  return routing.locales.flatMap((locale) =>
-    topics.docs.map((topic) => ({
-      locale,
-      topicSlug: topic.slug,
-    })),
-  )
-}
 
 type Args = {
   params: Promise<{
