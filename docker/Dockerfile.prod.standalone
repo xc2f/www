@@ -30,6 +30,11 @@ COPY . .
 RUN PAYLOAD_SECRET=build-secret \
     CRON_SECRET=build-secret \
     PREVIEW_SECRET=build-secret \
+    AWS_SERVICE_REGION=us-east-1 \
+    EMAIL_DEFAULT_FROM_NAME=XC2F \
+    EMAIL_DEFAULT_FROM_NO_REPLY=no-reply@example.com \
+    EMAIL_DEFAULT_FROM=no-reply@example.com \
+    EMAIL_DEFAULT_REPLY=no-reply@example.com \
     pnpm build
 
 FROM node:24-slim AS runner
