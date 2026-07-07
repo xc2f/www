@@ -11,7 +11,7 @@ const isAdminUser = (user: UserWithRoles | null | undefined) => {
 
   // Legacy users created before roles existed can still administer users until
   // their roles are saved.
-  if (!('roles' in user) || user.roles == null) return true
+  if (!('roles' in user) || user.roles == null || user.roles.length === 0) return true
 
   return Boolean(user.roles?.includes('admin'))
 }
@@ -24,7 +24,22 @@ const isAdminField: FieldAccess = ({ req: { user } }) => {
   return isAdminUser(user as UserWithRoles | null | undefined)
 }
 
-const adminOrSelf: Access = (args) => {
+const adminOrSelfRead: Access = (args) => {
+  const {
+    req: { user },
+  } = args
+
+  if (isAdminUser(user as UserWithRoles | null | undefined)) return true
+  if (!user) return false
+
+  return {
+    id: {
+      equals: user.id,
+    },
+  }
+}
+
+const adminOrSelfUpdate: Access = (args) => {
   const {
     req: { user },
     id,
@@ -40,8 +55,8 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: isAdmin,
     delete: isAdmin,
-    read: adminOrSelf,
-    update: adminOrSelf,
+    read: adminOrSelfRead,
+    update: adminOrSelfUpdate,
   },
   admin: {
     defaultColumns: ['name', 'email', 'roles'],
