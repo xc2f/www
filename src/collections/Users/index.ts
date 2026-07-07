@@ -1,9 +1,13 @@
 import type { Access, CollectionConfig, FieldAccess } from 'payload'
 
-import { adminAccess, adminOnly, isAdminUser, type UserWithRoles } from '../../access/roles'
+import { adminOnly, isAdminOrEditorUser, isAdminUser, type UserWithRoles } from '../../access/roles'
 
 const isAdminField: FieldAccess = ({ req: { user } }) => {
   return isAdminUser(user as UserWithRoles | null | undefined)
+}
+
+const adminPanelAccess = ({ req: { user } }: { req: { user: unknown } }) => {
+  return isAdminOrEditorUser(user as UserWithRoles | null | undefined)
 }
 
 const adminOrSelfRead: Access = (args) => {
@@ -34,7 +38,7 @@ const adminOrSelfUpdate: Access = (args) => {
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: adminAccess,
+    admin: adminPanelAccess,
     create: adminOnly,
     delete: adminOnly,
     read: adminOrSelfRead,
