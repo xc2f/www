@@ -1,6 +1,19 @@
 FROM node:24-slim AS base
 
+ARG NPM_REGISTRY=https://registry.npmjs.org
+ARG APT_MIRROR=http://deb.debian.org/debian
+ARG APT_SECURITY_MIRROR=http://deb.debian.org/debian-security
+ENV COREPACK_NPM_REGISTRY="${NPM_REGISTRY}" \
+    NPM_CONFIG_REGISTRY="${NPM_REGISTRY}" \
+    npm_config_registry="${NPM_REGISTRY}"
+
 # ================== postgres client install begin ==================
+# 使用 Debian apt 镜像源加速本地 Docker 构建
+RUN sed -i \
+    -e "s|http://deb.debian.org/debian-security|${APT_SECURITY_MIRROR}|g" \
+    -e "s|http://deb.debian.org/debian|${APT_MIRROR}|g" \
+    /etc/apt/sources.list.d/debian.sources
+
 # 安装基础依赖
 # for db backup
 RUN apt-get update && apt-get install -y \
@@ -33,7 +46,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN mkdir -p /home/node/.pnpm-store && chown -R node:node /home/node/.pnpm-store
 
 # Enable pnpm via the packageManager field in package.json.
-RUN corepack enable
+RUN npm config set registry "${NPM_REGISTRY}" && corepack enable
 
 # 依赖安装阶段
 FROM base AS deps
@@ -42,8 +55,11 @@ WORKDIR /app
 RUN mkdir -p /app && chown -R node:node /app
 USER node
 COPY --chown=node:node package.json pnpm-lock.yaml ./
-# 显式指向 store
-RUN pnpm config set store-dir /home/node/.pnpm-store && \
+# Keep the pnpm content-addressable store in a BuildKit cache instead of baking
+# it into the deps layer. This reduces Docker build disk usage substantially.
+RUN --mount=type=cache,id=pnpm-store,target=/home/node/.pnpm-store,uid=1000,gid=1000 \
+    pnpm config set store-dir /home/node/.pnpm-store && \
+    pnpm config set registry "${NPM_CONFIG_REGISTRY}" && \
     pnpm install --frozen-lockfile
 
 # 运行阶段

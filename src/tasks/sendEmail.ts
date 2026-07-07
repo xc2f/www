@@ -19,6 +19,7 @@ export const sendEmailTask: SendEmailTaskConfig = {
     const log = await payload.findByID({
       collection: 'mails',
       id: input.id,
+      req,
     })
 
     if (log.sendStatus === 'sent') {
@@ -52,6 +53,7 @@ export const sendEmailTask: SendEmailTaskConfig = {
           id: { in: attachmentIDs },
         },
         limit: attachments.length,
+        req,
       })
 
       const files: Attachment[] = (mediaDocs?.docs || [])
@@ -116,6 +118,7 @@ export const sendEmailTask: SendEmailTaskConfig = {
           sendStatus: 'sent',
           result: combineResult('ok'),
         },
+        req,
       })
       return {
         output: {

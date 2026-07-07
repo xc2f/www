@@ -14,8 +14,9 @@ import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 import 'katex/dist/katex.min.css'
 
-// html
+// html whitelist
 import rehypeRaw from 'rehype-raw'
+import rehypeSanitize, { defaultSchema, type Options as SanitizeOptions } from 'rehype-sanitize'
 
 import { Code as CodeHighlighter } from '../Code/Component.client'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -26,13 +27,38 @@ type Props = {
   className?: string
 } & MarkdownBlockProps
 
+const classNamePattern = /^[A-Za-z0-9_:\-\s/.[\]]+$/
+
+const markdownHtmlSchema = {
+  ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames || []), 'iframe'],
+  attributes: {
+    ...defaultSchema.attributes,
+    '*': [...(defaultSchema.attributes?.['*'] || []), ['className', classNamePattern]],
+    iframe: [
+      'allow',
+      'allowFullScreen',
+      'height',
+      'loading',
+      'referrerPolicy',
+      'src',
+      'title',
+      'width',
+    ],
+  },
+  protocols: {
+    ...defaultSchema.protocols,
+    src: ['https'],
+  },
+} satisfies SanitizeOptions
+
 export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
   const withClassName = cn(className, 'markdown')
   const markdownContent = convertLexicalToPlaintext({ data: content })
   const markdownElement = (
     <Markdown
       remarkPlugins={[remarkMath, remarkGfm]}
-      rehypePlugins={[rehypeKatex, rehypeRaw]}
+      rehypePlugins={[rehypeRaw, [rehypeSanitize, markdownHtmlSchema], rehypeKatex]}
       components={{
         // 拦截 pre 标签
         pre(props) {

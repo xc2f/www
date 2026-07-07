@@ -1,4 +1,4 @@
-import { exec } from 'child_process'
+import { spawn } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
@@ -11,26 +11,46 @@ export const backupDatabaseTask = async function () {
   console.log('🚀 Starting database dump...')
 
   try {
+    const output = fs.createWriteStream(LOCAL_PATH, { flags: 'wx' })
+
     // 1. 执行 pg_dump
-    await new Promise((resolve, reject) => {
-      // 使用 -Z 9 直接让 pg_dump 压缩，简化管道操作
-      const dumpCommand = `pg_dump -h postgres -U ${process.env.DATABASE_USER} -d ${process.env.DATABASE_NAME} -Z 9 > ${LOCAL_PATH}`
-
-      exec(
-        dumpCommand,
-        { env: { ...process.env, PGPASSWORD: process.env.DATABASE_PASSWORD } },
-        (err, stdout, stderr) => {
-          // 即使没有 err，只要 stderr 有内容，往往也是报错了
-          if (stderr) console.warn('pg_dump stderr (might be warnings):', stderr)
-
-          if (err) {
-            console.error('❌ Exec Error:', err)
-            console.error('❌ Stderr:', stderr)
-            return reject(new Error(`Dump failed: ${stderr || err.message}`))
-          }
-          resolve('Success')
+    await new Promise<void>((resolve, reject) => {
+      const dump = spawn(
+        'pg_dump',
+        [
+          '-h',
+          process.env.DATABASE_HOST || 'postgres',
+          '-U',
+          process.env.DATABASE_USER || '',
+          '-d',
+          process.env.DATABASE_NAME || '',
+          '-Z',
+          '9',
+        ],
+        {
+          env: { ...process.env, PGPASSWORD: process.env.DATABASE_PASSWORD || '' },
+          stdio: ['ignore', 'pipe', 'pipe'],
         },
       )
+
+      let stderr = ''
+
+      dump.stdout.pipe(output)
+      dump.stderr.on('data', (chunk) => {
+        stderr += chunk.toString()
+      })
+      dump.on('error', reject)
+      output.on('error', reject)
+      dump.on('close', (code) => {
+        if (stderr) console.warn('pg_dump stderr (might be warnings):', stderr)
+
+        if (code !== 0) {
+          output.end()
+          return reject(new Error(`Dump failed with exit code ${code}: ${stderr}`))
+        }
+
+        output.end(() => resolve())
+      })
     })
 
     console.log('✅ Database dump finished.')
@@ -74,5 +94,9 @@ export const backupDatabaseTask = async function () {
     console.error('❌ Backup Task Failed:', error)
     // 抛出错误以便 Payload Job 记录失败状态并根据策略重试
     throw error
+  } finally {
+    if (fs.existsSync(LOCAL_PATH)) {
+      fs.unlinkSync(LOCAL_PATH)
+    }
   }
 }
