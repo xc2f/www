@@ -9,8 +9,9 @@ export const endpoints: Endpoint[] = [
     handler: async (req) => {
       const authHeader = req.headers.get('authorization')
       const hasCronAccess = authHeader === `Bearer ${process.env.CRON_SECRET}`
+      const isAdmin = Boolean(req.user?.roles?.includes('admin'))
 
-      if (!req.user && !hasCronAccess) {
+      if (!isAdmin && !hasCronAccess) {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
       }
 

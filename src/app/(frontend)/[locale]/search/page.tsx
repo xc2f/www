@@ -11,7 +11,7 @@ import { CardPostData } from '@/components/Card'
 import { Locale } from '@/i18n/types'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { SearchArchiveIntro } from './SearchArchiveIntro'
-import { SearchResultsGrid } from './SearchResultsGrid'
+import { SearchResultsGrid, type SearchResult, type SearchVideoData } from './SearchResultsGrid'
 
 type Args = {
   searchParams: Promise<{
@@ -22,6 +22,25 @@ type Args = {
     locale: Locale
   }>
 }
+
+type RankedSearchResult = SearchResult & {
+  score: number
+  sortDate?: string | null
+}
+
+const SEARCH_FIELDS = [
+  'title',
+  'meta.title',
+  'meta.description',
+  'slug',
+  'categories.title',
+  'tags.title',
+  'summary',
+  'originalTitle',
+  'originalAuthor',
+  'topic.title',
+  'topic.slug',
+] as const
 
 export default async function Page({
   searchParams: searchParamsPromise,
@@ -35,213 +54,107 @@ export default async function Page({
 
   const { page: rawPage, q: rawQuery } = await searchParamsPromise
   const query = rawQuery?.trim() || ''
+  const queryTerms = getSearchTerms(query)
   const parsedPage = Number(rawPage)
   const currentPage = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1
   const pageSize = 12
-  const searchPoolLimit = 100
   const payload = await getPayload({ config: configPromise })
 
-  const postsWhere: Where | undefined = query
-    ? {
-        or: [
+  const searchWhere = buildSearchWhere(queryTerms)
+
+  const results = await payload.find({
+    collection: 'search',
+    depth: 1,
+    limit: 0,
+    locale,
+    overrideAccess: false,
+    pagination: false,
+    select: {
+      doc: true,
+      slug: true,
+      categories: true,
+      cover: true,
+      heroImage: true,
+      meta: true,
+      originalAuthor: true,
+      originalTitle: true,
+      publishedAt: true,
+      summary: true,
+      tags: true,
+      title: true,
+      topic: true,
+    },
+    ...(searchWhere ? { where: searchWhere } : {}),
+  })
+
+  const sortedSearchResults = results.docs
+    .flatMap<RankedSearchResult>((searchDoc) => {
+      const relationTo = searchDoc.doc?.relationTo
+
+      if (relationTo === 'posts') {
+        const post = {
+          categories: searchDoc.categories?.map((category) => ({
+            title: category?.title || undefined,
+          })),
+          heroImage: searchDoc.heroImage,
+          meta: searchDoc.meta,
+          publishedAt: searchDoc.publishedAt,
+          slug: searchDoc.slug || '',
+          tags:
+            searchDoc.tags?.map((tag: { title?: string | null }) => ({
+              title: tag?.title || undefined,
+            })) || [],
+          title: searchDoc.title || undefined,
+        }
+
+        return [
           {
-            title: {
-              like: query,
-            },
+            id: `post-${searchDoc.id}`,
+            post: post as CardPostData,
+            score: getPostSearchScore(post, queryTerms),
+            sortDate: post.publishedAt,
+            type: 'post' as const,
           },
-          {
-            'meta.description': {
-              like: query,
-            },
-          },
-          {
-            'meta.title': {
-              like: query,
-            },
-          },
-          {
-            slug: {
-              like: query,
-            },
-          },
-          {
-            'categories.title': {
-              like: query,
-            },
-          },
-        ],
+        ]
       }
-    : undefined
 
-  const videosWhere: Where = {
-    and: [
-      {
-        _status: {
-          equals: 'published',
-        },
-      },
-    ],
-  }
+      if (relationTo === 'videos') {
+        const video: SearchVideoData = {
+          cover: typeof searchDoc.cover === 'object' ? searchDoc.cover : null,
+          href: getVideoSearchPath(searchDoc),
+          originalAuthor: searchDoc.originalAuthor,
+          publishedAt: searchDoc.publishedAt,
+          summary: searchDoc.summary,
+          tags:
+            searchDoc.tags?.map((tag: { title?: string | null }) => ({
+              title: tag?.title || undefined,
+            })) || [],
+          title: searchDoc.title,
+          topic: searchDoc.topic,
+        }
 
-  if (query) {
-    videosWhere.and?.push({
-      or: [
-        {
-          title: {
-            like: query,
+        return [
+          {
+            id: `video-${searchDoc.id}`,
+            score: getVideoSearchScore(searchDoc, queryTerms),
+            sortDate: searchDoc.publishedAt,
+            type: 'video' as const,
+            video,
           },
-        },
-        {
-          summary: {
-            like: query,
-          },
-        },
-        {
-          slug: {
-            like: query,
-          },
-        },
-        {
-          originalTitle: {
-            like: query,
-          },
-        },
-        {
-          originalAuthor: {
-            like: query,
-          },
-        },
-        {
-          'topic.title': {
-            like: query,
-          },
-        },
-        {
-          'tags.title': {
-            like: query,
-          },
-        },
-      ],
+        ]
+      }
+
+      return []
     })
-  }
+    .sort((a, b) => {
+      if (a.score !== b.score) return b.score - a.score
 
-  const [posts, videos] = await Promise.all([
-    payload.find({
-      collection: 'search',
-      depth: 1,
-      limit: searchPoolLimit,
-      locale,
-      pagination: false,
-      select: {
-        doc: true,
-        title: true,
-        slug: true,
-        categories: true,
-        meta: true,
-        publishedAt: true,
-        tags: true,
-      },
-      ...(postsWhere ? { where: postsWhere } : {}),
-    }),
-    payload.find({
-      collection: 'videos',
-      depth: 2,
-      draft: false,
-      limit: searchPoolLimit,
-      locale,
-      overrideAccess: false,
-      pagination: false,
-      where: videosWhere,
-    }),
-  ])
+      const timeDifference = getTimeValue(b.sortDate) - getTimeValue(a.sortDate)
 
-  const postIDs = posts.docs
-    .map((doc) => {
-      if (typeof doc.doc?.value === 'object') return doc.doc.value.id
-      return doc.doc?.value
+      if (timeDifference !== 0) return timeDifference
+
+      return a.id.localeCompare(b.id)
     })
-    .filter((value): value is number => typeof value === 'number')
-
-  const postDataByID = new Map<number, CardPostData>()
-
-  if (postIDs.length > 0) {
-    const indexedPosts = await payload.find({
-      collection: 'posts',
-      depth: 1,
-      limit: postIDs.length,
-      locale,
-      overrideAccess: false,
-      pagination: false,
-      select: {
-        categories: true,
-        heroImage: true,
-        meta: true,
-        publishedAt: true,
-        slug: true,
-        tags: true,
-        title: true,
-      },
-      where: {
-        id: {
-          in: postIDs,
-        },
-      },
-    })
-
-    indexedPosts.docs.forEach((post) => {
-      postDataByID.set(post.id, {
-        categories: post.categories,
-        heroImage: post.heroImage,
-        meta: post.meta,
-        publishedAt: post.publishedAt,
-        slug: post.slug,
-        tags: post.tags,
-        title: post.title,
-      })
-    })
-  }
-
-  const archivePosts = posts.docs.map((doc) => {
-    const relationDoc = typeof doc.doc?.value === 'object' ? doc.doc.value : null
-    const relationID = relationDoc?.id || (typeof doc.doc?.value === 'number' ? doc.doc.value : null)
-    const localizedPost = relationID ? postDataByID.get(relationID) : undefined
-
-    return {
-      categories:
-        localizedPost?.categories ||
-        doc.categories?.map((category) => ({
-          title: category?.title || undefined,
-        })),
-      heroImage: localizedPost?.heroImage,
-      meta: localizedPost?.meta || doc.meta,
-      publishedAt:
-        localizedPost?.publishedAt || doc.publishedAt || relationDoc?.publishedAt,
-      slug: localizedPost?.slug || doc.slug || relationDoc?.slug || '',
-      tags: localizedPost?.tags,
-      title: localizedPost?.title || doc.title || relationDoc?.title || undefined,
-    }
-  })
-
-  const sortedSearchResults = [
-    ...archivePosts.map((post, index) => ({
-      id: `post-${post.slug || index}`,
-      post: post as CardPostData,
-      rank: getPostSearchRank(post, query),
-      sortDate: post.publishedAt,
-      type: 'post' as const,
-    })),
-    ...videos.docs.map((video) => ({
-      id: `video-${video.id}`,
-      rank: getVideoSearchRank(video, query),
-      sortDate: video.publishedAt,
-      type: 'video' as const,
-      video,
-    })),
-  ].sort((a, b) => {
-    if (a.rank !== b.rank) return a.rank - b.rank
-
-    return getTimeValue(b.sortDate) - getTimeValue(a.sortDate)
-  })
   const totalResults = sortedSearchResults.length
   const totalPages = Math.ceil(totalResults / pageSize)
   const safePage = totalPages > 0 ? Math.min(currentPage, totalPages) : 1
@@ -308,7 +221,29 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 }
 
 function normalizeSearchText(value?: string | null): string {
-  return value?.toLowerCase().trim() || ''
+  return value?.toLowerCase().replace(/[-_/]+/g, ' ').replace(/\s+/g, ' ').trim() || ''
+}
+
+function getSearchTerms(query: string): string[] {
+  const normalizedQuery = normalizeSearchText(query)
+
+  if (!normalizedQuery) return []
+
+  return [...new Set(normalizedQuery.split(' ').filter(Boolean))]
+}
+
+function buildSearchWhere(queryTerms: string[]): Where | undefined {
+  if (queryTerms.length === 0) return undefined
+
+  return {
+    and: queryTerms.map((term) => ({
+      or: SEARCH_FIELDS.map((field) => ({
+        [field]: {
+          like: term,
+        },
+      })),
+    })),
+  }
 }
 
 function getTimeValue(value?: string | null): number {
@@ -319,36 +254,122 @@ function getTimeValue(value?: string | null): number {
   return Number.isNaN(time) ? 0 : time
 }
 
-function includesQuery(value: string | undefined | null, query: string): boolean {
-  const normalizedQuery = normalizeSearchText(query)
+function getRelationTitle(item: unknown): string | null {
+  if (!item || typeof item !== 'object' || !('title' in item)) {
+    return null
+  }
 
-  if (!normalizedQuery) return false
+  const title = (item as { title?: unknown }).title
 
-  return normalizeSearchText(value).includes(normalizedQuery)
+  return typeof title === 'string' ? title : null
 }
 
-function getPostSearchRank(
+function getVideoSearchPath(searchDoc: {
+  slug?: string | null
+  topic?: {
+    slug?: string | null
+  } | null
+}): string | null {
+  if (!searchDoc.topic?.slug || !searchDoc.slug) {
+    return null
+  }
+
+  return `/videos/${searchDoc.topic.slug}/${searchDoc.slug}`
+}
+
+function scoreText(value: string | undefined | null, queryTerms: string[]): number {
+  if (!value || queryTerms.length === 0) return 0
+
+  const normalizedValue = normalizeSearchText(value)
+  if (!normalizedValue) return 0
+
+  const exactQuery = queryTerms.join(' ')
+  let score = 0
+
+  if (normalizedValue === exactQuery) {
+    score += 160
+  } else if (normalizedValue.startsWith(exactQuery)) {
+    score += 125
+  } else if (normalizedValue.includes(exactQuery)) {
+    score += 90
+  }
+
+  for (const term of queryTerms) {
+    if (normalizedValue === term) {
+      score += 45
+    } else if (normalizedValue.startsWith(term)) {
+      score += 34
+    } else if (normalizedValue.split(' ').some((word) => word.startsWith(term))) {
+      score += 24
+    } else if (normalizedValue.includes(term)) {
+      score += 14
+    }
+  }
+
+  return score
+}
+
+function scoreTextList(
+  values: (string | undefined | null)[] | undefined | null,
+  queryTerms: string[],
+): number {
+  return values?.reduce((score, value) => score + scoreText(value, queryTerms), 0) || 0
+}
+
+function getPostSearchScore(
   post: {
+    categories?: { title?: string | null }[] | null
     meta?: {
       description?: string | null
       title?: string | null
     }
+    slug?: string | null
+    tags?: { title?: string | null }[] | null
     title?: string | null
   },
-  query: string,
+  queryTerms: string[],
 ): number {
-  if (!query) return 2
-  if (includesQuery(post.title, query)) return 0
-  if (includesQuery(post.meta?.title, query)) return 0
-  if (includesQuery(post.meta?.description, query)) return 1
+  if (queryTerms.length === 0) return 0
 
-  return 2
+  return (
+    scoreText(post.title, queryTerms) * 5 +
+    scoreText(post.meta?.title, queryTerms) * 4 +
+    scoreText(post.slug, queryTerms) * 3 +
+    scoreTextList(
+      post.categories?.map((category) => category.title),
+      queryTerms,
+    ) *
+      2 +
+    scoreTextList(
+      post.tags?.map((tag) => tag.title),
+      queryTerms,
+    ) *
+      2 +
+    scoreText(post.meta?.description, queryTerms)
+  )
 }
 
-function getVideoSearchRank(video: { summary?: string | null; title?: string | null }, query: string): number {
-  if (!query) return 2
-  if (includesQuery(video.title, query)) return 0
-  if (includesQuery(video.summary, query)) return 1
+function getVideoSearchScore(
+  video: {
+    originalAuthor?: string | null
+    originalTitle?: string | null
+    slug?: string | null
+    summary?: string | null
+    tags?: unknown[] | null
+    title?: string | null
+    topic?: unknown
+  },
+  queryTerms: string[],
+): number {
+  if (queryTerms.length === 0) return 0
 
-  return 2
+  return (
+    scoreText(video.title, queryTerms) * 5 +
+    scoreText(video.originalTitle, queryTerms) * 4 +
+    scoreText(video.slug, queryTerms) * 3 +
+    scoreText(getRelationTitle(video.topic), queryTerms) * 2 +
+    scoreTextList(video.tags?.map(getRelationTitle), queryTerms) * 2 +
+    scoreText(video.summary, queryTerms) +
+    scoreText(video.originalAuthor, queryTerms)
+  )
 }

@@ -9,7 +9,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { anyone } from '../../access/anyone'
-import { authenticated } from '../../access/authenticated'
+import { adminOrEditor } from '../../access/roles'
 
 import { addWatermark } from './hooks/addWatermark'
 
@@ -24,14 +24,15 @@ export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: adminOrEditor,
+    delete: adminOrEditor,
     read: anyone,
-    update: authenticated,
+    update: adminOrEditor,
   },
   admin: {
     group: 'Media',
   },
+  defaultSort: '-createdAt',
   fields: [
     {
       name: 'watermark',

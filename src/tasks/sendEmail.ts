@@ -14,15 +14,14 @@ export const sendEmailTask: SendEmailTaskConfig = {
   slug: 'send-email',
   retries: 2,
   handler: async ({ input, req }) => {
-    // Properly type the sendEmail call
     const payload = req.payload
-    const log = await payload.findByID({
+    const mail = await payload.findByID({
       collection: 'mails',
       id: input.id,
       req,
     })
 
-    if (log.sendStatus === 'sent') {
+    if (mail.sendStatus !== 'pending') {
       return {
         output: {
           emailSent: false,
@@ -35,8 +34,8 @@ export const sendEmailTask: SendEmailTaskConfig = {
       return `${now}\n${str}`
     }
 
-    const getAttachments = async () => {
-      const attachments = input.attachments ?? []
+    const getAttachments = async (mailDoc: Mail) => {
+      const attachments = mailDoc.attachments ?? []
       const attachmentIDs = attachments
         .map((attachment) =>
           typeof attachment.file === 'object' ? attachment.file.id : attachment.file,
@@ -94,29 +93,32 @@ export const sendEmailTask: SendEmailTaskConfig = {
       return list.length > 0 ? list : undefined
     }
 
-    const from = toAddress(input.from)
-    const to = toAddressList(input.to)
+    const from = toAddress(mail.from)
+    const to = toAddressList(mail.to)
 
     try {
       const emailOptions: SendEmailOptions = {
         from: from ?? undefined,
         to,
-        cc: toAddressList(input.cc),
-        bcc: toAddressList(input.bcc),
-        replyTo: input.replyTo ?? undefined,
-        subject: input.subject,
-        text: input.text ?? undefined,
-        html: input.html ?? undefined,
-        attachments: await getAttachments(),
+        cc: toAddressList(mail.cc),
+        bcc: toAddressList(mail.bcc),
+        replyTo: mail.replyTo ?? undefined,
+        subject: mail.subject,
+        text: mail.text ?? undefined,
+        html: mail.html ?? undefined,
+        attachments: await getAttachments(mail),
       }
 
       await payload.sendEmail(emailOptions)
       await payload.update({
         collection: 'mails',
-        id: input.id,
+        id: mail.id,
         data: {
           sendStatus: 'sent',
           result: combineResult('ok'),
+        },
+        context: {
+          skipEmailQueue: true,
         },
         req,
       })
@@ -128,11 +130,15 @@ export const sendEmailTask: SendEmailTaskConfig = {
     } catch (err) {
       await req.payload.update({
         collection: 'mails',
-        id: input.id,
+        id: mail.id,
         data: {
           sendStatus: 'failed',
           result: combineResult(err instanceof Error ? err.message : String(err)),
         },
+        context: {
+          skipEmailQueue: true,
+        },
+        req,
       })
       throw err
     }

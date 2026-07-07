@@ -36,6 +36,24 @@ import { endpoints } from './endpoints'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const requireEnv = (name: string): string => {
+  const value = process.env[name]
+
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+
+  return value
+}
+
+const s3Config = {
+  accessKeyId: requireEnv('S3_ACCESS_KEY_ID'),
+  bucket: requireEnv('S3_BUCKET'),
+  endpoint: requireEnv('S3_ENDPOINT'),
+  region: process.env.S3_REGION || 'auto',
+  secretAccessKey: requireEnv('S3_SECRET'),
+}
+
 export default buildConfig({
   admin: {
     components: {
@@ -116,13 +134,13 @@ export default buildConfig({
           prefix: 'media',
         },
       },
-      bucket: process.env.S3_BUCKET || '',
+      bucket: s3Config.bucket,
       config: {
-        region: process.env.S3_REGION || 'auto',
-        endpoint: process.env.S3_ENDPOINT || '',
+        region: s3Config.region,
+        endpoint: s3Config.endpoint,
         credentials: {
-          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-          secretAccessKey: process.env.S3_SECRET || '',
+          accessKeyId: s3Config.accessKeyId,
+          secretAccessKey: s3Config.secretAccessKey,
         },
       },
     }),

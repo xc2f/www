@@ -37,6 +37,14 @@ export const searchFields: Field[] = [
     ],
   },
   {
+    name: 'heroImage',
+    type: 'upload',
+    relationTo: 'media',
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
     name: 'publishedAt',
     type: 'date',
     admin: {
@@ -57,6 +65,74 @@ export const searchFields: Field[] = [
       },
       {
         name: 'categoryID',
+        type: 'text',
+      },
+      {
+        name: 'title',
+        type: 'text',
+      },
+    ],
+  },
+  {
+    name: 'summary',
+    type: 'textarea',
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
+    name: 'originalTitle',
+    type: 'text',
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
+    name: 'originalAuthor',
+    type: 'text',
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
+    name: 'cover',
+    type: 'upload',
+    relationTo: 'media',
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
+    name: 'topic',
+    type: 'group',
+    admin: {
+      readOnly: true,
+    },
+    fields: [
+      {
+        name: 'topicID',
+        type: 'text',
+      },
+      {
+        name: 'slug',
+        type: 'text',
+      },
+      {
+        name: 'title',
+        type: 'text',
+      },
+    ],
+  },
+  {
+    label: 'Tags',
+    name: 'tags',
+    type: 'array',
+    admin: {
+      readOnly: true,
+    },
+    fields: [
+      {
+        name: 'tagID',
         type: 'text',
       },
       {

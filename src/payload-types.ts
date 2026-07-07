@@ -1086,21 +1086,43 @@ export interface Search {
   id: number;
   title?: string | null;
   priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
+  doc:
+    | {
+        relationTo: 'posts';
+        value: number | Post;
+      }
+    | {
+        relationTo: 'videos';
+        value: number | Video;
+      };
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
     image?: (number | null) | Media;
   };
+  heroImage?: (number | null) | Media;
   publishedAt?: string | null;
   categories?:
     | {
         relationTo?: string | null;
         categoryID?: string | null;
+        title?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  summary?: string | null;
+  originalTitle?: string | null;
+  originalAuthor?: string | null;
+  cover?: (number | null) | Media;
+  topic?: {
+    topicID?: string | null;
+    slug?: string | null;
+    title?: string | null;
+  };
+  tags?:
+    | {
+        tagID?: string | null;
         title?: string | null;
         id?: string | null;
       }[]
@@ -1976,12 +1998,31 @@ export interface SearchSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  heroImage?: T;
   publishedAt?: T;
   categories?:
     | T
     | {
         relationTo?: T;
         categoryID?: T;
+        title?: T;
+        id?: T;
+      };
+  summary?: T;
+  originalTitle?: T;
+  originalAuthor?: T;
+  cover?: T;
+  topic?:
+    | T
+    | {
+        topicID?: T;
+        slug?: T;
+        title?: T;
+      };
+  tags?:
+    | T
+    | {
+        tagID?: T;
         title?: T;
         id?: T;
       };

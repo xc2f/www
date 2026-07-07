@@ -1,6 +1,6 @@
 // src/collections/Mails.ts
 import { CollectionConfig } from 'payload'
-import { authenticated } from '../../access/authenticated'
+import { adminAccess, adminOnly } from '../../access/roles'
 
 export const Mails: CollectionConfig = {
   slug: 'mails',
@@ -9,11 +9,13 @@ export const Mails: CollectionConfig = {
     defaultColumns: ['subject', 'to', 'sendStatus', 'createdAt'],
     group: 'Tools',
   },
+  defaultSort: '-createdAt',
   access: {
-    create: authenticated,
-    read: authenticated,
-    update: authenticated,
-    delete: authenticated,
+    admin: adminAccess,
+    create: adminOnly,
+    read: adminOnly,
+    update: adminOnly,
+    delete: adminOnly,
   },
   fields: [
     /** From */
@@ -220,11 +222,16 @@ export const Mails: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async ({ doc, req }) => {
-        const { sendStatus, _status } = doc
-        if (sendStatus === 'sent' || _status === 'draft') {
+      async ({ context, doc, req }) => {
+        if (context.skipEmailQueue) {
           return doc
         }
+
+        const { sendStatus, _status } = doc
+        if (sendStatus !== 'pending' || _status === 'draft') {
+          return doc
+        }
+
         await req.payload.jobs.queue({
           task: 'send-email',
           req,

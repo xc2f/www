@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../../access/authenticated'
+import { adminOrEditor } from '../../access/roles'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { slugField } from 'payload'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -8,15 +8,15 @@ import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 export const Moments: CollectionConfig = {
   slug: 'moments',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: adminOrEditor,
+    delete: adminOrEditor,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: adminOrEditor,
   },
   defaultSort: '-publishedAt',
   admin: {
-    useAsTitle: 'title',
     defaultColumns: ['title', 'publishedAt', '_status'],
+    group: 'Content',
     livePreview: {
       url: ({ data: _data, req }) =>
         generatePreviewPath({
@@ -33,6 +33,7 @@ export const Moments: CollectionConfig = {
         collection: 'moments',
         req,
       }),
+    useAsTitle: 'title',
   },
   fields: [
     {

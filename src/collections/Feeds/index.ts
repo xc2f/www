@@ -1,22 +1,23 @@
 import type { CollectionConfig } from 'payload'
 
-import { anyone } from '../../access/anyone'
-import { authenticated } from '../../access/authenticated'
+import { adminOrEditor } from '../../access/roles'
+import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { slugField } from 'payload'
 
 export const Feeds: CollectionConfig = {
   slug: 'feeds',
   access: {
-    create: authenticated,
-    delete: authenticated,
-    read: anyone,
-    update: authenticated,
+    create: adminOrEditor,
+    delete: adminOrEditor,
+    read: authenticatedOrPublished,
+    update: adminOrEditor,
   },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'feedUrl', 'enabled', '_status', 'updatedAt'],
     group: 'Tools',
   },
+  defaultSort: '-updatedAt',
   fields: [
     {
       name: 'title',
@@ -78,6 +79,7 @@ export const Feeds: CollectionConfig = {
 
         const result = await payload.find({
           collection: 'feeds',
+          overrideAccess: false,
           where: {
             slug: { equals: slug },
             enabled: { equals: true },

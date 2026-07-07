@@ -4,8 +4,8 @@ import path from 'path'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 
 export const backupDatabaseTask = async function () {
-  const DATE = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
-  const FILE_NAME = `backup_${DATE}.sql.gz`
+  const TIMESTAMP = new Date().toISOString().replace(/[:.]/g, '-')
+  const FILE_NAME = `backup_${TIMESTAMP}.sql.gz`
   const LOCAL_PATH = path.join('/tmp', FILE_NAME)
 
   console.log('🚀 Starting database dump...')

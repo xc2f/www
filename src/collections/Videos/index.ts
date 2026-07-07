@@ -9,7 +9,7 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticated } from '../../access/authenticated'
+import { adminOrEditor } from '../../access/roles'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -21,14 +21,15 @@ import { slugField } from 'payload'
 export const Videos: CollectionConfig = {
   slug: 'videos',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: adminOrEditor,
+    delete: adminOrEditor,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: adminOrEditor,
   },
   admin: {
-    useAsTitle: 'title',
     defaultColumns: ['title', 'topic', 'publishedAt', '_status'],
+    group: 'Content',
+    useAsTitle: 'title',
   },
   defaultSort: '-publishedAt',
   fields: [

@@ -1,8 +1,9 @@
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 
 import type { Post } from '../../../payload-types'
+import { getLocalizedPaths, revalidateLocalizedPath } from '../../../utilities/revalidateLocalizedPath'
 
 export const revalidatePost: CollectionAfterChangeHook<Post> = ({
   doc,
@@ -13,9 +14,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
     if (doc._status === 'published') {
       const path = `/posts/${doc.slug}`
 
-      payload.logger.info(`Revalidating post at path: ${path}`)
+      payload.logger.info(`Revalidating post at paths: ${getLocalizedPaths(path).join(', ')}`)
 
-      revalidatePath(path)
+      revalidateLocalizedPath(path)
       revalidateTag('posts-sitemap')
     }
 
@@ -23,9 +24,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
     if (previousDoc._status === 'published' && doc._status !== 'published') {
       const oldPath = `/posts/${previousDoc.slug}`
 
-      payload.logger.info(`Revalidating old post at path: ${oldPath}`)
+      payload.logger.info(`Revalidating old post at paths: ${getLocalizedPaths(oldPath).join(', ')}`)
 
-      revalidatePath(oldPath)
+      revalidateLocalizedPath(oldPath)
       revalidateTag('posts-sitemap')
     }
   }
@@ -36,7 +37,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { 
   if (!context.disableRevalidate) {
     const path = `/posts/${doc?.slug}`
 
-    revalidatePath(path)
+    revalidateLocalizedPath(path)
     revalidateTag('posts-sitemap')
   }
 

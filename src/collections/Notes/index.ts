@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { authenticated } from '../../access/authenticated'
+import { adminAccess, adminOnly } from '../../access/roles'
 
 import { Code } from '../../blocks/Code/config'
 
@@ -9,11 +9,13 @@ export const Notes: CollectionConfig = {
     useAsTitle: 'title',
     group: 'Tools',
   },
+  defaultSort: '-updatedAt',
   access: {
-    create: authenticated,
-    read: authenticated,
-    update: authenticated,
-    delete: authenticated,
+    admin: adminAccess,
+    create: adminOnly,
+    read: adminOnly,
+    update: adminOnly,
+    delete: adminOnly,
   },
   fields: [
     {

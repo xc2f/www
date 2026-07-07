@@ -6,6 +6,7 @@ export async function findFeedBySlug(slug: string) {
 
   const { docs } = await payload.find({
     collection: 'feeds',
+    overrideAccess: false,
     where: {
       slug: { equals: slug },
       enabled: { equals: true },

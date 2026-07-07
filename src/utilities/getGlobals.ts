@@ -15,6 +15,7 @@ async function getGlobal(slug: Global, depth = 0, locale: Locale) {
     slug,
     depth,
     locale,
+    overrideAccess: false,
   })
 
   return global

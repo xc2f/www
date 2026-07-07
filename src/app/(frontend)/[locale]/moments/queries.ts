@@ -1,7 +1,7 @@
 import configPromise from '@payload-config'
 import { draftMode } from 'next/headers'
 import { cache } from 'react'
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 
 import type { Locale } from '@/i18n/types'
 import type { Media, Moment } from '@/payload-types'
@@ -48,6 +48,11 @@ export const queryMomentsPage = cache(
   }) => {
     const { isEnabled: draft } = await draftMode()
     const payload = await getPayload({ config: configPromise })
+    const where: Where | undefined = draft
+      ? undefined
+      : {
+          _status: { equals: 'published' },
+        }
 
     const moments = await payload.find({
       collection: 'moments',
@@ -64,9 +69,7 @@ export const queryMomentsPage = cache(
         content: true,
         publishedAt: true,
       },
-      where: {
-        _status: { equals: 'published' },
-      },
+      ...(where ? { where } : {}),
     })
 
     return {

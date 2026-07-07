@@ -1,8 +1,9 @@
 import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
 
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 
 import type { Page } from '../../../payload-types'
+import { getLocalizedPaths, revalidateLocalizedPath } from '../../../utilities/revalidateLocalizedPath'
 
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
@@ -13,9 +14,9 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
     if (doc._status === 'published') {
       const path = doc.slug === 'home' ? '/' : `/${doc.slug}`
 
-      payload.logger.info(`Revalidating page at path: ${path}`)
+      payload.logger.info(`Revalidating page at paths: ${getLocalizedPaths(path).join(', ')}`)
 
-      revalidatePath(path)
+      revalidateLocalizedPath(path)
       revalidateTag('pages-sitemap')
     }
 
@@ -23,9 +24,9 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
     if (previousDoc?._status === 'published' && doc._status !== 'published') {
       const oldPath = previousDoc.slug === 'home' ? '/' : `/${previousDoc.slug}`
 
-      payload.logger.info(`Revalidating old page at path: ${oldPath}`)
+      payload.logger.info(`Revalidating old page at paths: ${getLocalizedPaths(oldPath).join(', ')}`)
 
-      revalidatePath(oldPath)
+      revalidateLocalizedPath(oldPath)
       revalidateTag('pages-sitemap')
     }
   }
@@ -35,7 +36,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 export const revalidateDelete: CollectionAfterDeleteHook<Page> = ({ doc, req: { context } }) => {
   if (!context.disableRevalidate) {
     const path = doc?.slug === 'home' ? '/' : `/${doc?.slug}`
-    revalidatePath(path)
+    revalidateLocalizedPath(path)
     revalidateTag('pages-sitemap')
   }
 

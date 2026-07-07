@@ -1,12 +1,25 @@
 import React from 'react'
 
-import type { Video } from '@/payload-types'
+import type { Media } from '@/payload-types'
 
+import { ArchiveCard } from '@/components/ArchiveCard'
 import { Card, type CardPostData } from '@/components/Card'
 import { cn } from '@/utilities/ui'
-import { VideoCard } from '../videos/VideoCard'
 
-type SearchResult =
+export type SearchVideoData = {
+  cover?: Media | null
+  href?: string | null
+  originalAuthor?: string | null
+  publishedAt?: string | null
+  summary?: string | null
+  tags?: { title?: string | null }[] | null
+  title?: string | null
+  topic?: {
+    title?: string | null
+  } | null
+}
+
+export type SearchResult =
   | {
       id: string
       post: CardPostData
@@ -15,7 +28,7 @@ type SearchResult =
   | {
       id: string
       type: 'video'
-      video: Video
+      video: SearchVideoData
     }
 
 type SearchResultsGridProps = {
@@ -32,7 +45,21 @@ export function SearchResultsGrid({ className, results }: SearchResultsGridProps
             {result.type === 'post' ? (
               <Card className="h-full" doc={result.post} relationTo="posts" showCategories />
             ) : (
-              <VideoCard className="h-full" video={result.video} />
+              <ArchiveCard
+                className="h-full"
+                description={result.video.summary}
+                href={result.video.href}
+                image={result.video.cover}
+                placeholderLabel="XC2F / VIDEO"
+                publishedAt={result.video.publishedAt}
+                tags={
+                  result.video.tags
+                    ?.map((tag) => tag.title)
+                    .filter((tag): tag is string => Boolean(tag)) ?? []
+                }
+                title={result.video.title}
+                topLabel={result.video.topic?.title}
+              />
             )}
           </div>
         ))}
