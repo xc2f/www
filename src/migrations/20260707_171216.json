@@ -13323,8 +13323,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "tag_i_d": {
-          "name": "tag_i_d",
+        "tag_id": {
+          "name": "tag_id",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -13465,8 +13465,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "topic_topic_i_d": {
-          "name": "topic_topic_i_d",
+        "topic_topic_id": {
+          "name": "topic_topic_id",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false

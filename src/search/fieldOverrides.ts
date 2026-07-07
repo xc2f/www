@@ -64,7 +64,7 @@ export const searchFields: Field[] = [
         type: 'text',
       },
       {
-        name: 'categoryID',
+        name: 'categoryId',
         type: 'text',
       },
       {
@@ -110,7 +110,7 @@ export const searchFields: Field[] = [
     },
     fields: [
       {
-        name: 'topicID',
+        name: 'topicId',
         type: 'text',
       },
       {
@@ -132,7 +132,7 @@ export const searchFields: Field[] = [
     },
     fields: [
       {
-        name: 'tagID',
+        name: 'tagId',
         type: 'text',
       },
       {

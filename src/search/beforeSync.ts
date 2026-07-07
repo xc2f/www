@@ -149,7 +149,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
 
     modifiedDoc.categories = populatedCategories.map((each) => ({
       relationTo: 'categories',
-      categoryID: String(each.id),
+      categoryId: String(each.id),
       title: each.title,
     }))
   }
@@ -163,7 +163,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
 
     if (populatedTopic) {
       modifiedDoc.topic = {
-        topicID: String(populatedTopic.id),
+        topicId: String(populatedTopic.id),
         slug: populatedTopic.slug,
         title: populatedTopic.title,
       }
@@ -178,7 +178,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
     })
 
     modifiedDoc.tags = populatedTags.map((each) => ({
-      tagID: String(each.id),
+      tagId: String(each.id),
       title: each.title,
     }))
   }

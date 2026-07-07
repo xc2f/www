@@ -6,7 +6,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"tag_i_d" varchar,
+    "tag_id" varchar,
   	"title" varchar
   );
   
@@ -15,7 +15,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "search" ADD COLUMN "original_title" varchar;
   ALTER TABLE "search" ADD COLUMN "original_author" varchar;
   ALTER TABLE "search" ADD COLUMN "cover_id" integer;
-  ALTER TABLE "search" ADD COLUMN "topic_topic_i_d" varchar;
+  ALTER TABLE "search" ADD COLUMN "topic_topic_id" varchar;
   ALTER TABLE "search" ADD COLUMN "topic_slug" varchar;
   ALTER TABLE "search" ADD COLUMN "topic_title" varchar;
   ALTER TABLE "search_rels" ADD COLUMN "videos_id" integer;
@@ -48,7 +48,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   ALTER TABLE "search" DROP COLUMN "original_title";
   ALTER TABLE "search" DROP COLUMN "original_author";
   ALTER TABLE "search" DROP COLUMN "cover_id";
-  ALTER TABLE "search" DROP COLUMN "topic_topic_i_d";
+  ALTER TABLE "search" DROP COLUMN "topic_topic_id";
   ALTER TABLE "search" DROP COLUMN "topic_slug";
   ALTER TABLE "search" DROP COLUMN "topic_title";
   ALTER TABLE "search_rels" DROP COLUMN "videos_id";`)

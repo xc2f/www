@@ -1106,7 +1106,7 @@ export interface Search {
   categories?:
     | {
         relationTo?: string | null;
-        categoryID?: string | null;
+        categoryId?: string | null;
         title?: string | null;
         id?: string | null;
       }[]
@@ -1116,13 +1116,13 @@ export interface Search {
   originalAuthor?: string | null;
   cover?: (number | null) | Media;
   topic?: {
-    topicID?: string | null;
+    topicId?: string | null;
     slug?: string | null;
     title?: string | null;
   };
   tags?:
     | {
-        tagID?: string | null;
+        tagId?: string | null;
         title?: string | null;
         id?: string | null;
       }[]
@@ -2004,7 +2004,7 @@ export interface SearchSelect<T extends boolean = true> {
     | T
     | {
         relationTo?: T;
-        categoryID?: T;
+        categoryId?: T;
         title?: T;
         id?: T;
       };
@@ -2015,14 +2015,14 @@ export interface SearchSelect<T extends boolean = true> {
   topic?:
     | T
     | {
-        topicID?: T;
+        topicId?: T;
         slug?: T;
         title?: T;
       };
   tags?:
     | T
     | {
-        tagID?: T;
+        tagId?: T;
         title?: T;
         id?: T;
       };

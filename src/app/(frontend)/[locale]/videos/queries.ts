@@ -10,12 +10,12 @@ export const queryPublishedVideos = cache(
     limit = 12,
     locale,
     page = 1,
-    topicID,
+    topicId,
   }: {
     limit?: number
     locale: Locale
     page?: number
-    topicID?: number
+    topicId?: number
   }) => {
     const payload = await getPayload({ config: configPromise })
 
@@ -34,11 +34,11 @@ export const queryPublishedVideos = cache(
               equals: 'published',
             },
           },
-          ...(topicID
+          ...(topicId
             ? [
                 {
                   topic: {
-                    equals: topicID,
+                    equals: topicId,
                   },
                 },
               ]
@@ -74,7 +74,7 @@ export const queryVideoTopicBySlug = cache(
 )
 
 export const queryVideoBySlugAndTopic = cache(
-  async ({ locale, slug, topicID }: { locale: Locale; slug: string; topicID: number }) => {
+  async ({ locale, slug, topicId }: { locale: Locale; slug: string; topicId: number }) => {
     const { isEnabled: draft } = await draftMode()
     const payload = await getPayload({ config: configPromise })
 
@@ -95,7 +95,7 @@ export const queryVideoBySlugAndTopic = cache(
           },
           {
             topic: {
-              equals: topicID,
+              equals: topicId,
             },
           },
         ],

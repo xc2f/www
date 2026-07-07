@@ -39,7 +39,7 @@ export default async function Page({ params }: Args) {
   const video = await queryVideoBySlugAndTopic({
     locale,
     slug: decodedVideoSlug,
-    topicID: topic.id,
+    topicId: topic.id,
   })
 
   if (!video) notFound()
@@ -214,7 +214,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const video = await queryVideoBySlugAndTopic({
     locale,
     slug: decodedVideoSlug,
-    topicID: topic.id,
+    topicId: topic.id,
   })
 
   if (!video) return {}

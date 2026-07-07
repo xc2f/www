@@ -29,7 +29,7 @@ export default async function Page({ params }: Args) {
 
   if (!topic) notFound()
 
-  const videos = await queryPublishedVideos({ limit: 100, locale, topicID: topic.id })
+  const videos = await queryPublishedVideos({ limit: 100, locale, topicId: topic.id })
 
   return (
     <div className="pb-24">
