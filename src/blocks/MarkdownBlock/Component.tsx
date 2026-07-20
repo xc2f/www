@@ -20,6 +20,7 @@ import rehypeSanitize, { defaultSchema, type Options as SanitizeOptions } from '
 
 import { Code as CodeHighlighter } from '../Code/Component.client'
 import { Checkbox } from '@/components/ui/checkbox'
+import { MermaidDiagram } from './MermaidDiagram'
 
 import './style.scss'
 
@@ -71,6 +72,9 @@ export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
           const match = /language-(\w+)/.exec(className || '')
           if (match) {
             const content = String(children).trim()
+            if (match[1] === 'mermaid') {
+              return <MermaidDiagram chart={content} />
+            }
             return <CodeHighlighter code={content} language={match[1]} />
           }
           return (

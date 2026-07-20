@@ -16,6 +16,352 @@
 }
 
 .markdown {
+  .mermaid-diagram {
+    --mermaid-surface: rgb(248 251 252 / 0.78);
+    --mermaid-surface-strong: rgb(255 255 255 / 0.92);
+    --mermaid-surface-soft: rgb(241 245 249 / 0.58);
+    --mermaid-border: rgb(15 23 42 / 0.105);
+    --mermaid-border-soft: rgb(15 23 42 / 0.07);
+    --mermaid-border-signal: rgb(125 215 255 / 0.28);
+    --mermaid-text: rgb(15 23 42 / 0.84);
+    --mermaid-text-muted: rgb(71 85 105 / 0.72);
+    --mermaid-line: rgb(51 65 85 / 0.4);
+    --mermaid-label: rgb(248 251 252 / 0.92);
+    --mermaid-node-glow: rgb(15 23 42 / 0.045);
+    --mermaid-node-highlight: rgb(255 255 255 / 0.58);
+
+    position: relative;
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 0;
+    border-radius: 1.05rem;
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.46), rgb(255 255 255 / 0) 18%),
+      radial-gradient(circle at 12% 18%, rgb(255 143 114 / 0.045), transparent 30%),
+      radial-gradient(circle at 88% 16%, rgb(125 215 255 / 0.055), transparent 34%),
+      rgb(248 251 252 / 0.68);
+    box-shadow: 0 12px 34px rgb(15 23 42 / 0.055);
+    @include custom-scrollbar;
+
+    &::before {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      content: '';
+      background-image:
+        linear-gradient(rgb(15 23 42 / 0.026) 1px, transparent 1px),
+        linear-gradient(90deg, rgb(15 23 42 / 0.026) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, transparent, black 18%, black 82%, transparent);
+    }
+
+    .mermaid-diagram__canvas {
+      position: relative;
+      min-width: min-content;
+      padding: 1.5rem;
+    }
+
+    svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+      overflow: visible;
+      font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+      color: var(--mermaid-text);
+    }
+
+    .label,
+    .label text,
+    .nodeLabel,
+    .edgeLabel,
+    .messageText,
+    .actor,
+    .noteText,
+    .taskText,
+    .titleText,
+    .sectionTitle {
+      color: var(--mermaid-text);
+      fill: var(--mermaid-text) !important;
+      font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif !important;
+      font-size: 13px;
+      font-weight: 450;
+      letter-spacing: 0;
+    }
+
+    .nodeLabel,
+    .nodeLabel p,
+    .node span,
+    .node foreignObject div {
+      color: var(--mermaid-text) !important;
+      line-height: 1.25 !important;
+    }
+
+    .node foreignObject {
+      overflow: visible;
+    }
+
+    .node foreignObject > div {
+      display: flex !important;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .nodeLabel,
+    .nodeLabel p,
+    .nodeLabel span,
+    .node span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 !important;
+      padding: 0 !important;
+      text-align: center;
+    }
+
+    .node text,
+    .node tspan {
+      dominant-baseline: middle;
+      alignment-baseline: middle;
+    }
+
+    .node .label {
+      padding: 0 0.1rem;
+    }
+
+    .edgeLabel,
+    .edgeLabel p {
+      color: var(--mermaid-text-muted);
+      background: var(--mermaid-label) !important;
+    }
+
+    .edgeLabel rect {
+      fill: var(--mermaid-label) !important;
+      opacity: 0.88 !important;
+    }
+
+    .node rect,
+    .node circle,
+    .node ellipse,
+    .node polygon,
+    .node path,
+    .actor,
+    .note,
+    .loopLine,
+    .cluster rect {
+      fill: var(--mermaid-surface) !important;
+      stroke: var(--mermaid-border) !important;
+      stroke-width: 0.85px !important;
+      vector-effect: non-scaling-stroke;
+      filter: drop-shadow(0 10px 18px var(--mermaid-node-glow));
+    }
+
+    .node rect,
+    .node path {
+      rx: 7px;
+      ry: 7px;
+    }
+
+    .node.default rect,
+    .node.default circle,
+    .node.default ellipse,
+    .node.default polygon,
+    .node.default path {
+      fill: var(--mermaid-surface-strong) !important;
+      stroke: var(--mermaid-border-signal) !important;
+    }
+
+    .node.default rect,
+    .node.default path {
+      filter:
+        drop-shadow(0 9px 16px var(--mermaid-node-glow))
+        drop-shadow(0 -1px 0 var(--mermaid-node-highlight));
+    }
+
+    .node polygon,
+    .node circle,
+    .node ellipse {
+      filter: drop-shadow(0 8px 14px var(--mermaid-node-glow));
+    }
+
+    .node .divider {
+      stroke: var(--mermaid-border-soft) !important;
+      stroke-width: 0.8px !important;
+    }
+
+    .node.clickable {
+      cursor: pointer;
+
+      rect,
+      circle,
+      ellipse,
+      polygon,
+      path {
+        transition:
+          fill 180ms ease,
+          stroke 180ms ease,
+          filter 180ms ease;
+      }
+
+      &:hover {
+        rect,
+        circle,
+        ellipse,
+        polygon,
+        path {
+          fill: color-mix(in oklab, var(--mermaid-surface-strong) 88%, rgb(125 215 255 / 0.12)) !important;
+          stroke: var(--mermaid-border-signal) !important;
+          filter: drop-shadow(0 12px 22px var(--mermaid-node-glow));
+        }
+      }
+    }
+
+    .node[class*='flowchart-'] rect,
+    .node[class*='flowchart-'] path {
+      stroke-linejoin: round;
+    }
+
+    .cluster rect {
+      fill: var(--mermaid-surface-soft) !important;
+      stroke: var(--mermaid-border-soft) !important;
+      stroke-dasharray: 3 7;
+      filter: none;
+    }
+
+    .edgePath .path,
+    .flowchart-link,
+    .messageLine0,
+    .messageLine1,
+    .loopLine,
+    .relation,
+    .transition,
+    line {
+      stroke: var(--mermaid-line) !important;
+      stroke-width: 1.15px !important;
+    }
+
+    marker path,
+    marker polygon {
+      fill: var(--mermaid-line) !important;
+      stroke: var(--mermaid-line) !important;
+    }
+
+    .actor-line {
+      stroke: var(--mermaid-line) !important;
+      stroke-width: 1px !important;
+      stroke-dasharray: 4 6;
+    }
+
+    .note {
+      fill: rgb(255 212 121 / 0.14) !important;
+      stroke: rgb(180 83 9 / 0.18) !important;
+    }
+
+    .section,
+    .task {
+      fill: var(--mermaid-surface) !important;
+      stroke: var(--mermaid-border) !important;
+    }
+
+    .grid .tick line {
+      stroke: rgb(15 23 42 / 0.08) !important;
+    }
+
+    .today {
+      stroke: rgb(255 143 114 / 0.68) !important;
+      stroke-width: 1.5px !important;
+    }
+  }
+
+  .mermaid-diagram__placeholder {
+    padding: 2rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-align: center;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
+  }
+
+  .mermaid-diagram--error {
+    border-color: rgb(255 143 114 / 0.28);
+
+    figcaption {
+      padding: 0.85rem 1rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgb(255 143 114 / 0.92);
+    }
+
+    pre {
+      margin: 0;
+      padding: 0.85rem 1rem 1rem;
+      overflow-x: auto;
+      background: transparent;
+      color: var(--muted-foreground);
+      box-shadow: none;
+    }
+  }
+
+  :where([data-theme='dark']) & {
+    .mermaid-diagram {
+      --mermaid-surface: rgb(10 16 23 / 0.82);
+      --mermaid-surface-strong: rgb(12 19 27 / 0.92);
+      --mermaid-surface-soft: rgb(255 255 255 / 0.026);
+      --mermaid-border: rgb(255 255 255 / 0.095);
+      --mermaid-border-soft: rgb(255 255 255 / 0.06);
+      --mermaid-border-signal: rgb(125 215 255 / 0.22);
+      --mermaid-text: rgb(255 255 255 / 0.76);
+      --mermaid-text-muted: rgb(255 255 255 / 0.5);
+      --mermaid-line: rgb(125 215 255 / 0.38);
+      --mermaid-label: rgb(8 13 18 / 0.94);
+      --mermaid-node-glow: rgb(0 0 0 / 0.18);
+      --mermaid-node-highlight: rgb(255 255 255 / 0.035);
+
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(255 255 255 / 0) 20%),
+        radial-gradient(circle at 12% 18%, rgb(255 143 114 / 0.045), transparent 30%),
+        radial-gradient(circle at 88% 16%, rgb(125 215 255 / 0.05), transparent 34%),
+        rgb(6 10 15 / 0.68);
+      box-shadow: 0 16px 42px rgb(0 0 0 / 0.2);
+
+      &::before {
+        background-image:
+          linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+      }
+
+      .node rect,
+      .node circle,
+      .node ellipse,
+      .node polygon,
+      .node path,
+      .actor,
+      .note,
+      .loopLine,
+      .cluster rect {
+        filter: drop-shadow(0 14px 24px rgb(0 0 0 / 0.18));
+      }
+
+      .cluster rect {
+        filter: none;
+      }
+
+      .note {
+        fill: rgb(255 212 121 / 0.07) !important;
+        stroke: rgb(255 212 121 / 0.18) !important;
+      }
+
+      .grid .tick line {
+        stroke: rgb(255 255 255 / 0.07) !important;
+      }
+    }
+  }
+
   .table-container {
     overflow-x: auto;
     margin: 2rem 0;
