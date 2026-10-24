@@ -1,4 +1,6 @@
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { text } from '@payloadcms/db-sqlite/drizzle/sqlite-core'
+import { mkdirSync } from 'node:fs'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -32,9 +34,13 @@ import { en } from '@payloadcms/translations/languages/en'
 import { zh } from '@payloadcms/translations/languages/zh'
 
 import { endpoints } from './endpoints'
+import { sqliteFilePath, sqliteURL } from './utilities/sqlite'
+import { migrations } from './migrations/sqlite'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const databaseURL = sqliteURL()
+mkdirSync(path.dirname(sqliteFilePath(databaseURL)), { recursive: true })
 
 const requireEnv = (name: string): string => {
   const value = process.env[name]
@@ -103,12 +109,29 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URL,
-    },
-    // push: true,
-    // prodMigrations: migrations,
+  db: sqliteAdapter({
+    client: { url: databaseURL },
+    autoIncrement: true,
+    busyTimeout: 30000,
+    wal: { synchronous: 'FULL', journalSizeLimit: 16 * 1024 * 1024 },
+    transactionOptions: { behavior: 'immediate' },
+    migrationDir: path.resolve(dirname, 'migrations/sqlite'),
+    prodMigrations: migrations,
+    afterSchemaInit: [
+      ({ schema, extendTable }) => {
+        // Older production search rows retain these pre-localization values.
+        // Keep them in the schema so development schema pushes cannot discard them.
+        extendTable({
+          table: schema.tables.search,
+          columns: {
+            legacyMetaTitle: text('meta_title'),
+            legacyMetaDescription: text('meta_description'),
+            legacySummary: text('summary'),
+          },
+        })
+        return schema
+      },
+    ],
   }),
   collections: [
     Media,
@@ -176,12 +199,15 @@ export default buildConfig({
         ],
       },
     ],
-    autoRun: [
-      {
-        cron: '* * * * *', // Run every minute
-        limit: 100,
-      },
-    ],
+    autoRun:
+      process.env.DISABLE_BACKGROUND_JOBS === 'true'
+        ? []
+        : [
+            {
+              cron: '* * * * *', // Run every minute
+              limit: 100,
+            },
+          ],
     jobsCollectionOverrides: ({ defaultJobsCollection }) => {
       if (!defaultJobsCollection.admin) {
         defaultJobsCollection.admin = {}

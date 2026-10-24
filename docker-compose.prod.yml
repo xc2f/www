@@ -1,35 +1,18 @@
 services:
   payload:
-    image:
-      public.ecr.aws/umcai/xc2f/payload:latest
-      # public.ecr.aws/umcai/xc2f/payload:dev-latest
+    image: public.ecr.aws/umcai/xc2f/payload:latest
     container_name: payload
-    # restart: unless-stopped
+    restart: unless-stopped
     ports:
       - '127.0.0.1:3000:3000'
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
-    depends_on:
-      - postgres
+    volumes:
+      - sqlite_data:/app/data
+    environment:
+      DATABASE_URL: file:/app/data/xc2f.db
     env_file:
       - .env
 
-  postgres:
-    image: postgres:18
-    container_name: postgres
-    restart: always
-    command: postgres -c config_file=/var/lib/postgresql/postgresql.conf
-    volumes:
-      - pgdata:/var/lib/postgresql
-      - ./postgres/postgresql.conf:/var/lib/postgresql/postgresql.conf:ro
-      - ./postgres/pg_hba.conf:/var/lib/postgresql/pg_hba.conf:ro
-    environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
-
 volumes:
-  pgdata:
+  sqlite_data:
     external: true
-    name: xc2f_pgdata
+    name: xc2f_sqlite_data

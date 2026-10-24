@@ -14,34 +14,20 @@ services:
     ports:
       - '127.0.0.1:3000:3000'
     volumes:
+      - sqlite_data:/app/data
       - .:/app
       - node_modules:/app/node_modules
       - pnpm_store:/home/node/.pnpm-store
       - ~/.aws:/home/node/.aws
-    environment:
-      NODE_ENV: development
     env_file:
       - .env
-    depends_on:
-      - postgres
-
-  postgres:
-    image: postgres:18
-    container_name: postgres
-    restart: always
-    command: postgres -c config_file=/var/lib/postgresql/postgresql.conf
-    volumes:
-      - pgdata:/var/lib/postgresql
-      - ./postgres/postgresql.conf:/var/lib/postgresql/postgresql.conf:ro
-      - ./postgres/pg_hba.conf:/var/lib/postgresql/pg_hba.conf:ro
+    # Keep SQLite outside the bind-mounted source directory.
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
+      NODE_ENV: development
+      DATABASE_URL: file:/app/data/xc2f.db
 
 volumes:
-  pgdata:
-    external: true
-    name: xc2f_pgdata
+  sqlite_data:
+    name: xc2f_sqlite_dev_data
   pnpm_store:
   node_modules:

@@ -25,3 +25,11 @@ pnpm-debug.log*
 
 # misc
 .DS_Store
+
+# Local SQLite databases and private migration exports
+data/
+backups/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*

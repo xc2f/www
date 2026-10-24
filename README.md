@@ -16,175 +16,95 @@ A personal research project forked from the Payload CMS [website](https://github
 - Organized Payload Admin collections with grouped navigation, default sorting, and icon labels.
 - Production-safe seed endpoint: demo seeding is disabled when `NODE_ENV=production`.
 
+## Database
+
+The application uses local SQLite through `@payloadcms/db-sqlite`, with WAL,
+explicit transactions, and a 30-second busy timeout. Media stays in S3/R2.
+Production uses a single application instance and a local persistent Docker volume.
+
+**Existing PostgreSQL deployments:** follow [the migration runbook](docs/sqlite-migration.md)
+before deploying this version. Changing the adapter does not migrate your data.
+The original PostgreSQL volume and migrations are retained for rollback.
+
 ## Develop
 
-### Start Server
+1. Copy `.env.example` to `.env` and configure Payload secrets and S3/R2 credentials.
+2. Run `pnpm install --frozen-lockfile`.
+3. Run `pnpm db:init`, then `pnpm dev`.
+
+On the host, the default database is `data/xc2f.db`. Docker Compose uses
+`file:/app/data/xc2f.db` in the separate `xc2f_sqlite_dev_data` volume:
 
 ```bash
-docker-compose up -d
+docker compose up -d --build
 ```
 
-### Initial Admin Account
+Local files in `data/` and `backups/` are excluded from Git and Docker build contexts.
+A host database is not automatically copied into the Docker development volume.
+Keep `DISABLE_BACKGROUND_JOBS=true` when running a local copy of production data.
 
-- Email: `admin@local.host`
-- Password: `123456`
+Development auto-login is configured in `src/payload.config.ts` for the original
+local seed account. Imported production accounts retain their own credentials;
+use those credentials to sign in.
 
-### Admin Collections
-
-Payload Admin collections are grouped for easier navigation:
-
-- `Content`: Pages, Posts, Moments, Videos
-- `Taxonomy`: Categories, Tags, Video Topics
-- `Media`: Media
-- `Tools`: Feeds, Mails, Notes
-- `System`: Users
-
-Collections also define default list sorting. Content lists generally sort by latest publish or update time, taxonomy lists sort by title, and operational collections sort by latest activity.
-
-### Seed Data
-
-The local seed route is:
+## Validation
 
 ```bash
-POST /next/seed
+pnpm test:sqlite
+pnpm exec tsc --noEmit
+pnpm build
 ```
 
-It resets demo content and should only be used for local or test environments. In production, the route returns `404` and does not run.
+`test:sqlite` verifies COPY decoding, authentication hash preservation, sequence
+continuity, refusal to overwrite populated databases, transactional rollback,
+and restoring committed WAL data from a compressed SQLite backup.
 
-## Build
+The migration runbook also covers testing Payload against a disposable copy of
+real data, including authentication, drafts, versions, localized content, and search.
 
-Docker images are built using GitHub Actions. You need to configure the following environment variables in your [GitHub Environment Settings](https://github.com/xc2f/www/settings/environments).
+## Build and deploy
 
-- AWS_OIDC_ROLE
-- AWS_ECR_REGISTRY
-- NEXT_PUBLIC_SERVER_URL
-- NEXT_PUBLIC_SITE_NAME
+GitHub Actions builds the production standalone image and pushes it to ECR:
 
-The workflows load `.env.example` as build-time defaults, then override the public build variables above from GitHub environment variables. The deployed application still requires the runtime environment variables documented in `.env.example`, including Payload, database, preview/cron secrets, email settings, and S3/R2 storage settings.
-
-Required S3/R2 storage variables:
-
-- S3_ENDPOINT
-- S3_BUCKET
-- S3_ACCESS_KEY_ID
-- S3_SECRET
-- S3_REGION, optional, defaults to `auto`
-
-The ARM image is built by default. To build an x86 (linux/amd64) image, search for `ubuntu-latest` and `linux/amd64` in the `.github/workflows/` files and uncomment the corresponding lines.
-
-## Deploy
-
-### Deploy with Docker Compose (Recommended)
-
-```bash
-# Required files
-docker-compose.prod.yml
-.env
-postgres/**
-
-# Optional files
-scripts/**
-```
-
-#### 1. Production Image
-
-> In most cases, the server should use this image
-
-```bash
+```text
 public.ecr.aws/umcai/xc2f/payload:latest
 ```
 
-After pushing to the `main` branch, GitHub CI will build a standalone mode image and push it to ECR.
+Configure `AWS_OIDC_ROLE`, `AWS_ECR_REGISTRY`, `NEXT_PUBLIC_SERVER_URL`, and
+`NEXT_PUBLIC_SITE_NAME` in the GitHub production environment. Builds use an isolated
+SQLite path, and local database files are excluded from the image.
 
-#### 2. Production Image with Dev Environment
+Runtime requires the secrets and S3/R2 variables documented in `.env.example`.
+`DATABASE_URL` is fixed by Compose to `file:/app/data/xc2f.db`; the standalone
+application runs as UID/GID `1001:1001` and the database directory must be writable.
 
-```bash
-public.ecr.aws/umcai/xc2f/payload:dev-latest
-```
-
-This image supports running `pnpm` scripts, such as `pnpm payload migrate`.
-You need to dispatch `Build and Push Dev Image` manually in CI.
-
-### Deploy with Docker + Build Branch
+After preparing and verifying the persistent `xc2f_sqlite_data` volume:
 
 ```bash
-# .env
-APP_CMD=start
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-1. Manually dispatch `Build and Push to Build Branch` in CI.
-2. The server needs to pull the latest project code (dependencies not required).
-3. Build a local image: `docker-compose build`
-4. On the server side, deploy with: `pnpm run deploy:build`
-
-### Deploy with Build Branch
-
-1. Manually dispatch `Build and Push to Build Branch` in CI.
-2. The server needs to pull the latest code and install dependencies.
-3. On the server side, deploy with: `pnpm run deploy:build`
-
-## Troubleshooting
-
-- On first startup, you may encounter an error indicating that `external volume "xc2f_pgdata" not found`. You can resolve this by commenting out the `volumes.pgdata.external` and `volumes.pgdata.name` lines in `docker-compose.yml`. Or you can create the xc2f_pgdata volume by running `docker volume create xc2f_pgdata`.
-- On first startup or after new table structures are added, enter the payload container to run `pnpm payload migrate:create` and `pnpm payload migrate`.
-- If the API returns a 404, check if the URL is being processed by locale middleware. Exclude the API prefix in `src/middleware.ts`.
-- If startup fails with `Missing required environment variable: S3_*`, check the S3/R2 variables in `.env`. Storage is configured at Payload startup and missing credentials fail fast.
-
-## Commands
-
-### docker-compose
-
-- build: `docker-compose build`
-- stop: `docker-compose down`
-- start: `docker-compose up -d`
-- enter payload container: `docker-compose exec payload sh`
-
-### Stash A File with Git
+`pnpm deploy` checks that the SQLite volume and database file exist before replacing
+the application. The standalone application applies bundled SQLite migrations on
+startup. New SQLite schema changes need a committed migration:
 
 ```bash
-git stash push -- docker-compose.yml
+pnpm payload migrate:create describe_change
+pnpm generate:types
+pnpm generate:importmap
 ```
 
-### Change Postgres volume name
+SQLite migrations live in `src/migrations/sqlite`. PostgreSQL history is archived
+under `src/migrations/postgres` and is never run against SQLite.
 
-```bash
-docker run --rm -v ${FROM_NAME_pgdata}:/from -v ${TO_NAME_pgdata}:/to alpine sh -c "cd /from && cp -a . /to"
-```
+## Backups
 
-### Change Postgres Password
+The scheduled task and admin backup endpoint create a consistent SQLite snapshot
+using `sqlite3 VACUUM INTO`, gzip it, and upload it to `backups/` in S3/R2. Docker
+images include the SQLite CLI. Host installations also need `sqlite3` on `PATH`.
+See the runbook for restore and rollback steps.
 
-```bash
-docker-compose exec postgres sh
-psql -U postgres
-ALTER USER postgres WITH PASSWORD 'postgres';
-# Note: Put the new password in single quotes; end command with semicolon
-```
+## Seed data
 
-### Database Migration
-
-```bash
-# Enter payload container
-docker-compose exec payload sh
-
-# Create migration
-pnpm payload migrate:create
-
-# Apply migration
-pnpm payload migrate
-
-# Exit container
-exit
-
-# Confirm migration filename
-docker exec -it payload ls /app/src/migrations
-
-# Copy to host machine
-docker cp payload:/app/src/migrations/. ./migrations/
-
-# Merge and commit
-cd ~/www-code
-git pull
-cp -r ~/www/migrations/* ./src/migrations/
-git status
-git add -A && git commit -m "chore: generate payload migrations" && git push
-```
+`POST /next/seed` resets demo content in development/test environments only.
+The route returns `404` in production. Do not run it against imported data.

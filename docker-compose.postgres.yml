@@ -1,0 +1,22 @@
+# Legacy PostgreSQL, for read-only export or rollback. Never delete its volume during migration.
+services:
+  postgres:
+    image: postgres:18
+    container_name: postgres
+    restart: unless-stopped
+    command: postgres -c config_file=/var/lib/postgresql/postgresql.conf
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./postgres/postgresql.conf:/var/lib/postgresql/postgresql.conf:ro
+      - ./postgres/pg_hba.conf:/var/lib/postgresql/pg_hba.conf:ro
+    ports:
+      - '127.0.0.1:5432:5432'
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+
+volumes:
+  pgdata:
+    external: true
+    name: xc2f_pgdata

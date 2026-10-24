@@ -23,3 +23,11 @@ node_modules/
 
 # DB
 backups
+
+# Local SQLite databases and private migration exports
+data/
+backups/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*

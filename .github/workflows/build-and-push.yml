@@ -8,9 +8,8 @@ permissions:
   contents: read
 
 env:
-  # Build should not connect to Postgres. This sentinel URL fails fast if a
-  # future change reintroduces build-time database access.
-  DATABASE_URL: postgres://build:build@127.0.0.1:1/build
+  # Build uses an isolated SQLite path; runtime data is never part of the image.
+  DATABASE_URL: file:/tmp/xc2f-build.db
   AWS_OIDC_ROLE: ${{ vars.AWS_OIDC_ROLE }}
   AWS_ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY }}
   NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
@@ -106,6 +105,12 @@ jobs:
           echo "npm-debug.log*" >> .dockerignore
           echo "pnpm-debug.log*" >> .dockerignore
           echo ".DS_Store" >> .dockerignore
+          echo "data/" >> .dockerignore
+          echo "backups/" >> .dockerignore
+          echo "*.db" >> .dockerignore
+          echo "*.db-*" >> .dockerignore
+          echo "*.sqlite" >> .dockerignore
+          echo "*.sqlite-*" >> .dockerignore
           echo "==== Current .dockerignore ===="
           cat .dockerignore
 
