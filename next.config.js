@@ -11,6 +11,14 @@ const NEXT_PUBLIC_SERVER_URL =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // libsql selects its native package with a dynamic require that tracing can miss.
+  // Include both pnpm's native package files and the links used by libsql to resolve them.
+  outputFileTracingIncludes: {
+    '/*': [
+      'node_modules/.pnpm/libsql@*/node_modules/@libsql/**/*',
+      'node_modules/.pnpm/@libsql+*/node_modules/@libsql/**/*',
+    ],
+  },
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL, process.env.S3_ENDPOINT].filter(Boolean).map((item) => {

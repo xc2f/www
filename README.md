@@ -40,8 +40,9 @@ docker compose up -d --build
 ```
 
 Local files in `data/` and `backups/` are excluded from Git and Docker build contexts.
-Create `data/` before starting Docker (`pnpm db:init` also creates it). Compose refuses
-to create a missing bind directory automatically. Host and Docker now share this database;
+Create `data/` before starting Docker (`pnpm db:init` also creates it). The short bind
+syntax supports older `docker-compose` installations. The deployment script checks
+that the database exists before startup. Host and Docker now share this database;
 stop the host application before starting its Docker instance. On Linux the development
 container runs as UID/GID `1000:1000`; ensure that user can write the directory and database.
 Keep `DISABLE_BACKGROUND_JOBS=true` when running a local copy of production data.
@@ -86,7 +87,7 @@ and setting Linux permissions for the production user:
 
 ```bash
 sudo chown -R 1001:1001 ./data
-sudo chmod 700 ./data
+sudo chmod 755 ./data
 sudo chmod 600 ./data/xc2f.db
 ```
 

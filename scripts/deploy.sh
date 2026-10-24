@@ -1,26 +1,32 @@
 #!/usr/bin/env bash
 set -e
 
-# 如果 deploy.sh 和 docker-compose.yml 在同一层级
-# ======== 删除 begin ========
-PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$PROJECT_DIR"
-# ======== 删除 end ========
-
-# 定义文件路径变量，根据 docker-compose file name 更新
 COMPOSE_FILE="docker-compose.prod.yml"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Support both a standalone server upload and the repository's scripts/ layout.
+if [ -f "$SCRIPT_DIR/$COMPOSE_FILE" ]; then
+  PROJECT_DIR="$SCRIPT_DIR"
+elif [ -f "$SCRIPT_DIR/../$COMPOSE_FILE" ]; then
+  PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+else
+  echo "Cannot locate $COMPOSE_FILE beside the deployment script or in its parent directory."
+  exit 1
+fi
+cd "$PROJECT_DIR"
 
 echo "🚀 Starting deployment..."
 
 # Prevent an existing PostgreSQL installation from silently booting an empty site.
 if [ ! -f "$PROJECT_DIR/data/xc2f.db" ] || [ ! -s "$PROJECT_DIR/data/xc2f.db" ]; then
-  echo "data/xc2f.db is missing or empty. Complete docs/sqlite-migration.md before deploying."
+  echo "Database is missing, empty, or inaccessible: $PROJECT_DIR/data/xc2f.db"
+  echo "Check the database location and directory permissions before deploying."
   exit 1
 fi
 
 # 1. 拉取最新镜像
 echo "📥 Pulling latest images..."
-docker-compose -f $COMPOSE_FILE pull
+docker-compose -f "$COMPOSE_FILE" pull
 docker-compose -f "$COMPOSE_FILE" run --rm --no-deps --entrypoint node payload -e \
   'const fs = require("fs");
    const file = "/app/data/xc2f.db";
@@ -30,8 +36,8 @@ docker-compose -f "$COMPOSE_FILE" run --rm --no-deps --entrypoint node payload -
 
 # 2. 启动/更新容器
 echo "🆙 Starting containers..."
-docker-compose -f $COMPOSE_FILE down
-docker-compose -f $COMPOSE_FILE up -d
+docker-compose -f "$COMPOSE_FILE" down
+docker-compose -f "$COMPOSE_FILE" up -d
 
 # 3. 清理旧镜像
 echo "🧹 Cleaning up old images..."

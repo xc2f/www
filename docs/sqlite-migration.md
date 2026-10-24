@@ -74,12 +74,14 @@ Set `DISABLE_BACKGROUND_JOBS=true` for the first verification startup.
 Both Compose files bind the host `./data` directory to `/app/data`. The path is
 relative to the Compose file; no SQLite Docker volume needs to be created or populated.
 Prepare the directory while the application is stopped, and place the verified
-SQLite database at `data/xc2f.db`. Compose refuses to create a missing host directory.
+SQLite database at `data/xc2f.db`. The short bind syntax (`./data:/app/data`) supports
+older `docker-compose` installations without `create_host_path`. Prepare the data
+before startup; `scripts/deploy.sh` checks for a nonempty database.
 On a Linux production server, grant the standalone container's UID/GID 1001 access:
 
 ```bash
 sudo chown -R 1001:1001 ./data
-sudo chmod 700 ./data
+sudo chmod 755 ./data
 sudo chmod 600 ./data/xc2f.db
 ```
 

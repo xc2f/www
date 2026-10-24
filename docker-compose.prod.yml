@@ -6,11 +6,7 @@ services:
     ports:
       - '127.0.0.1:3000:3000'
     volumes:
-      - type: bind
-        source: ./data
-        target: /app/data
-        bind:
-          create_host_path: false
+      - ./data:/app/data
     environment:
       DATABASE_URL: file:/app/data/xc2f.db
     env_file:
