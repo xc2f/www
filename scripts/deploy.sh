@@ -19,7 +19,7 @@ echo "🚀 Starting deployment..."
 
 # Require the prepared volume before starting the application.
 if ! docker volume inspect xc2f_sqlite_data >/dev/null 2>&1; then
-  echo "SQLite volume is missing. Run migrate-sqlite-volume.sh before deploying."
+  echo "SQLite volume xc2f_sqlite_data is missing. See README.md for initial setup."
   exit 1
 fi
 

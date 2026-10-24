@@ -1,7 +1,7 @@
 ---
 title: Database Adapters & Transactions
 description: Database adapters, storage, email, and transaction patterns
-tags: [payload, database, mongodb, postgres, sqlite, transactions]
+tags: [payload, database, mongodb, sqlite, transactions]
 ---
 
 # Payload CMS Adapters
@@ -16,22 +16,6 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URL,
-  }),
-})
-```
-
-### Postgres
-
-```typescript
-import { postgresAdapter } from '@payloadcms/db-postgres'
-
-export default buildConfig({
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URL,
-    },
-    push: false, // Don't auto-push schema changes
-    migrationDir: './migrations',
   }),
 })
 ```
@@ -102,7 +86,6 @@ const brokenHook: CollectionAfterChangeHook = async ({ collection, doc, req }) =
 **Why This Matters:**
 
 - **MongoDB (with replica sets)**: Creates atomic session across operations
-- **PostgreSQL**: All operations use same Drizzle transaction
 - **SQLite (with transactions enabled)**: Ensures rollback on errors
 - **Without req**: Each operation runs independently, breaking atomicity
 

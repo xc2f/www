@@ -1006,7 +1006,7 @@ export const myPlugin =
 
 1. Always pass `req` to nested operations in hooks
 2. Use context flags to prevent infinite hook loops
-3. Enable transactions for MongoDB (requires replica set) and Postgres
+3. Enable SQLite transactions explicitly with `transactionOptions: {}`
 4. Use `beforeValidate` for data formatting
 5. Use `beforeChange` for business logic
 
@@ -1117,7 +1117,7 @@ For deeper exploration of specific topics, refer to the context files located in
 
 11. **`adapters.md`** - Database and storage adapters
 
-    - MongoDB, PostgreSQL, SQLite patterns
+    - SQLite adapter configuration and transaction patterns
     - Storage adapter usage (S3, Azure, GCS, etc.)
     - Custom adapter development
 

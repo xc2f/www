@@ -22,10 +22,6 @@ The application uses local SQLite through `@payloadcms/db-sqlite`, with WAL,
 explicit transactions, and a 30-second busy timeout. Media stays in S3/R2.
 Production uses a single application instance with the Docker named volume `xc2f_sqlite_data` mounted at `/app/data`.
 
-**Existing PostgreSQL deployments:** follow [the migration runbook](docs/sqlite-migration.md)
-before deploying this version. Changing the adapter does not migrate your data.
-The original PostgreSQL volume and migrations are retained for rollback.
-
 ## Develop
 
 1. Copy `.env.example` to `.env` and configure Payload secrets and S3/R2 credentials.
@@ -42,8 +38,8 @@ docker compose up -d --build
 Local files in `data/` and `backups/` are excluded from Git and Docker build contexts.
 Host `./data` files are not automatically imported into either Docker volume.
 The development image initializes its volume directory for UID/GID `1000:1000`.
-The production volume is external and must be prepared before startup; the
-migration helper below imports a consistent snapshot and sets UID/GID `1001:1001`.
+The production volume is external and must be created before the first startup.
+The production image initializes its data directory for UID/GID `1001:1001`.
 Keep `DISABLE_BACKGROUND_JOBS=true` when running a local copy of production data.
 
 Development auto-login is configured in `src/payload.config.ts` for the original
@@ -58,12 +54,10 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
-`test:sqlite` verifies COPY decoding, authentication hash preservation, sequence
-continuity, refusal to overwrite populated databases, transactional rollback,
-and restoring committed WAL data from a compressed SQLite backup.
-
-The migration runbook also covers testing Payload against a disposable copy of
-real data, including authentication, drafts, versions, localized content, and search.
+`test:sqlite` verifies that a compressed SQLite snapshot restores committed WAL data
+into a standalone database with valid integrity. Standalone builds include the full
+SQLite client dependency tree; the production image checks both ESM and CommonJS
+clients, native bindings, Base64 encoding, and transactions during its build.
 
 ## Build and deploy
 
@@ -81,20 +75,16 @@ Runtime requires the secrets and S3/R2 variables documented in `.env.example`.
 `DATABASE_URL` is fixed by Compose to `file:/app/data/xc2f.db`; the standalone
 application runs as UID/GID `1001:1001` and the database directory must be writable.
 
-For a first production import or a switch from the previous `./data` bind mount,
-place the verified database at `./data/xc2f.db`, then run:
+For a new installation, create the external data volume and start the application:
 
 ```bash
-bash scripts/migrate-sqlite-volume.sh
+docker volume create xc2f_sqlite_data
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-The helper works from `scripts/` or beside `docker-compose.prod.yml`. On a server
-with uploaded deployment files, run `bash migrate-sqlite-volume.sh` instead. It
-refuses an existing target database before stopping the application, stops writes,
-creates a consistent SQLite snapshot in `xc2f_sqlite_data`, checks integrity and
-foreign keys, sets permissions, then recreates the application container. Original
-`./data` files are retained. If the import fails after stopping the app, investigate
-before restarting; the original source remains available for recovery.
+Payload initializes the SQLite schema on first database access. Open `/admin` to
+create the initial account. Existing deployments continue using the database already
+stored in `xc2f_sqlite_data`.
 
 For later deployments:
 
@@ -114,15 +104,20 @@ pnpm generate:types
 pnpm generate:importmap
 ```
 
-SQLite migrations live in `src/migrations/sqlite`. PostgreSQL history is archived
-under `src/migrations/postgres` and is never run against SQLite.
+SQLite schema migrations live in `src/migrations/sqlite`. Keep the baseline and
+subsequent migrations committed so fresh installations and upgrades use the same schema.
 
 ## Backups
 
 The scheduled task and admin backup endpoint create a consistent SQLite snapshot
 using `sqlite3 VACUUM INTO`, gzip it, and upload it to `backups/` in S3/R2. Docker
 images include the SQLite CLI. Host installations also need `sqlite3` on `PATH`.
-See the runbook for restore and rollback steps.
+To restore a backup, decompress it to a new file and run `PRAGMA integrity_check`
+and `PRAGMA foreign_key_check`. Stop the application, take a snapshot of the current
+database, and restore the verified file into `xc2f_sqlite_data` using a helper
+container. Set ownership to `1001:1001` and remove or archive old WAL/SHM sidecars
+while all connections are closed before restarting. Replacing a host `./data` file
+does not update the database in the Docker volume.
 
 ## Seed data
 
