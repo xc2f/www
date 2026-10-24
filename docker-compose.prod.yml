@@ -1,6 +1,7 @@
 services:
   payload:
     image: public.ecr.aws/umcai/xc2f/payload:latest
+    # image: public.ecr.aws/umcai/xc2f/payload:dev-latest
     container_name: payload
     restart: unless-stopped
     ports:

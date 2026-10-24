@@ -1,7 +1,8 @@
 import type { Mail } from '@/payload-types'
 import type { SendEmailOptions, TaskConfig } from 'payload'
-import type { Address } from 'nodemailer/lib/mailer'
 import type { Attachment } from 'nodemailer/lib/mailer'
+
+type EmailAddress = Exclude<NonNullable<SendEmailOptions['from']>, string>
 
 type SendEmailTaskConfig = TaskConfig<{
   input: Mail
@@ -66,7 +67,7 @@ export const sendEmailTask: SendEmailTaskConfig = {
       return files
     }
 
-    const toAddress = (entry: { address?: string | null; name?: string | null }): Address | null => {
+    const toAddress = (entry: { address?: string | null; name?: string | null }): EmailAddress | null => {
       if (!entry.address) {
         return null
       }
@@ -80,15 +81,15 @@ export const sendEmailTask: SendEmailTaskConfig = {
 
       return {
         address: entry.address,
-      } as Address
+      }
     }
 
     const toAddressList = (
       entries?: { address?: string | null; name?: string | null }[] | null,
-    ): Address[] | undefined => {
+    ): EmailAddress[] | undefined => {
       const list = (entries ?? [])
         .map((entry) => toAddress(entry))
-        .filter((entry): entry is Address => entry !== null)
+        .filter((entry): entry is EmailAddress => entry !== null)
 
       return list.length > 0 ? list : undefined
     }

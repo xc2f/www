@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM node:24.22.1-slim AS base
 
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -40,7 +40,7 @@ RUN PAYLOAD_SECRET=build-secret \
     EMAIL_DEFAULT_REPLY=no-reply@example.com \
     pnpm build
 
-FROM node:24-slim AS runner
+FROM node:24.22.1-slim AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production

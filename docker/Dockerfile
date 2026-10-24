@@ -1,4 +1,4 @@
-FROM node:24-slim AS base
+FROM node:24.22.1-slim AS base
 
 ARG NPM_REGISTRY=https://registry.npmjs.org
 ARG APT_MIRROR=http://deb.debian.org/debian
