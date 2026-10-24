@@ -17,10 +17,9 @@ cd "$PROJECT_DIR"
 
 echo "🚀 Starting deployment..."
 
-# Prevent an existing PostgreSQL installation from silently booting an empty site.
-if [ ! -f "$PROJECT_DIR/data/xc2f.db" ] || [ ! -s "$PROJECT_DIR/data/xc2f.db" ]; then
-  echo "Database is missing, empty, or inaccessible: $PROJECT_DIR/data/xc2f.db"
-  echo "Check the database location and directory permissions before deploying."
+# Require the prepared volume before starting the application.
+if ! docker volume inspect xc2f_sqlite_data >/dev/null 2>&1; then
+  echo "SQLite volume is missing. Run migrate-sqlite-volume.sh before deploying."
   exit 1
 fi
 

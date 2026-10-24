@@ -20,7 +20,7 @@ A personal research project forked from the Payload CMS [website](https://github
 
 The application uses local SQLite through `@payloadcms/db-sqlite`, with WAL,
 explicit transactions, and a 30-second busy timeout. Media stays in S3/R2.
-Production uses a single application instance with the host `./data` directory mounted into the container.
+Production uses a single application instance with the Docker named volume `xc2f_sqlite_data` mounted at `/app/data`.
 
 **Existing PostgreSQL deployments:** follow [the migration runbook](docs/sqlite-migration.md)
 before deploying this version. Changing the adapter does not migrate your data.
@@ -33,18 +33,17 @@ The original PostgreSQL volume and migrations are retained for rollback.
 3. Run `pnpm db:init`, then `pnpm dev`.
 
 On the host, the default database is `data/xc2f.db`. Docker Compose uses
-`file:/app/data/xc2f.db`, backed by the same host `./data` directory:
+`file:/app/data/xc2f.db` in the separate `xc2f_sqlite_dev_data` named volume:
 
 ```bash
 docker compose up -d --build
 ```
 
 Local files in `data/` and `backups/` are excluded from Git and Docker build contexts.
-Create `data/` before starting Docker (`pnpm db:init` also creates it). The short bind
-syntax supports older `docker-compose` installations. The deployment script checks
-that the database exists before startup. Host and Docker now share this database;
-stop the host application before starting its Docker instance. On Linux the development
-container runs as UID/GID `1000:1000`; ensure that user can write the directory and database.
+Host `./data` files are not automatically imported into either Docker volume.
+The development image initializes its volume directory for UID/GID `1000:1000`.
+The production volume is external and must be prepared before startup; the
+migration helper below imports a consistent snapshot and sets UID/GID `1001:1001`.
 Keep `DISABLE_BACKGROUND_JOBS=true` when running a local copy of production data.
 
 Development auto-login is configured in `src/payload.config.ts` for the original
@@ -82,23 +81,31 @@ Runtime requires the secrets and S3/R2 variables documented in `.env.example`.
 `DATABASE_URL` is fixed by Compose to `file:/app/data/xc2f.db`; the standalone
 application runs as UID/GID `1001:1001` and the database directory must be writable.
 
-After placing the verified database at `./data/xc2f.db` next to the Compose file
-and setting Linux permissions for the production user:
+For a first production import or a switch from the previous `./data` bind mount,
+place the verified database at `./data/xc2f.db`, then run:
 
 ```bash
-sudo chown -R 1001:1001 ./data
-sudo chmod 755 ./data
-sudo chmod 600 ./data/xc2f.db
+bash scripts/migrate-sqlite-volume.sh
 ```
 
-Start the application:
+The helper works from `scripts/` or beside `docker-compose.prod.yml`. On a server
+with uploaded deployment files, run `bash migrate-sqlite-volume.sh` instead. It
+refuses an existing target database before stopping the application, stops writes,
+creates a consistent SQLite snapshot in `xc2f_sqlite_data`, checks integrity and
+foreign keys, sets permissions, then recreates the application container. Original
+`./data` files are retained. If the import fails after stopping the app, investigate
+before restarting; the original source remains available for recovery.
+
+For later deployments:
 
 ```bash
-docker compose -f docker-compose.prod.yml up -d
+bash scripts/deploy.sh
 ```
 
-`pnpm deploy` checks that `data/xc2f.db` exists and is nonempty, and that the
-container user can read/write it and its directory before replacing the application. The standalone application applies bundled SQLite migrations on
+The deployment script requires `xc2f_sqlite_data` to exist and checks database
+access from inside the container before updating the application. Host `./data`
+is no longer used by the running container. Do not delete the active Docker volume.
+The standalone application applies bundled SQLite migrations on
 startup. New SQLite schema changes need a committed migration:
 
 ```bash

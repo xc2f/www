@@ -6,8 +6,13 @@ services:
     ports:
       - '127.0.0.1:3000:3000'
     volumes:
-      - ./data:/app/data
+      - sqlite_data:/app/data
     environment:
       DATABASE_URL: file:/app/data/xc2f.db
     env_file:
       - .env
+
+volumes:
+  sqlite_data:
+    external: true
+    name: xc2f_sqlite_data

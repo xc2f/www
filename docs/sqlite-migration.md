@@ -71,37 +71,45 @@ the server's existing `.env`; remove the obsolete PostgreSQL `DATABASE_URL` or
 replace it with `file:/app/data/xc2f.db`. Compose also sets this URL explicitly.
 Set `DISABLE_BACKGROUND_JOBS=true` for the first verification startup.
 
-Both Compose files bind the host `./data` directory to `/app/data`. The path is
-relative to the Compose file; no SQLite Docker volume needs to be created or populated.
-Prepare the directory while the application is stopped, and place the verified
-SQLite database at `data/xc2f.db`. The short bind syntax (`./data:/app/data`) supports
-older `docker-compose` installations without `create_host_path`. Prepare the data
-before startup; `scripts/deploy.sh` checks for a nonempty database.
-On a Linux production server, grant the standalone container's UID/GID 1001 access:
+Production mounts the external named volume `xc2f_sqlite_data` at `/app/data`.
+Development uses its own `xc2f_sqlite_dev_data` volume. Host `./data` is an import
+source only; changes there do not affect an application already running from a volume.
+
+For a first import, or to move the current production database from its old bind
+mount into the named volume, upload these files beside the server's existing `.env`:
+
+- `docker-compose.prod.yml`
+- `scripts/migrate-sqlite-volume.sh` (place it beside the Compose file on the server)
+- `scripts/deploy.sh` (also supports being beside the Compose file)
+
+Keep the current `data/xc2f.db` and any WAL/SHM sidecars in their existing directory.
+Use a pinned, verified image tag in the Compose file. Run:
 
 ```bash
-sudo chown -R 1001:1001 ./data
-sudo chmod 755 ./data
-sudo chmod 600 ./data/xc2f.db
+cd /home/ubuntu/www
+bash migrate-sqlite-volume.sh
+docker-compose -f docker-compose.prod.yml logs --tail=100 payload
 ```
 
-The development container uses UID/GID `1000:1000` instead. Set ownership for the
-container you are using on Linux. Host and Docker instances must not run against
-this shared database simultaneously during validation.
+The helper creates `xc2f_sqlite_data` if needed, verifies the target is empty before
+stopping the app, stops the app, then uses `sqlite3 VACUUM INTO` to create a consistent
+snapshot from the read-only source mount. It checks integrity and foreign keys,
+sets directory/file ownership to `1001:1001` and modes `700`/`600`, and starts the
+application using the new volume. It does not launch Payload during the import.
+Existing target database files are never overwritten. If a previous test left a
+populated volume with this name, inspect it before choosing which database to use.
 
-If you already started SQLite using `xc2f_sqlite_data` or
-`xc2f_sqlite_dev_data`, stop that application and export a consistent snapshot from
-its volume before switching mounts. The new bind mount does not copy volume data.
-Keep the old volume, compare its data with any existing `./data/xc2f.db`, and do not
-overwrite either database without choosing the intended source and backing it up.
+The original host files remain available for recovery. If copying or validation
+fails after the app stops, it stays stopped and the script reports the error.
+To recover the old bind-mounted deployment, restore the previous Compose mount
+(`./data:/app/data`) and recreate the app while the original source is still current.
+After new writes reach the volume, take a fresh snapshot from that volume before
+reverting mounts; the old host database is then stale.
 
-Use a pinned version/tag in `docker-compose.prod.yml` for this cutover. Then start
-the new app, check logs and both locales, and sign in using an existing account:
-
-```bash
-docker compose -f docker-compose.prod.yml up -d
-docker compose -f docker-compose.prod.yml logs --tail=100 payload
-```
+The application may now require no host `data/` directory at all on later deployments.
+Run the updated `deploy.sh`, which verifies the external volume and container-side
+permissions. Normal `docker system prune` does not delete this volume; never run
+commands that remove `xc2f_sqlite_data` while it holds the active database.
 
 Check the scheduled-job list before enabling background jobs: imported records
 retain their source state. Resume production jobs by setting
@@ -125,7 +133,9 @@ sqlite3 -readonly data/restored.db 'PRAGMA integrity_check; PRAGMA foreign_key_c
 Expected output: `ok`, with no foreign-key violation rows. Stop the application
 before replacing the active database. Take a snapshot of the current database,
 remove or archive its old WAL/SHM sidecars while all connections are closed, install
-the verified restored file, correct ownership, and restart. Never replace only the
+the verified restored file into `xc2f_sqlite_data` using a helper container, set
+ownership to `1001:1001`, and restart. Restoring into host `./data` alone does not
+change the database in the active volume. Never replace only the
 main `.db` while an application connection is open.
 
 ## 5. Rollback

@@ -14,7 +14,7 @@ services:
     ports:
       - '127.0.0.1:3000:3000'
     volumes:
-      - ./data:/app/data
+      - sqlite_data:/app/data
       - .:/app
       - node_modules:/app/node_modules
       - pnpm_store:/home/node/.pnpm-store
@@ -26,5 +26,7 @@ services:
       DATABASE_URL: file:/app/data/xc2f.db
 
 volumes:
+  sqlite_data:
+    name: xc2f_sqlite_dev_data
   pnpm_store:
   node_modules:
