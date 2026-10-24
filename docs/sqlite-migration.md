@@ -71,18 +71,27 @@ the server's existing `.env`; remove the obsolete PostgreSQL `DATABASE_URL` or
 replace it with `file:/app/data/xc2f.db`. Compose also sets this URL explicitly.
 Set `DISABLE_BACKGROUND_JOBS=true` for the first verification startup.
 
-Prepare the production volume while the application is stopped. The helper below
-uses the new standalone image, whose Node runtime is already installed. It refuses
-to overwrite an existing database and gives the directory/file to UID/GID 1001:
+Both Compose files bind the host `./data` directory to `/app/data`. The path is
+relative to the Compose file; no SQLite Docker volume needs to be created or populated.
+Prepare the directory while the application is stopped, and place the verified
+SQLite database at `data/xc2f.db`. Compose refuses to create a missing host directory.
+On a Linux production server, grant the standalone container's UID/GID 1001 access:
 
 ```bash
-docker volume create xc2f_sqlite_data
-docker run --rm --user 0 --entrypoint node \
-  --mount type=volume,src=xc2f_sqlite_data,dst=/data \
-  --mount type=bind,src="$PWD/data",dst=/source,readonly \
-  public.ecr.aws/umcai/xc2f/payload:YOUR_SQLITE_IMAGE_TAG \
-  -e 'const fs=require("fs"); fs.copyFileSync("/source/xc2f.db","/data/xc2f.db",fs.constants.COPYFILE_EXCL); fs.chownSync("/data",1001,1001); fs.chownSync("/data/xc2f.db",1001,1001); fs.chmodSync("/data/xc2f.db",0o600)'
+sudo chown -R 1001:1001 ./data
+sudo chmod 700 ./data
+sudo chmod 600 ./data/xc2f.db
 ```
+
+The development container uses UID/GID `1000:1000` instead. Set ownership for the
+container you are using on Linux. Host and Docker instances must not run against
+this shared database simultaneously during validation.
+
+If you already started SQLite using `xc2f_sqlite_data` or
+`xc2f_sqlite_dev_data`, stop that application and export a consistent snapshot from
+its volume before switching mounts. The new bind mount does not copy volume data.
+Keep the old volume, compare its data with any existing `./data/xc2f.db`, and do not
+overwrite either database without choosing the intended source and backing it up.
 
 Use a pinned version/tag in `docker-compose.prod.yml` for this cutover. Then start
 the new app, check logs and both locales, and sign in using an existing account:

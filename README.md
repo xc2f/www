@@ -20,7 +20,7 @@ A personal research project forked from the Payload CMS [website](https://github
 
 The application uses local SQLite through `@payloadcms/db-sqlite`, with WAL,
 explicit transactions, and a 30-second busy timeout. Media stays in S3/R2.
-Production uses a single application instance and a local persistent Docker volume.
+Production uses a single application instance with the host `./data` directory mounted into the container.
 
 **Existing PostgreSQL deployments:** follow [the migration runbook](docs/sqlite-migration.md)
 before deploying this version. Changing the adapter does not migrate your data.
@@ -33,14 +33,17 @@ The original PostgreSQL volume and migrations are retained for rollback.
 3. Run `pnpm db:init`, then `pnpm dev`.
 
 On the host, the default database is `data/xc2f.db`. Docker Compose uses
-`file:/app/data/xc2f.db` in the separate `xc2f_sqlite_dev_data` volume:
+`file:/app/data/xc2f.db`, backed by the same host `./data` directory:
 
 ```bash
 docker compose up -d --build
 ```
 
 Local files in `data/` and `backups/` are excluded from Git and Docker build contexts.
-A host database is not automatically copied into the Docker development volume.
+Create `data/` before starting Docker (`pnpm db:init` also creates it). Compose refuses
+to create a missing bind directory automatically. Host and Docker now share this database;
+stop the host application before starting its Docker instance. On Linux the development
+container runs as UID/GID `1000:1000`; ensure that user can write the directory and database.
 Keep `DISABLE_BACKGROUND_JOBS=true` when running a local copy of production data.
 
 Development auto-login is configured in `src/payload.config.ts` for the original
@@ -78,14 +81,23 @@ Runtime requires the secrets and S3/R2 variables documented in `.env.example`.
 `DATABASE_URL` is fixed by Compose to `file:/app/data/xc2f.db`; the standalone
 application runs as UID/GID `1001:1001` and the database directory must be writable.
 
-After preparing and verifying the persistent `xc2f_sqlite_data` volume:
+After placing the verified database at `./data/xc2f.db` next to the Compose file
+and setting Linux permissions for the production user:
+
+```bash
+sudo chown -R 1001:1001 ./data
+sudo chmod 700 ./data
+sudo chmod 600 ./data/xc2f.db
+```
+
+Start the application:
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-`pnpm deploy` checks that the SQLite volume and database file exist before replacing
-the application. The standalone application applies bundled SQLite migrations on
+`pnpm deploy` checks that `data/xc2f.db` exists and is nonempty, and that the
+container user can read/write it and its directory before replacing the application. The standalone application applies bundled SQLite migrations on
 startup. New SQLite schema changes need a committed migration:
 
 ```bash

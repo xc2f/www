@@ -13,8 +13,8 @@ COMPOSE_FILE="docker-compose.prod.yml"
 echo "🚀 Starting deployment..."
 
 # Prevent an existing PostgreSQL installation from silently booting an empty site.
-if ! docker volume inspect xc2f_sqlite_data >/dev/null 2>&1; then
-  echo "SQLite volume is missing. Complete docs/sqlite-migration.md before deploying."
+if [ ! -f "$PROJECT_DIR/data/xc2f.db" ] || [ ! -s "$PROJECT_DIR/data/xc2f.db" ]; then
+  echo "data/xc2f.db is missing or empty. Complete docs/sqlite-migration.md before deploying."
   exit 1
 fi
 
@@ -22,7 +22,11 @@ fi
 echo "📥 Pulling latest images..."
 docker-compose -f $COMPOSE_FILE pull
 docker-compose -f "$COMPOSE_FILE" run --rm --no-deps --entrypoint node payload -e \
-  'if (!require("fs").statSync("/app/data/xc2f.db").size) process.exit(1)'
+  'const fs = require("fs");
+   const file = "/app/data/xc2f.db";
+   if (!fs.statSync(file).isFile() || !fs.statSync(file).size) process.exit(1);
+   fs.accessSync("/app/data", fs.constants.R_OK | fs.constants.W_OK | fs.constants.X_OK);
+   fs.accessSync(file, fs.constants.R_OK | fs.constants.W_OK)'
 
 # 2. 启动/更新容器
 echo "🆙 Starting containers..."
