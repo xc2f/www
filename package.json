@@ -22,7 +22,11 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "deploy": "bash scripts/deploy.sh",
     "deploy:build": "bash scripts/deploy.build.sh",
-    "db:init": "cross-env ENABLE_EMAIL=false DISABLE_BACKGROUND_JOBS=true payload migrate",
+    "db:init": "pnpm run db:migrate",
+    "db:migrate": "cross-env ENABLE_EMAIL=false DISABLE_BACKGROUND_JOBS=true payload migrate",
+    "db:migrate:create": "bash scripts/db-migrate-create.sh",
+    "db:migrate:status": "cross-env ENABLE_EMAIL=false DISABLE_BACKGROUND_JOBS=true payload migrate:status",
+    "typecheck": "tsc --noEmit",
     "test:sqlite": "node --import tsx --test tests/sqlite/*.test.ts",
     "test:ops": "node --import tsx --test tests/sqlite/*.test.ts tests/scripts/*.test.ts"
   },

@@ -100,13 +100,28 @@ The standalone application applies bundled SQLite migrations on
 startup. New SQLite schema changes need a committed migration:
 
 ```bash
-pnpm payload migrate:create describe_change
-pnpm generate:types
-pnpm generate:importmap
+pnpm run db:migrate:create add_post_summary
 ```
+
+Replace `add_post_summary` with a descriptive migration name. This command generates
+the migration, Payload types, and admin import map, then runs TypeScript validation.
+It stops on the first failed step. Review the generated SQL before applying it to
+your local database:
+
+```bash
+pnpm run db:migrate
+pnpm run db:migrate:status
+```
+
+`pnpm run db:init` is an alias for `pnpm run db:migrate`. These commands use the
+database configured by `DATABASE_URL`; without it, the host default is `data/xc2f.db`.
+Email and background jobs are disabled during migration commands.
 
 SQLite schema migrations live in `src/migrations/sqlite`. Keep the baseline and
 subsequent migrations committed so fresh installations and upgrades use the same schema.
+Production applies pending bundled migrations when the new image starts; deploy
+with `pnpm run deploy` after building the image. Back up the active database before
+schema-changing deployments; image rollback does not reverse database migrations.
 
 ### Scheduled database backups
 
@@ -168,27 +183,6 @@ Compose service to a specific image tag instead of `latest`.
 Run `pnpm test:ops` for SQLite backup/recovery, real mail-queue retries, system
 endpoint access, and deployment failure/rollback simulations. Production image
 CI runs these checks and TypeScript validation before publishing the image.
-
-## Upgrading to Payload 3.92.0
-
-Payload and all `@payloadcms/*` packages are pinned to 3.92.0. Next.js is on
-15.4.11 to satisfy Payload's peer dependency; Nodemailer uses version 10 with its
-built-in types. Node.js must satisfy `^22.23.4 || >=24.22.1`; this project uses
-24.22.1 in `.nvmrc` and Docker images.
-
-Before updating an existing deployment, take a consistent backup of its active
-SQLite database. The bundled `payload_3_92` migration adds the media `_objectKey`
-and user `resetPasswordRequestedAt` columns and indexes on localized parent IDs.
-Existing media objects stay in place. Production applies the migration on startup;
-for host development, run `pnpm db:init` before `pnpm dev`.
-
-Re-create any pending scheduled publish/unpublish events after the upgrade because
-Payload changed the scheduling user's representation. New uploads also follow
-stricter SVG/XML validation and a default 50 MiB multipart request limit. Verify
-any workflows that rely on those formats or larger requests before deploying.
-
-References: [3.90.0 upgrade notes](https://github.com/payloadcms/payload/releases/tag/v3.90.0)
-and [3.92.0 release notes](https://github.com/payloadcms/payload/releases/tag/v3.92.0).
 
 ## Backups
 
