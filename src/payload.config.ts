@@ -3,7 +3,7 @@ import { text } from '@payloadcms/db-sqlite/drizzle/sqlite-core'
 import { mkdirSync } from 'node:fs'
 import sharp from 'sharp'
 import path from 'path'
-import { buildConfig, PayloadRequest } from 'payload'
+import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { transporter } from './email/transporter'
@@ -36,6 +36,9 @@ import { zh } from '@payloadcms/translations/languages/zh'
 import { endpoints } from './endpoints'
 import { sqliteFilePath, sqliteURL } from './utilities/sqlite'
 import { migrations } from './migrations/sqlite'
+import { recoverBackupJobs } from './utilities/recoverBackupJobs'
+import { adminOnly } from './access/roles'
+import { systemAccess } from './access/system'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -61,6 +64,7 @@ const s3Config = {
 }
 
 export default buildConfig({
+  onInit: recoverBackupJobs,
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
@@ -175,22 +179,14 @@ export default buildConfig({
   },
   jobs: {
     access: {
-      run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Allow logged in users to execute this endpoint (default)
-        if (req.user) return true
-
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
-        const authHeader = req.headers.get('authorization')
-        return authHeader === `Bearer ${process.env.CRON_SECRET}`
-      },
+      run: systemAccess,
     },
     tasks: [
       sendEmailTask,
       {
         slug: 'backupDatabase',
         handler: backupDatabaseTask,
+        retries: 3,
         schedule: [
           {
             cron: '0 0 * * *',
@@ -213,6 +209,10 @@ export default buildConfig({
         defaultJobsCollection.admin = {}
       }
       defaultJobsCollection.admin.hidden = false
+      defaultJobsCollection.access = {
+        ...defaultJobsCollection.access,
+        read: adminOnly,
+      }
       return defaultJobsCollection
     },
   },

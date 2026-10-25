@@ -108,6 +108,67 @@ pnpm generate:importmap
 SQLite schema migrations live in `src/migrations/sqlite`. Keep the baseline and
 subsequent migrations committed so fresh installations and upgrades use the same schema.
 
+### Scheduled database backups
+
+With `DISABLE_BACKGROUND_JOBS=false`, backups run daily at midnight in the
+container's timezone (UTC by default, or 08:00 Asia/Shanghai). The queue polls
+every minute. Failed backups have up to three retries; successful jobs are
+deleted by Payload, and backup files are stored under `backups/` in R2.
+
+Before starting the queue, Payload releases unfinished `backupDatabase` jobs
+whose last update predates the Node process startup. This recovers jobs left
+with `processing=true` by a container restart. Recovery logs the affected job IDs,
+preserves completed/failed jobs and other task types, and is disabled during
+production builds or when `DISABLE_BACKGROUND_JOBS=true`.
+
+This recovery assumes the current single-container, single-Node-process deployment.
+Before adding concurrent workers or rolling deployments sharing the same SQLite
+database, replace it with worker ownership/leases so a new process cannot release
+another process's active backup. Retrying an interrupted upload can produce an
+additional backup object; existing backups are preserved.
+
+Each snapshot/compression/upload attempt is cancelled after ten minutes. Backup
+outcomes are written atomically beside the SQLite file as
+`xc2f.db.backup-status.json`, so completion history survives container replacement
+and Payload's deletion of successful job records. Keep this file with the data
+volume. It is operational metadata, not part of the database snapshot.
+
+`GET /api/backup/status` requires an admin session or `Authorization: Bearer
+<CRON_SECRET>`. It returns HTTP 200 when the latest outcome is successful and the
+last successful upload is at most 26 hours old. Missing history, failed attempts,
+overdue backups, and unreadable status files return HTTP 503. After first deploying
+this feature, the first successful backup establishes its history; older R2
+objects are not imported automatically. A successful retry restores HTTP 200.
+The endpoint tracks completed uploads; it does not check whether someone later
+deletes an object from R2 or verify that the backup can be restored.
+
+Configure your monitoring service to poll that endpoint with the secret header
+and alert on HTTP 503 or connection failure. No external notification service is
+configured by this repository. `GET /api/health` is a separate public application
+and database readiness check; it returns no content or user data.
+
+### Deployment verification and rollback
+
+`scripts/deploy.sh` preserves the current image as `xc2f-payload:rollback`, checks
+volume access before stopping the current app, and starts the new image without
+removing the Compose project. It polls `/api/health` up to 30 times with five-second
+intervals and five-second HTTP timeouts. Deployment succeeds only when Payload's
+database query succeeds. Concurrent deployments are blocked by `.deploy.lock`.
+
+On startup/readiness failure, the script attempts to restart the previous image
+and still exits with a failure code. Rollback probes `/admin/login` for compatibility
+with older images that have no health endpoint; this is a smoke check, so verify
+application behavior afterward. Database migrations are **not** reversed and may
+be incompatible with an older image. Take a verified database backup before
+schema-changing deployments and follow the restore procedure below if needed.
+If an interrupted deployment leaves `.deploy.lock`, verify no deployment is
+running before removing that directory. `PAYLOAD_IMAGE` can pin the production
+Compose service to a specific image tag instead of `latest`.
+
+Run `pnpm test:ops` for SQLite backup/recovery, real mail-queue retries, system
+endpoint access, and deployment failure/rollback simulations. Production image
+CI runs these checks and TypeScript validation before publishing the image.
+
 ## Upgrading to Payload 3.92.0
 
 Payload and all `@payloadcms/*` packages are pinned to 3.92.0. Next.js is on

@@ -1,6 +1,6 @@
 services:
   payload:
-    image: public.ecr.aws/umcai/xc2f/payload:latest
+    image: ${PAYLOAD_IMAGE:-public.ecr.aws/umcai/xc2f/payload:latest}
     # image: public.ecr.aws/umcai/xc2f/payload:dev-latest
     container_name: payload
     restart: unless-stopped
@@ -12,6 +12,16 @@ services:
       DATABASE_URL: file:/app/data/xc2f.db
     env_file:
       - .env
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health', {signal: AbortSignal.timeout(5000)}).then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 15s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
 
 volumes:
   sqlite_data:

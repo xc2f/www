@@ -14,7 +14,7 @@ type SendEmailTaskConfig = TaskConfig<{
 export const sendEmailTask: SendEmailTaskConfig = {
   slug: 'send-email',
   retries: 2,
-  handler: async ({ input, req }) => {
+  handler: async ({ input, job, req }) => {
     const payload = req.payload
     const mail = await payload.findByID({
       collection: 'mails',
@@ -22,7 +22,8 @@ export const sendEmailTask: SendEmailTaskConfig = {
       req,
     })
 
-    if (mail.sendStatus !== 'pending') {
+    const isRetry = mail.sendStatus === 'failed' && (job.totalTried ?? 0) > 0
+    if (mail.sendStatus !== 'pending' && !isRetry) {
       return {
         output: {
           emailSent: false,
@@ -67,7 +68,10 @@ export const sendEmailTask: SendEmailTaskConfig = {
       return files
     }
 
-    const toAddress = (entry: { address?: string | null; name?: string | null }): EmailAddress | null => {
+    const toAddress = (entry: {
+      address?: string | null
+      name?: string | null
+    }): EmailAddress | null => {
       if (!entry.address) {
         return null
       }
