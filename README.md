@@ -80,7 +80,7 @@ For a new installation, create the external data volume and start the applicatio
 
 ```bash
 docker volume create xc2f_sqlite_data
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 Payload initializes the SQLite schema on first database access. Open `/admin` to

@@ -20,5 +20,5 @@ echo "👉 Restore build artifacts"
 git restore --source origin/build .next public
 
 echo "👉 Start docker"
-docker-compose down
-docker-compose up -d
+docker compose down
+docker compose up -d
