@@ -5,6 +5,7 @@
     "intro_description": "A record of experiments, technical notes, and phased reflections.",
     "intro_description_second_line": "Keep building, slowly forward.",
     "join_the_discussion_on_github": "Join the discussion on GitHub",
+    "related_posts": "Related posts",
     "discussion": "Discuss",
     "discussion_description": "If you have a different take, a useful addition, or related experience, continue the thread on GitHub.",
     "open_on_github": "Open on GitHub",
@@ -22,10 +23,11 @@
     "eyebrow": "XC2F / SEARCH",
     "intro_description": "Search the archive.",
     "intro_description_second_line": "Search titles, categories, and slugs.",
-    "enter": "Search titles, excerpts, or slugs",
+    "enter": "Enter a keyword",
+    "clear": "Clear search query",
     "submit": "Submit",
     "signal": "Scanning",
-    "idle": "Search titles, descriptions, and slugs across the archive.",
+    "idle": "Search articles and videos.",
     "query_label": "Query",
     "results_for": "{count} results for “{query}”.",
     "no_results": "Search produced no results.",
@@ -37,11 +39,13 @@
   "Moments": {
     "moments": "Moments",
     "eyebrow": "XC2F / MOMENTS",
-    "intro_description": "A record of the small signals that are easy to miss.",
+    "intro_description": "Notes on things I notice in everyday life.",
     "intro_description_second_line": "About work, life, and emotions that pass in a flash.",
     "empty": "No moments yet.",
     "loading": "Loading",
-    "load_retry": "Load failed. Retry",
+    "load_more": "Load more",
+    "load_failed": "Could not load more.",
+    "retry": "Retry",
     "mood": {
       "happy": "Happy",
       "calm": "Calm",
@@ -83,22 +87,43 @@
       "dark": "Dark"
     }
   },
+  "ArchivePagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "range": "Page {page} of {totalPages}"
+  },
   "Home": {
-    "title": "XC2F",
-    "terminal": {
-      "label": "XC2F signal terminal",
-      "status": "live / forming",
-      "signal": "signal: unresolved"
-    },
-    "subtitle": {
-      "before": "Not ",
-      "highlight1": "complete",
-      "middle": ". Still ",
-      "highlight2": "present",
-      "after": "."
-    },
-    "panel": "",
-    "statusLine": "Quietly luminous. Slow growth."
+    "description": "A personal archive of technology, experiments, and everyday observations.",
+    "archive": {
+      "label": "Content archives",
+      "posts": {
+        "title": "Posts",
+        "description": "Technical notes and experiments"
+      },
+      "moments": {
+        "title": "Moments",
+        "description": "Everyday notes and observations"
+      },
+      "projects": {
+        "title": "Projects",
+        "description": "Tools and archives I build"
+      }
+    }
+  },
+  "Projects": {
+    "title": "Projects",
+    "description": "Tools and archives I build and maintain.",
+    "items": {
+      "bingWallpapers": {
+        "title": "Bing Wallpapers",
+        "description": "Browse Bing’s daily wallpapers and the stories behind the images."
+      },
+      "videoSubtitles": {
+        "title": "Video Subtitles",
+        "description": "Organize source subtitles and generate Simplified Chinese subtitles and publishing materials."
+      }
+    }
   },
   "Status": {
     "notFound": {

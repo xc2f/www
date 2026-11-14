@@ -36,6 +36,7 @@ export default function MomentsFeed({
   const [moments, setMoments] = useState(initialMoments)
   const [hasNextPage, setHasNextPage] = useState(Boolean(initialHasNextPage))
   const [nextPage, setNextPage] = useState(initialNextPage ?? null)
+  const pendingRequest = useRef<AbortController | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
 
@@ -45,18 +46,26 @@ export default function MomentsFeed({
     setNextPage(initialNextPage ?? null)
     setIsLoading(false)
     setHasError(false)
-  }, [initialHasNextPage, initialMoments, initialNextPage])
+
+    return () => {
+      pendingRequest.current?.abort()
+      pendingRequest.current = null
+    }
+  }, [initialHasNextPage, initialMoments, initialNextPage, locale])
 
   const loadNextPage = useCallback(async () => {
-    if (!hasNextPage || !nextPage || isLoading) {
+    if (!hasNextPage || !nextPage || isLoading || pendingRequest.current) {
       return
     }
 
+    const request = new AbortController()
+    pendingRequest.current = request
     setIsLoading(true)
     setHasError(false)
 
     try {
       const response = await fetch(`/${locale}/moments/feed?page=${nextPage}`, {
+        signal: request.signal,
         headers: {
           Accept: 'application/json',
         },
@@ -68,6 +77,8 @@ export default function MomentsFeed({
 
       const data = (await response.json()) as MomentsFeedResponse
 
+      if (pendingRequest.current !== request) return
+
       setMoments((currentMoments) => {
         const existingIDs = new Set(currentMoments.map((moment) => moment.id))
         const nextMoments = data.docs.filter((moment) => !existingIDs.has(moment.id))
@@ -77,16 +88,19 @@ export default function MomentsFeed({
       setHasNextPage(Boolean(data.hasNextPage))
       setNextPage(data.nextPage ?? null)
     } catch {
-      setHasError(true)
+      if (pendingRequest.current === request) setHasError(true)
     } finally {
-      setIsLoading(false)
+      if (pendingRequest.current === request) {
+        pendingRequest.current = null
+        setIsLoading(false)
+      }
     }
   }, [hasNextPage, isLoading, locale, nextPage])
 
   useEffect(() => {
     const sentinel = sentinelRef.current
 
-    if (!sentinel || !hasNextPage || hasError) {
+    if (!sentinel || !hasNextPage || hasError || typeof IntersectionObserver === 'undefined') {
       return
     }
 
@@ -109,44 +123,32 @@ export default function MomentsFeed({
   }, [hasError, hasNextPage, loadNextPage])
 
   if (!moments?.length) {
-    return (
-      <div className="py-16 text-center text-sm text-slate-500 dark:text-white/42">
-        {t('empty')}
-      </div>
-    )
+    return <div className="archive-note">{t('empty')}</div>
   }
 
   return (
     <div>
-      {moments.map((moment, index) => (
-        <React.Fragment key={moment.id}>
-          <MomentCard moment={moment} />
-          {index < moments.length - 1 && (
-            <div className="pointer-events-none h-px bg-[linear-gradient(90deg,rgba(148,163,184,0),rgba(148,163,184,0.14)_8%,rgba(148,163,184,0.24)_50%,rgba(148,163,184,0.14)_92%,rgba(148,163,184,0))] dark:bg-[linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.06)_8%,rgba(255,255,255,0.12)_50%,rgba(255,255,255,0.06)_92%,rgba(255,255,255,0))]" />
-          )}
-        </React.Fragment>
-      ))}
+      <ul className="archive-moments">
+        {moments.map((moment) => (
+          <li key={moment.id}>
+            <MomentCard moment={moment} />
+          </li>
+        ))}
+      </ul>
 
-      {(hasNextPage || isLoading || hasError) && (
-        <div
-          ref={sentinelRef}
-          className="flex min-h-20 items-center justify-center py-6 text-center text-xs font-medium uppercase tracking-[0.18em] text-slate-400 dark:text-white/34"
-        >
-          {hasError ? (
-            <button
-              className="transition-colors hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 dark:hover:text-white/72 dark:focus-visible:ring-white/20"
-              onClick={() => void loadNextPage()}
-              type="button"
-            >
-              {t('load_retry')}
-            </button>
-          ) : isLoading ? (
-            t('loading')
-          ) : (
-            <span aria-hidden="true">· · ·</span>
-          )}
-        </div>
-      )}
+      <div className="archive-feed-controls" ref={sentinelRef}>
+        <span role="status">{isLoading ? t('loading') : hasError ? t('load_failed') : ''}</span>
+        {hasNextPage && (
+          <button
+            aria-disabled={isLoading}
+            className="archive-feed-more"
+            onClick={() => void loadNextPage()}
+            type="button"
+          >
+            {hasError ? t('retry') : t('load_more')}
+          </button>
+        )}
+      </div>
     </div>
   )
 }

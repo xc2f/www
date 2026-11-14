@@ -8,7 +8,7 @@ import { Locale } from '@/i18n/types'
 
 type Global = keyof Config['globals']
 
-async function getGlobal(slug: Global, depth = 0, locale: Locale) {
+async function getGlobal<T extends Global>(slug: T, depth = 0, locale: Locale) {
   const payload = await getPayload({ config: configPromise })
 
   const global = await payload.findGlobal({
@@ -24,7 +24,7 @@ async function getGlobal(slug: Global, depth = 0, locale: Locale) {
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
-export const getCachedGlobal = (slug: Global, depth = 0) =>
+export const getCachedGlobal = <T extends Global>(slug: T, depth = 0) =>
   unstable_cache(async (locale: Locale) => getGlobal(slug, depth, locale), [slug], {
     tags: [`global_${slug}`],
   })

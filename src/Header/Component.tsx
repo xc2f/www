@@ -1,16 +1,13 @@
-import { HeaderClient } from './Component.client'
-import { getCachedGlobal } from '@/utilities/getGlobals'
-import React from 'react'
-
-import type { Header } from '@/payload-types'
-
 import { getLocale } from 'next-intl/server'
-import { Locale } from '@/i18n/types'
+
+import type { Locale } from '@/i18n/types'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+
+import { HeaderClient } from './Component.client'
 
 export async function Header() {
   const locale = (await getLocale()) as Locale
+  const { navItems } = await getCachedGlobal('header', 1)(locale)
 
-  const headerData: Header = await getCachedGlobal('header', 1)(locale)
-
-  return <HeaderClient data={headerData} />
+  return <HeaderClient navItems={navItems} />
 }

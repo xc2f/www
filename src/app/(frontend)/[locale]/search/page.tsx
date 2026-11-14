@@ -1,16 +1,15 @@
-import { PageRange } from '@/components/PageRange'
-import { Pagination } from '@/components/Pagination'
+import { ArchivePagination } from '../ArchivePagination'
 import configPromise from '@payload-config'
 import type { Where } from 'payload'
 import { getPayload } from 'payload'
 import React from 'react'
-import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 
 import { Locale } from '@/i18n/types'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { SearchArchiveIntro } from './SearchArchiveIntro'
+import { ContentArchive } from '../ContentArchive'
+import { SearchField } from './SearchField.client'
 import { SearchResultsGrid, type SearchResult, type SearchVideoData } from './SearchResultsGrid'
 
 type Args = {
@@ -58,6 +57,15 @@ export default async function Page({
   const parsedPage = Number(rawPage)
   const currentPage = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1
   const pageSize = 12
+  if (!query) {
+    return (
+      <ContentArchive title={t('search')} intro={<SearchForm locale={locale} query={query} />}>
+        <PageClient />
+        <p className="archive-note">{t('idle')}</p>
+      </ContentArchive>
+    )
+  }
+
   const payload = await getPayload({ config: configPromise })
 
   const searchWhere = buildSearchWhere(queryTerms)
@@ -162,52 +170,31 @@ export default async function Page({
   const resultCount = searchResults.length
 
   return (
-    <div className="pb-24">
+    <ContentArchive title={t('search')} intro={<SearchForm locale={locale} query={query} />}>
       <PageClient />
-      <SearchArchiveIntro
-        description={t('intro_description')}
-        descriptionSecondLine={t('intro_description_second_line')}
-        eyebrow={t('eyebrow')}
-        title={t('search')}
-      >
-        <div className="max-w-4xl">
-          <Search defaultValue={query} />
-        </div>
-      </SearchArchiveIntro>
+      <p className="archive-note">
+        {resultCount
+          ? t('results_for', { count: totalResults, query })
+          : t('empty_with_query', { query })}
+      </p>
+      {resultCount > 0 && <SearchResultsGrid results={searchResults} locale={locale} />}
+      {totalPages > 1 && (
+        <ArchivePagination page={safePage} totalPages={totalPages} query={query} />
+      )}
+    </ContentArchive>
+  )
+}
 
-      <div className="container mt-6 sm:mt-7">
-        <div className="grid grid-cols-4 gap-x-4 sm:grid-cols-8 lg:grid-cols-12 lg:gap-x-6 xl:gap-x-7">
-          <div className="col-span-4 md:col-span-5 lg:col-span-7 xl:col-span-6">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-3 py-2">
-              <PageRange
-                currentPage={safePage}
-                limit={pageSize}
-                namespace="Search"
-                totalDocs={totalResults}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {resultCount > 0 ? (
-        <>
-          <SearchResultsGrid className="mt-6 sm:mt-7" results={searchResults} />
-          <div className="container">
-            {totalPages > 1 ? (
-              <Pagination
-                basePath="/search"
-                className="mt-14"
-                page={safePage}
-                pageParam="page"
-                queryParams={{ q: query }}
-                totalPages={totalPages}
-              />
-            ) : null}
-          </div>
-        </>
-      ) : null}
-    </div>
+async function SearchForm({ locale, query }: { locale: Locale; query: string }) {
+  const t = await getTranslations('Search')
+  return (
+    <form className="archive-search" action={`/${locale}/search`} method="get" role="search">
+      <label className="sr-only" htmlFor="archive-search-query">
+        {t('query_label')}
+      </label>
+      <SearchField query={query} placeholder={t('enter')} clearLabel={t('clear')} />
+      <button type="submit">{t('search')}</button>
+    </form>
   )
 }
 
@@ -221,7 +208,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 }
 
 function normalizeSearchText(value?: string | null): string {
-  return value?.toLowerCase().replace(/[-_/]+/g, ' ').replace(/\s+/g, ' ').trim() || ''
+  return (
+    value
+      ?.toLowerCase()
+      .replace(/[-_/]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim() || ''
+  )
 }
 
 function getSearchTerms(query: string): string[] {

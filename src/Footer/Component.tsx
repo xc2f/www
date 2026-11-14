@@ -1,5 +1,4 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import Link from 'next/link'
 import React from 'react'
 
 import type { Footer } from '@/payload-types'
@@ -7,7 +6,6 @@ import type { Footer } from '@/payload-types'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { LanguageSelector } from './Locale'
 import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
 
 import { getLocale } from 'next-intl/server'
 import { Locale } from '@/i18n/types'
@@ -21,19 +19,21 @@ export async function Footer() {
   return (
     <footer
       data-site-footer
-      className="position z-30 mt-auto border-t border-white/10 bg-[#0a0a0a] text-white"
+      className="relative z-30 mt-auto border-t border-border bg-background text-muted-foreground"
     >
-      <div className="container flex flex-col gap-8 py-8 md:flex-row md:justify-between">
-        <Link className="home-footer-brand flex items-center" href="/">
-          <Logo className="home-footer-logo text-white" variant="signal" />
-        </Link>
-
-        <div className="home-footer-controls flex flex-col-reverse items-start gap-4 md:flex-row md:items-center">
-          <nav className="home-footer-nav flex flex-col gap-4 md:flex-row">
-            {navItems.map(({ link }, i) => {
-              return <CMSLink className="home-footer-link text-white" key={i} {...link} />
-            })}
-          </nav>
+      <div className="container flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-3 text-sm">
+        {navItems.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-5">
+            {navItems.map(({ link }, i) => (
+              <CMSLink
+                className="inline-flex min-h-11 items-center hover:underline"
+                key={i}
+                {...link}
+              />
+            ))}
+          </div>
+        )}
+        <div className="ml-auto flex flex-wrap items-center gap-x-4">
           <LanguageSelector />
           <ThemeSelector />
         </div>

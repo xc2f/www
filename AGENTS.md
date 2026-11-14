@@ -2,7 +2,7 @@
 
 For all future XC2F-related UI, visual design, interaction, copywriting, and page optimization tasks, prioritize and follow the project skill at `.codex/skills/xc2f-ui-style/SKILL.md`.
 
-This skill defines XC2F's long-term design language. It takes precedence when evaluating or changing the XC2F interface, and future work should preserve its restrained, technical, exploratory, calm, and personal future-lab atmosphere.
+This skill defines XC2F's public design language. Use it to preserve the quiet personal archive, shared reading layout, and hand-drawn homepage illustration.
 
 # Payload CMS Development Rules
 

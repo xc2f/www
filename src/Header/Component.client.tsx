@@ -1,26 +1,18 @@
 'use client'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React, { useEffect, useRef, useState } from 'react'
-
 import type { Header } from '@/payload-types'
+
+import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { Link, usePathname } from '@/i18n/navigation'
+import React, { useEffect, useState } from 'react'
 
 import { Logo } from '@/components/Logo/Logo'
 import { HeaderNav } from './Nav'
 
-interface HeaderClientProps {
-  data: Header
-}
-
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export function HeaderClient({ navItems }: Pick<Header, 'navItems'>) {
   /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
-  const isHomePage = pathname === '/' || /^\/(en|zh)\/?$/.test(pathname)
-  const headerRef = useRef<HTMLElement | null>(null)
-
   useEffect(() => {
     setHeaderTheme(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -31,46 +23,17 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [headerTheme])
 
-  useEffect(() => {
-    const header = headerRef.current
-    const body = document.body
-
-    if (!header || !isHomePage) {
-      body.style.removeProperty('--home-header-height')
-      return
-    }
-
-    const syncHeaderHeight = () => {
-      body.style.setProperty('--home-header-height', `${header.offsetHeight}px`)
-    }
-
-    syncHeaderHeight()
-
-    const observer = new ResizeObserver(syncHeaderHeight)
-    observer.observe(header)
-
-    return () => {
-      observer.disconnect()
-      body.style.removeProperty('--home-header-height')
-    }
-  }, [isHomePage])
-
   return (
-    <header
-      ref={headerRef}
-      data-site-header
-      className={`z-20 ${isHomePage ? 'home-header absolute inset-x-0 top-0' : 'relative'}`}
-      {...(theme ? { 'data-theme': theme } : {})}
-    >
-      <div
-        className={`container flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2 sm:flex-nowrap ${
-          isHomePage ? 'py-7 sm:py-8' : 'py-6 sm:py-8'
-        }`}
-      >
-        <Link className="flex shrink-0 items-center" href="/">
-          <Logo className={isHomePage ? 'home-header-logo' : undefined} variant="signal" />
+    <header data-site-header className="relative z-20" {...(theme ? { 'data-theme': theme } : {})}>
+      <div className="container flex flex-wrap items-center justify-between gap-x-6 gap-y-0.5 py-3 sm:py-4">
+        <Link
+          className="site-header-home flex min-h-11 shrink-0 items-center"
+          href="/"
+          aria-label="XC2F"
+        >
+          <Logo className="site-header-logo" variant="signal" />
         </Link>
-        <HeaderNav data={data} isHomePage={isHomePage} />
+        <HeaderNav navItems={navItems} />
       </div>
     </header>
   )

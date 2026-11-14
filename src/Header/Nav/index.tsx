@@ -1,43 +1,81 @@
 'use client'
 
-import React from 'react'
-
-import type { Header as HeaderType } from '@/payload-types'
-
-import { CMSLink } from '@/components/Link'
-import Link from 'next/link'
 import { SearchIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import NextLink from 'next/link'
 
-export const HeaderNav: React.FC<{ data: HeaderType; isHomePage?: boolean }> = ({
-  data,
-  isHomePage = false,
-}) => {
-  const navItems = data?.navItems || []
-  const navClassName = isHomePage
-    ? 'home-header-nav w-full flex-wrap justify-end gap-3 sm:w-auto sm:flex-nowrap sm:gap-6'
-    : 'w-full flex-wrap justify-end gap-2.5 text-[0.72rem] tracking-[0.16em] text-primary sm:w-auto sm:flex-nowrap sm:gap-3 sm:text-sm sm:tracking-normal'
-  const linkClassName = isHomePage
-    ? 'home-header-link'
-    : 'shrink-0 whitespace-nowrap text-inherit'
-  const searchClassName = isHomePage
-    ? 'home-header-search'
-    : 'shrink-0 text-primary/84 transition-colors hover:text-primary'
+import { Link, usePathname } from '@/i18n/navigation'
+
+import { routing } from '@/i18n/routing'
+import type { Header } from '@/payload-types'
+import { usePathname as useLocalizedPathname } from 'next/navigation'
+
+const linkClassName = 'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap'
+
+export function HeaderNav({ navItems }: Pick<Header, 'navItems'>) {
+  const t = useTranslations('Home.archive')
+  const search = useTranslations('Search')
+  const pathname = usePathname()
+  const localizedPathname = useLocalizedPathname()
 
   return (
-    <nav className={`flex min-w-0 shrink items-center ${navClassName}`}>
-      {navItems.map(({ link }, i) => {
+    <nav
+      aria-label={t('label')}
+      className="site-header-nav flex min-w-0 flex-wrap items-center gap-x-4 gap-y-0.5 text-sm sm:gap-x-6"
+    >
+      {navItems?.map(({ id, link }, index) => {
+        const reference = link.reference?.value
+        const href =
+          link.type === 'reference'
+            ? typeof reference === 'object' && reference?.slug
+              ? link.reference?.relationTo === 'posts'
+                ? `/posts/${reference.slug}`
+                : reference.slug === 'home'
+                  ? '/'
+                  : `/${reference.slug}`
+              : null
+            : link.url
+
+        if (!href) return null
+
+        const [path] = href.split(/[?#]/, 1)
+        const firstSegment = path.split('/')[1]
+        const localize =
+          path.startsWith('/') &&
+          !path.startsWith('//') &&
+          !routing.locales.some((locale) => locale === firstSegment) &&
+          firstSegment !== 'admin' &&
+          firstSegment !== 'api' &&
+          !path.includes('.')
+        const NavLink = localize ? Link : NextLink
+        const activePath = localize ? pathname : localizedPathname
+        const normalizedPath = path.replace(/\/$/, '') || '/'
+        const isPosts = /^\/(?:en\/|zh\/)?posts$/.test(normalizedPath)
+        const current =
+          path && activePath === normalizedPath
+            ? 'page'
+            : isPosts && activePath.startsWith(`${normalizedPath}/`)
+              ? 'location'
+              : undefined
         return (
-          <CMSLink
-            key={i}
-            {...link}
-            appearance={isHomePage ? 'inline' : 'link'}
+          <NavLink
+            key={id ?? index}
+            href={href}
+            aria-current={current}
             className={linkClassName}
-          />
+            {...(link.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {link.label}
+          </NavLink>
         )
       })}
-      <Link className={searchClassName} href="/search">
-        <span className="sr-only">Search</span>
-        <SearchIcon className={isHomePage ? 'h-5 w-5' : 'h-[1.05rem] w-[1.05rem]'} />
+      <Link
+        className="site-header-search inline-flex min-h-11 min-w-11 items-center justify-center"
+        href="/search"
+        aria-current={pathname === '/search' ? 'page' : undefined}
+      >
+        <span className="sr-only">{search('search')}</span>
+        <SearchIcon aria-hidden="true" size={18} strokeWidth={1.5} />
       </Link>
     </nav>
   )

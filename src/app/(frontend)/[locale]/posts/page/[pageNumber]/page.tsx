@@ -1,8 +1,7 @@
 import type { Metadata } from 'next/types'
 
-import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
-import { Pagination } from '@/components/Pagination'
+import { ArchivePagination } from '../../../ArchivePagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -11,7 +10,7 @@ import { notFound } from 'next/navigation'
 
 import { Locale } from '@/i18n/types'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { PostsArchiveIntro } from '../../PostsArchiveIntro'
+import { ArchiveEntry, ContentArchive } from '../../../ContentArchive'
 
 type Args = {
   params: Promise<{
@@ -42,40 +41,40 @@ export default async function Page({ params: paramsPromise }: Args) {
     select: {
       title: true,
       slug: true,
-      categories: true,
       heroImage: true,
       meta: true,
       publishedAt: true,
-      tags: true,
     },
   })
 
   return (
-    <div className="pb-24">
+    <ContentArchive title={t('posts')}>
       <PageClient />
-      <PostsArchiveIntro title={t('posts')} />
-
-      <div className="container mt-6 sm:mt-7">
-        <div className="grid grid-cols-4 gap-x-4 sm:grid-cols-8 lg:grid-cols-12 lg:gap-x-6 xl:gap-x-7">
-          <div className="col-span-4 md:col-span-4 lg:col-span-6 xl:col-span-4">
-            <PageRange
-              collection="posts"
-              currentPage={posts.page}
-              limit={12}
-              totalDocs={posts.totalDocs}
+      <PageRange
+        collection="posts"
+        currentPage={posts.page}
+        limit={12}
+        totalDocs={posts.totalDocs}
+      />
+      {posts.docs.length > 0 && (
+        <ul className="archive-list">
+          {posts.docs.map((post) => (
+            <ArchiveEntry
+              key={post.id}
+              href={post.slug ? `/posts/${post.slug}` : undefined}
+              title={post.title}
+              description={post.meta?.description}
+              date={post.publishedAt}
+              image={post.heroImage}
+              locale={locale}
             />
-          </div>
-        </div>
-      </div>
-
-      <CollectionArchive className="mt-6 sm:mt-7" posts={posts.docs} />
-
-      <div className="container">
-        {posts?.page && posts?.totalPages > 1 && (
-          <Pagination className="mt-14" page={posts.page} totalPages={posts.totalPages} />
-        )}
-      </div>
-    </div>
+          ))}
+        </ul>
+      )}
+      {posts.totalPages > 1 && posts.page && (
+        <ArchivePagination page={posts.page} totalPages={posts.totalPages} />
+      )}
+    </ContentArchive>
   )
 }
 

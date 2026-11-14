@@ -14,7 +14,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { HomePage } from './home'
 
 import { Locale } from '@/i18n/types'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 type Args = {
   params: Promise<{
@@ -67,7 +67,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const decodedSlug = decodeURIComponent(slug)
   if (decodedSlug === 'home') {
-    return {}
+    const t = await getTranslations({ locale, namespace: 'Home' })
+    return { description: t('description') }
   }
 
   const page = await queryPageBySlug({

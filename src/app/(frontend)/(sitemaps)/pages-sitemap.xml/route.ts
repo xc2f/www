@@ -19,8 +19,8 @@ const getPagesSitemap = unstable_cache(
     const defaultLocale = 'en'
     const dateFallback = new Date().toISOString()
 
-    // 1️⃣ 默认页面（search / posts）
-    const defaultPages = ['search', 'posts']
+    // 1️⃣ 默认页面
+    const defaultPages = ['search', 'posts', 'projects']
 
     const defaultSitemap = defaultPages.map((slug) => {
       const alternates = locales.map((locale) => ({

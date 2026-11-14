@@ -1,10 +1,10 @@
-import React from 'react'
+import { getTranslations } from 'next-intl/server'
 
+import type { CardPostData } from '@/components/Card'
+import type { Locale } from '@/i18n/types'
 import type { Media } from '@/payload-types'
 
-import { ArchiveCard } from '@/components/ArchiveCard'
-import { Card, type CardPostData } from '@/components/Card'
-import { cn } from '@/utilities/ui'
+import { ArchiveEntry } from '../ContentArchive'
 
 export type SearchVideoData = {
   cover?: Media | null
@@ -31,39 +31,48 @@ export type SearchResult =
       video: SearchVideoData
     }
 
-type SearchResultsGridProps = {
-  className?: string
+export async function SearchResultsGrid({
+  results,
+  locale,
+}: {
   results: SearchResult[]
-}
+  locale: Locale
+}) {
+  const posts = await getTranslations('Posts')
+  const videos = await getTranslations('Videos')
 
-export function SearchResultsGrid({ className, results }: SearchResultsGridProps) {
   return (
-    <div className={cn('container', className)}>
-      <div className="grid grid-cols-4 gap-x-4 gap-y-5 sm:grid-cols-8 sm:gap-y-6 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-8 xl:gap-x-7 xl:gap-y-10">
-        {results.map((result) => (
-          <div className="col-span-4 md:col-span-4 lg:col-span-6 xl:col-span-4" key={result.id}>
-            {result.type === 'post' ? (
-              <Card className="h-full" doc={result.post} relationTo="posts" showCategories />
-            ) : (
-              <ArchiveCard
-                className="h-full"
-                description={result.video.summary}
-                href={result.video.href}
-                image={result.video.cover}
-                placeholderLabel="XC2F / VIDEO"
-                publishedAt={result.video.publishedAt}
-                tags={
-                  result.video.tags
-                    ?.map((tag) => tag.title)
-                    .filter((tag): tag is string => Boolean(tag)) ?? []
-                }
-                title={result.video.title}
-                topLabel={result.video.topic?.title}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+    <ul className="archive-list">
+      {results.map((result) => {
+        if (result.type === 'post') {
+          const { post } = result
+          return (
+            <ArchiveEntry
+              key={result.id}
+              locale={locale}
+              kind={posts('posts')}
+              href={post.slug ? `/posts/${post.slug}` : undefined}
+              title={post.title}
+              description={post.meta?.description}
+              date={post.publishedAt}
+              image={post.heroImage}
+            />
+          )
+        }
+        const { video } = result
+        return (
+          <ArchiveEntry
+            key={result.id}
+            locale={locale}
+            kind={videos('video')}
+            href={video.href}
+            title={video.title}
+            description={video.summary}
+            date={video.publishedAt}
+            image={video.cover}
+          />
+        )
+      })}
+    </ul>
   )
 }

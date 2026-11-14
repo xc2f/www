@@ -7,7 +7,7 @@ import MomentsFeed from './MomentsFeed'
 
 import { Locale } from '@/i18n/types'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { MomentsArchiveIntro } from './MomentsArchiveIntro'
+import { ContentArchive } from '../ContentArchive'
 import { queryMomentsPage } from './queries'
 
 type Args = {
@@ -36,22 +36,13 @@ export default async function Page({ params }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <div className="pb-24">
-        <MomentsArchiveIntro
-          eyebrow={t('eyebrow')}
-          title={t('moments')}
-          description={t('intro_description')}
-          descriptionSecondLine={t('intro_description_second_line')}
+      <ContentArchive title={t('moments')} intro={<p>{t('intro_description')}</p>}>
+        <MomentsFeed
+          initialMoments={moments.docs}
+          initialNextPage={moments.nextPage}
+          initialHasNextPage={moments.hasNextPage}
         />
-
-        <div className="container mt-6 sm:mt-7">
-          <MomentsFeed
-            initialMoments={moments.docs}
-            initialNextPage={moments.nextPage}
-            initialHasNextPage={moments.hasNextPage}
-          />
-        </div>
-      </div>
+      </ContentArchive>
     </>
   )
 }
