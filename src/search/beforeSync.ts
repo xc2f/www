@@ -7,7 +7,7 @@ const collectTaxonomyItems = async ({
   items,
   req,
 }: {
-  collection: 'categories' | 'tags' | 'video-topics'
+  collection: 'categories' | 'tags'
   items: unknown[]
   req: Parameters<BeforeSync>[0]['req']
 }): Promise<TaxonomyItem[]> => {
@@ -70,24 +70,6 @@ const collectTaxonomyItems = async ({
   return populatedItems
 }
 
-const collectTaxonomyItem = async ({
-  collection,
-  item,
-  req,
-}: {
-  collection: 'video-topics'
-  item: unknown
-  req: Parameters<BeforeSync>[0]['req']
-}): Promise<TaxonomyItem | null> => {
-  const [taxonomyItem] = await collectTaxonomyItems({
-    collection,
-    items: item ? [item] : [],
-    req,
-  })
-
-  return taxonomyItem ?? null
-}
-
 const getRelationID = (value: unknown): string | number | null | undefined => {
   if (!value || typeof value !== 'object') {
     return value as string | number | null | undefined
@@ -101,34 +83,13 @@ const getRelationID = (value: unknown): string | number | null | undefined => {
 }
 
 export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searchDoc }) => {
-  const {
-    doc: { relationTo: collection },
-  } = searchDoc
-
-  const {
-    categories,
-    cover,
-    heroImage,
-    meta,
-    originalAuthor,
-    originalTitle,
-    publishedAt,
-    slug,
-    summary,
-    tags,
-    title,
-    topic,
-  } = originalDoc
+  const { categories, heroImage, meta, publishedAt, slug, tags, title } = originalDoc
 
   const modifiedDoc: DocToSync = {
     ...searchDoc,
     slug,
-    cover: getRelationID(cover),
     heroImage: getRelationID(heroImage),
-    originalAuthor,
-    originalTitle,
     publishedAt,
-    summary,
     meta: {
       ...meta,
       title: meta?.title || title,
@@ -137,7 +98,6 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
     },
     categories: [],
     tags: [],
-    topic: undefined,
   }
 
   if (categories && Array.isArray(categories) && categories.length > 0) {
@@ -152,22 +112,6 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
       categoryId: String(each.id),
       title: each.title,
     }))
-  }
-
-  if (collection === 'videos' && topic) {
-    const populatedTopic = await collectTaxonomyItem({
-      collection: 'video-topics',
-      item: topic,
-      req,
-    })
-
-    if (populatedTopic) {
-      modifiedDoc.topic = {
-        topicId: String(populatedTopic.id),
-        slug: populatedTopic.slug,
-        title: populatedTopic.title,
-      }
-    }
   }
 
   if (tags && Array.isArray(tags) && tags.length > 0) {

@@ -76,57 +76,6 @@ export const searchFields: Field[] = [
     ],
   },
   {
-    name: 'summary',
-    type: 'textarea',
-    localized: true,
-    admin: {
-      readOnly: true,
-    },
-  },
-  {
-    name: 'originalTitle',
-    type: 'text',
-    admin: {
-      readOnly: true,
-    },
-  },
-  {
-    name: 'originalAuthor',
-    type: 'text',
-    admin: {
-      readOnly: true,
-    },
-  },
-  {
-    name: 'cover',
-    type: 'upload',
-    relationTo: 'media',
-    admin: {
-      readOnly: true,
-    },
-  },
-  {
-    name: 'topic',
-    type: 'group',
-    admin: {
-      readOnly: true,
-    },
-    fields: [
-      {
-        name: 'topicId',
-        type: 'text',
-      },
-      {
-        name: 'slug',
-        type: 'text',
-      },
-      {
-        name: 'title',
-        type: 'text',
-      },
-    ],
-  },
-  {
     label: 'Tags',
     name: 'tags',
     type: 'array',

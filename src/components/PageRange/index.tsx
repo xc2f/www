@@ -22,7 +22,7 @@ export const PageRange: React.FC<{
   }
   currentPage?: number
   limit?: number
-  namespace?: 'Posts' | 'Search' | 'Videos'
+  namespace?: 'Posts' | 'Search'
   totalDocs?: number
 }> = (props) => {
   const {

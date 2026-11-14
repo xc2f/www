@@ -83,8 +83,8 @@ docker volume create xc2f_sqlite_data
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-Payload initializes the SQLite schema on first database access. Open `/admin` to
-create the initial account. Existing deployments continue using the database already
+Apply the Payload SQLite migrations before opening `/admin` to create the initial account.
+Local development also uses explicit migrations via `pnpm db:migrate`. Existing deployments continue using the database already
 stored in `xc2f_sqlite_data`.
 
 For later deployments:

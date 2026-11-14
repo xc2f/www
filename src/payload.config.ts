@@ -1,5 +1,4 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { text } from '@payloadcms/db-sqlite/drizzle/sqlite-core'
 import { mkdirSync } from 'node:fs'
 import sharp from 'sharp'
 import path from 'path'
@@ -14,8 +13,6 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
-import { Videos } from './collections/Videos'
-import { VideoTopics } from './collections/VideoTopics'
 import { Tags } from './collections/Tags'
 import { Notes } from './collections/Notes'
 import { Feeds } from './collections/Feeds'
@@ -121,21 +118,8 @@ export default buildConfig({
     transactionOptions: { behavior: 'immediate' },
     migrationDir: path.resolve(dirname, 'migrations/sqlite'),
     prodMigrations: migrations,
-    afterSchemaInit: [
-      ({ schema, extendTable }) => {
-        // Older production search rows retain these pre-localization values.
-        // Keep them in the schema so development schema pushes cannot discard them.
-        extendTable({
-          table: schema.tables.search,
-          columns: {
-            legacyMetaTitle: text('meta_title'),
-            legacyMetaDescription: text('meta_description'),
-            legacySummary: text('summary'),
-          },
-        })
-        return schema
-      },
-    ],
+    // Apply explicit migrations so retired collection tables stay in existing databases.
+    push: false,
   }),
   collections: [
     Media,
@@ -143,9 +127,7 @@ export default buildConfig({
     Posts,
     Categories,
     Moments,
-    VideoTopics,
     Tags,
-    Videos,
     Notes,
     Feeds,
     Mails,

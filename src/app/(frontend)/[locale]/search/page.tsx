@@ -10,7 +10,7 @@ import { Locale } from '@/i18n/types'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { ContentArchive } from '../ContentArchive'
 import { SearchField } from './SearchField.client'
-import { SearchResultsGrid, type SearchResult, type SearchVideoData } from './SearchResultsGrid'
+import { SearchResultsGrid, type SearchResult } from './SearchResultsGrid'
 
 type Args = {
   searchParams: Promise<{
@@ -34,11 +34,6 @@ const SEARCH_FIELDS = [
   'slug',
   'categories.title',
   'tags.title',
-  'summary',
-  'originalTitle',
-  'originalAuthor',
-  'topic.title',
-  'topic.slug',
 ] as const
 
 export default async function Page({
@@ -81,18 +76,18 @@ export default async function Page({
       doc: true,
       slug: true,
       categories: true,
-      cover: true,
       heroImage: true,
       meta: true,
-      originalAuthor: true,
-      originalTitle: true,
       publishedAt: true,
-      summary: true,
       tags: true,
       title: true,
-      topic: true,
     },
-    ...(searchWhere ? { where: searchWhere } : {}),
+    where: {
+      and: [
+        { 'doc.relationTo': { equals: 'posts' } },
+        ...(searchWhere ? [searchWhere] : []),
+      ],
+    },
   })
 
   const sortedSearchResults = results.docs
@@ -122,32 +117,6 @@ export default async function Page({
             score: getPostSearchScore(post, queryTerms),
             sortDate: post.publishedAt,
             type: 'post' as const,
-          },
-        ]
-      }
-
-      if (relationTo === 'videos') {
-        const video: SearchVideoData = {
-          cover: typeof searchDoc.cover === 'object' ? searchDoc.cover : null,
-          href: getVideoSearchPath(searchDoc),
-          originalAuthor: searchDoc.originalAuthor,
-          publishedAt: searchDoc.publishedAt,
-          summary: searchDoc.summary,
-          tags:
-            searchDoc.tags?.map((tag: { title?: string | null }) => ({
-              title: tag?.title || undefined,
-            })) || [],
-          title: searchDoc.title,
-          topic: searchDoc.topic,
-        }
-
-        return [
-          {
-            id: `video-${searchDoc.id}`,
-            score: getVideoSearchScore(searchDoc, queryTerms),
-            sortDate: searchDoc.publishedAt,
-            type: 'video' as const,
-            video,
           },
         ]
       }
@@ -247,29 +216,6 @@ function getTimeValue(value?: string | null): number {
   return Number.isNaN(time) ? 0 : time
 }
 
-function getRelationTitle(item: unknown): string | null {
-  if (!item || typeof item !== 'object' || !('title' in item)) {
-    return null
-  }
-
-  const title = (item as { title?: unknown }).title
-
-  return typeof title === 'string' ? title : null
-}
-
-function getVideoSearchPath(searchDoc: {
-  slug?: string | null
-  topic?: {
-    slug?: string | null
-  } | null
-}): string | null {
-  if (!searchDoc.topic?.slug || !searchDoc.slug) {
-    return null
-  }
-
-  return `/videos/${searchDoc.topic.slug}/${searchDoc.slug}`
-}
-
 function scoreText(value: string | undefined | null, queryTerms: string[]): number {
   if (!value || queryTerms.length === 0) return 0
 
@@ -339,30 +285,5 @@ function getPostSearchScore(
     ) *
       2 +
     scoreText(post.meta?.description, queryTerms)
-  )
-}
-
-function getVideoSearchScore(
-  video: {
-    originalAuthor?: string | null
-    originalTitle?: string | null
-    slug?: string | null
-    summary?: string | null
-    tags?: unknown[] | null
-    title?: string | null
-    topic?: unknown
-  },
-  queryTerms: string[],
-): number {
-  if (queryTerms.length === 0) return 0
-
-  return (
-    scoreText(video.title, queryTerms) * 5 +
-    scoreText(video.originalTitle, queryTerms) * 4 +
-    scoreText(video.slug, queryTerms) * 3 +
-    scoreText(getRelationTitle(video.topic), queryTerms) * 2 +
-    scoreTextList(video.tags?.map(getRelationTitle), queryTerms) * 2 +
-    scoreText(video.summary, queryTerms) +
-    scoreText(video.originalAuthor, queryTerms)
   )
 }
