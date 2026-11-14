@@ -27,8 +27,9 @@ XC2F is a personal archive for technical notes, everyday observations, and proje
 - Prefer `ContentArchive` and `content-archive.css` in `src/app/(frontend)/[locale]/` for single-column indexes. Align the title, description or form, and first item on one edge. Use semantic section headings and lists.
 - **Articles:** Start the list close to the page title. Show titles and dates when available, with short summaries and small cover images when the source has them. Keep text-only and illustrated rows in the same rhythm. Use real links for pagination.
 - **Article detail:** Use the shared reading column. Place the title, optional summary, date, and category before the cover. Keep the cover shallow on small screens. Render rich text directly in the reading column. Use simple sections for related articles and the GitHub discussion link.
-- **Moments:** Keep a short introduction. Use a date column on desktop and place the date above the entry on phones. Keep images with the entry they belong to. Offer a keyboard-operable Load more control alongside automatic loading, with visible loading and retry states.
-- **Search:** Place a labeled search field and submit button directly below the heading. Use a GET form and keep the query in the URL. The initial state explains that articles and videos are searchable. Results identify the content type and show the result count or a clear empty state. The clear button clears a committed query and its results and returns focus to the field. Keep form submission and pagination available without JavaScript.
+- **Moments:** Keep a short introduction and tighter paragraph spacing for brief entries. Retain the relaxed line height within each paragraph. Use a date column on desktop and place the date above the entry on phones. Keep images with the entry they belong to. Offer a keyboard-operable Load more control alongside automatic loading, with visible loading and retry states.
+- **Markdown blocks:** Match the default rich-text editor’s line breaks. Enter starts a new paragraph, and Shift+Enter inserts a line break within the same paragraph. Apply this to prose after parsing Markdown so code fences and tables keep their syntax.
+- **Search:** Place a labeled search field and submit button directly below the heading. Use a GET form and keep the query in the URL. The initial state explains that articles are searchable. Show the result count or a clear empty state. The clear button clears a committed query and its results and returns focus to the field. Keep form submission and pagination available without JavaScript.
 - **Projects:** Use the same reading width and list style. Each entry has a name, a short explanation of its use, and an outward arrow for its external link.
 
 ## Shared navigation
@@ -40,5 +41,5 @@ XC2F is a personal archive for technical notes, everyday observations, and proje
 
 ## Working with existing pages
 
-- Follow the existing page family's requirements and choose a narrow change for each iteration. Video archives and video detail currently still use `ArchiveHero` and `DetailHero`. Use their actual implementation when working on them and the new content pages as references for any redesign.
+- Follow the existing page family's requirements and choose a narrow change for each iteration.
 - Check changed pages in both themes and at narrow and wide widths. Use actual content to verify title wrapping, optional media, hierarchy, keyboard focus, and links. For motion changes, also verify reduced motion. Follow the repository's Payload and TypeScript validation rules in `AGENTS.md`.

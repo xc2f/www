@@ -1,5 +1,3 @@
-import type { RequiredDataFromCollectionSlug } from 'payload'
-
 import { BookOpen, ChevronRight, Clock3, Shapes } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
@@ -11,7 +9,6 @@ import './home.css'
 
 type HomePageProps = {
   draft: boolean
-  page: RequiredDataFromCollectionSlug<'pages'>
 }
 
 const archives = [

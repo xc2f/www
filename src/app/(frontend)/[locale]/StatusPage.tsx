@@ -33,11 +33,10 @@ export function StatusPage({
     >
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#f6f8fb_0%,#e9eff5_34%,#f7fafc_100%)] dark:bg-[linear-gradient(180deg,#000000_0%,#050a10_36%,#000000_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_26%,rgba(255,143,114,0.09),transparent_28%),radial-gradient(circle_at_82%_24%,rgba(125,215,255,0.1),transparent_30%),radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.34),transparent_34%)] dark:bg-[radial-gradient(circle_at_18%_26%,rgba(255,143,114,0.08),transparent_28%),radial-gradient(circle_at_82%_24%,rgba(125,215,255,0.085),transparent_32%),radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.025),transparent_34%)]" />
-      <div className="home-atmosphere home-atmosphere-drift-a pointer-events-none absolute -left-[18%] top-[4%] h-[38rem] w-[38rem] rounded-full bg-[radial-gradient(circle,rgba(255,143,114,0.05),transparent_72%)] opacity-40 dark:bg-[radial-gradient(circle,rgba(255,143,114,0.055),transparent_72%)] dark:opacity-45" />
-      <div className="home-atmosphere home-atmosphere-drift-b pointer-events-none absolute right-[-20%] top-[12%] h-[40rem] w-[40rem] rounded-full bg-[radial-gradient(circle,rgba(125,215,255,0.065),transparent_72%)] opacity-38 dark:bg-[radial-gradient(circle,rgba(125,215,255,0.06),transparent_74%)] dark:opacity-42" />
+      <div className="home-atmosphere pointer-events-none absolute -left-[18%] top-[4%] h-[38rem] w-[38rem] rounded-full bg-[radial-gradient(circle,rgba(255,143,114,0.05),transparent_72%)] opacity-40 dark:bg-[radial-gradient(circle,rgba(255,143,114,0.055),transparent_72%)] dark:opacity-45" />
+      <div className="home-atmosphere pointer-events-none absolute right-[-20%] top-[12%] h-[40rem] w-[40rem] rounded-full bg-[radial-gradient(circle,rgba(125,215,255,0.065),transparent_72%)] opacity-38 dark:bg-[radial-gradient(circle,rgba(125,215,255,0.06),transparent_74%)] dark:opacity-42" />
       <div className="mux-grid pointer-events-none absolute inset-0 opacity-[0.07] dark:opacity-[0.1]" />
       <div className="home-noise pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06]" />
-      <div className="home-vignette pointer-events-none absolute inset-0 opacity-[0.16] dark:opacity-[0.72]" />
 
       <section className="container relative z-10 py-24">
         <div className="grid grid-cols-4 gap-x-4 sm:grid-cols-8 lg:grid-cols-12 lg:gap-x-6 xl:gap-x-7">

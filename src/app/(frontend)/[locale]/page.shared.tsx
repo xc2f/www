@@ -33,7 +33,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const url = '/' + decodedSlug
 
   if (decodedSlug === 'home') {
-    return <HomePage draft={draft} page={{ slug: 'home' } as RequiredDataFromCollectionSlug<'pages'>} />
+    return <HomePage draft={draft} />
   }
 
   const page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
@@ -45,10 +45,6 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
-
-  if (page.slug === 'home') {
-    return <HomePage draft={draft} page={page} />
-  }
 
   return (
     <article className="pt-16 pb-24">

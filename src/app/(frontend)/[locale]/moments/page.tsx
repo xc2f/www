@@ -36,7 +36,11 @@ export default async function Page({ params }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <ContentArchive title={t('moments')} intro={<p>{t('intro_description')}</p>}>
+      <ContentArchive
+        className="content-archive-compact"
+        title={t('moments')}
+        intro={<p>{t('intro_description')}</p>}
+      >
         <MomentsFeed
           initialMoments={moments.docs}
           initialNextPage={moments.nextPage}

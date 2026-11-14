@@ -63,18 +63,5 @@ export const PageRange: React.FC<{
           })
       : searchT('no_results')
 
-  return (
-    <div
-      className={[
-        className,
-        'max-w-full py-2 text-sm text-[#284855] dark:text-[#b9ecff]/78',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
-      <p className="text-[0.95rem] leading-6 tracking-[0.01em] text-[#284855] dark:text-[#b9ecff]/78">
-        {summary}
-      </p>
-    </div>
-  )
+  return <p className={['archive-page-range', className].filter(Boolean).join(' ')}>{summary}</p>
 }

@@ -8,6 +8,7 @@ import Markdown from 'react-markdown'
 
 // autolink literals, footnotes, strikethrough, tables, tasklists
 import remarkGfm from 'remark-gfm'
+import { remarkLineBreaks } from './remarkLineBreaks'
 
 // math
 import rehypeKatex from 'rehype-katex'
@@ -58,7 +59,7 @@ export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
   const markdownContent = convertLexicalToPlaintext({ data: content })
   const markdownElement = (
     <Markdown
-      remarkPlugins={[remarkMath, remarkGfm]}
+      remarkPlugins={[remarkMath, remarkGfm, remarkLineBreaks]}
       rehypePlugins={[rehypeRaw, [rehypeSanitize, markdownHtmlSchema], rehypeKatex]}
       components={{
         // 拦截 pre 标签

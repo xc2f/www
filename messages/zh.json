@@ -104,9 +104,8 @@
   },
   "Status": {
     "notFound": {
-      "eyebrow": "XC2F / SIGNAL LOST",
-      "title": "这条路径暂时没有回声。",
-      "description": "当前地址不在归档里，或者信号在抵达之前已经移动。",
+      "title": "页面未找到",
+      "description": "这个链接可能已失效。",
       "action": "回到首页"
     },
     "error": {

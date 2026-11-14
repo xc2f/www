@@ -1,16 +1,9 @@
-import type { Metadata } from 'next/types'
-
-import { PageRange } from '@/components/PageRange'
-import { ArchivePagination } from '../../../ArchivePagination'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import React from 'react'
-import PageClient from './page.client'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-import { Locale } from '@/i18n/types'
-import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { ArchiveEntry, ContentArchive } from '../../../ContentArchive'
+import type { Locale } from '@/i18n/types'
+import { PostsArchive } from '../../PostsArchive'
 
 type Args = {
   params: Promise<{
@@ -19,63 +12,12 @@ type Args = {
   }>
 }
 
-export default async function Page({ params: paramsPromise }: Args) {
-  const { pageNumber, locale } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
+export default async function Page({ params }: Args) {
+  const { locale, pageNumber } = await params
+  const page = Number(pageNumber)
+  if (!/^\d+$/.test(pageNumber) || !Number.isSafeInteger(page) || page < 1) notFound()
 
-  // Enable static rendering
-  setRequestLocale(locale)
-  const t = await getTranslations('Posts')
-
-  const sanitizedPageNumber = Number(pageNumber)
-
-  if (!Number.isInteger(sanitizedPageNumber)) notFound()
-
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    page: sanitizedPageNumber,
-    overrideAccess: false,
-    locale,
-    select: {
-      title: true,
-      slug: true,
-      heroImage: true,
-      meta: true,
-      publishedAt: true,
-    },
-  })
-
-  return (
-    <ContentArchive title={t('posts')}>
-      <PageClient />
-      <PageRange
-        collection="posts"
-        currentPage={posts.page}
-        limit={12}
-        totalDocs={posts.totalDocs}
-      />
-      {posts.docs.length > 0 && (
-        <ul className="archive-list">
-          {posts.docs.map((post) => (
-            <ArchiveEntry
-              key={post.id}
-              href={post.slug ? `/posts/${post.slug}` : undefined}
-              title={post.title}
-              description={post.meta?.description}
-              date={post.publishedAt}
-              image={post.heroImage}
-              locale={locale}
-            />
-          ))}
-        </ul>
-      )}
-      {posts.totalPages > 1 && posts.page && (
-        <ArchivePagination page={posts.page} totalPages={posts.totalPages} />
-      )}
-    </ContentArchive>
-  )
+  return <PostsArchive locale={locale} page={page} />
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {

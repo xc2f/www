@@ -104,9 +104,8 @@
   },
   "Status": {
     "notFound": {
-      "eyebrow": "XC2F / SIGNAL LOST",
-      "title": "The route has gone quiet.",
-      "description": "This address is not part of the current archive, or the signal moved before it could settle.",
+      "title": "Page not found",
+      "description": "This link may no longer work.",
       "action": "Return home"
     },
     "error": {

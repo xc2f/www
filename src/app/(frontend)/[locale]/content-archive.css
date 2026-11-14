@@ -8,6 +8,10 @@
   margin-bottom: 1.75rem;
 }
 
+.content-archive-compact .content-archive-heading {
+  margin-bottom: 1.375rem;
+}
+
 .content-archive-heading h1 {
   font-size: clamp(2.5rem, 7vw, 4.5rem);
   font-weight: 500;
@@ -19,6 +23,10 @@
   margin-top: 0.75rem;
   color: var(--index-muted);
   line-height: 1.6;
+}
+
+html[data-theme='dark'] .content-archive-heading .archive-page-range {
+  color: #c8d4e2;
 }
 
 .archive-list,
@@ -228,6 +236,33 @@
 }
 
 .archive-feed-more:focus-visible {
+  outline: 2px solid var(--index-accent);
+  outline-offset: 3px;
+}
+
+.archive-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  border-top: 1px solid var(--index-rule);
+  padding-top: 0.5rem;
+}
+
+.archive-recovery a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  color: var(--index-accent);
+  font-size: 0.9375rem;
+}
+
+.archive-recovery a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.archive-recovery a:focus-visible {
   outline: 2px solid var(--index-accent);
   outline-offset: 3px;
 }

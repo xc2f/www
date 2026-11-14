@@ -15,33 +15,15 @@ const getPagesSitemap = unstable_cache(
         ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
         : 'https://example.com')
 
-    const locales = routing.locales
-    const defaultLocale = 'en'
-    const dateFallback = new Date().toISOString()
+    const { locales, defaultLocale } = routing
+    const fixedPages = new Map<string, string>([
+      ['home', ''],
+      ['moments', '/moments'],
+      ['posts', '/posts'],
+      ['projects', '/projects'],
+      ['search', '/search'],
+    ])
 
-    // 1️⃣ 默认页面
-    const defaultPages = ['search', 'posts', 'projects']
-
-    const defaultSitemap = defaultPages.map((slug) => {
-      const alternates = locales.map((locale) => ({
-        hreflang: LOCALE_TO_HREFLANG[locale],
-        href: `${SITE_URL}/${locale}/${slug}`,
-      }))
-
-      return {
-        loc: `${SITE_URL}/${defaultLocale}/${slug}`,
-        lastmod: dateFallback,
-        alternateRefs: [
-          ...alternates,
-          {
-            hreflang: 'x-default',
-            href: `${SITE_URL}/${defaultLocale}/${slug}`,
-          },
-        ],
-      }
-    })
-
-    // 2️⃣ Payload pages
     const results = await payload.find({
       collection: 'pages',
       overrideAccess: false,
@@ -58,36 +40,28 @@ const getPagesSitemap = unstable_cache(
       },
     })
 
-    const pageSitemap = results.docs
-      ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            const isHome = page.slug === 'home'
+    const pages = [
+      ...Array.from(fixedPages.values(), (path) => ({ path, lastmod: undefined })),
+      ...results.docs.flatMap(({ slug, updatedAt }) =>
+        slug && !fixedPages.has(slug) ? [{ path: `/${slug}`, lastmod: updatedAt }] : [],
+      ),
+    ]
 
-            const alternates = locales.map((locale) => ({
-              hreflang: LOCALE_TO_HREFLANG[locale],
-              href: isHome ? `${SITE_URL}/${locale}` : `${SITE_URL}/${locale}/${page.slug}`,
-            }))
+    return pages.map(({ path, lastmod }) => {
+      const loc = `${SITE_URL}/${defaultLocale}${path}`
 
-            return {
-              loc: isHome
-                ? `${SITE_URL}/${defaultLocale}`
-                : `${SITE_URL}/${defaultLocale}/${page.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-              alternateRefs: [
-                ...alternates,
-                {
-                  hreflang: 'x-default',
-                  href: isHome
-                    ? `${SITE_URL}/${defaultLocale}`
-                    : `${SITE_URL}/${defaultLocale}/${page.slug}`,
-                },
-              ],
-            }
-          })
-      : []
-
-    return [...defaultSitemap, ...pageSitemap]
+      return {
+        loc,
+        ...(lastmod ? { lastmod } : {}),
+        alternateRefs: [
+          ...locales.map((locale) => ({
+            hreflang: LOCALE_TO_HREFLANG[locale],
+            href: `${SITE_URL}/${locale}${path}`,
+          })),
+          { hreflang: 'x-default', href: loc },
+        ],
+      }
+    })
   },
   ['pages-sitemap'],
   {

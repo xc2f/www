@@ -10,23 +10,17 @@ body:has(.home-index) {
 }
 
 html[data-theme='dark'] body:has(.home-index) {
-  --index-paper: #10141d;
-  --index-ink: #edf1fa;
-  --index-muted: #a9b5c8;
-  --index-rule: #303b4e;
-  --index-accent: #a6baff;
-  --index-hover: #1a2335;
+  --index-paper: var(--background);
+  --index-ink: var(--foreground);
+  --index-muted: var(--muted-foreground);
+  --index-rule: var(--border);
+  --index-accent: var(--site-link-accent);
+  --index-hover: var(--muted);
 }
 
 body:has(.home-index) header[data-site-header] {
   position: relative;
   color: var(--index-ink);
-}
-
-body:has(.home-index) header[data-site-header]::before,
-body:has(.home-index) header[data-site-header]::after,
-body:has(.home-index) .home-header-nav::before {
-  content: none;
 }
 
 body:has(.home-index) header[data-site-header] > div,
