@@ -27,7 +27,6 @@
     "clear": "Clear search query",
     "submit": "Submit",
     "signal": "Scanning",
-    "idle": "Search articles.",
     "query_label": "Query",
     "results_for": "{count} results for “{query}”.",
     "no_results": "Search produced no results.",

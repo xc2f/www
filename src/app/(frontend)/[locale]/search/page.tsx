@@ -56,7 +56,6 @@ export default async function Page({
     return (
       <ContentArchive title={t('search')} intro={<SearchForm locale={locale} query={query} />}>
         <PageClient />
-        <p className="archive-note">{t('idle')}</p>
       </ContentArchive>
     )
   }
@@ -153,13 +152,21 @@ export default async function Page({
   }))
 
   return (
-    <ContentArchive title={t('search')} intro={<SearchForm locale={locale} query={query} />}>
+    <ContentArchive
+      className="content-archive-compact"
+      title={t('search')}
+      intro={
+        <>
+          <SearchForm locale={locale} query={query} />
+          <p className="archive-page-range">
+            {resultCount
+              ? t('results_for', { count: totalResults, query })
+              : t('empty_with_query', { query })}
+          </p>
+        </>
+      }
+    >
       <PageClient />
-      <p className="archive-note">
-        {resultCount
-          ? t('results_for', { count: totalResults, query })
-          : t('empty_with_query', { query })}
-      </p>
       {resultCount > 0 && <SearchResultsGrid results={resultsWithCovers} locale={locale} />}
       {totalPages > 1 && (
         <ArchivePagination page={safePage} totalPages={totalPages} query={query} />

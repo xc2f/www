@@ -15,19 +15,29 @@ export function SearchField({
 }) {
   const router = useRouter()
   const input = useRef<HTMLInputElement>(null)
+  const previousQuery = useRef(query)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     setReady(true)
     const field = input.current
-    if (field) {
+    const active = document.activeElement
+    // Client navigation can leave focus on the link that opened this page.
+    const enteredFromLink =
+      active instanceof HTMLAnchorElement &&
+      active.origin === window.location.origin &&
+      active.pathname === window.location.pathname
+
+    if (field && (active === document.body || enteredFromLink)) {
       field.focus({ preventScroll: true })
       const end = field.value.length
       field.setSelectionRange(end, end)
     }
   }, [])
   useEffect(() => {
-    if (input.current) input.current.value = query
+    if (previousQuery.current === query) return
+    previousQuery.current = query
+    if (input.current && input.current.value !== query) input.current.value = query
   }, [query])
 
   return (

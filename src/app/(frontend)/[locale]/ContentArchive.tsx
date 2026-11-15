@@ -42,7 +42,6 @@ export function ArchiveEntry({
   description,
   date,
   image,
-  kind,
   external = false,
   headingLevel = 2,
   locale,
@@ -52,7 +51,6 @@ export function ArchiveEntry({
   description?: string | null
   date?: string | null
   image?: number | MediaData | null
-  kind?: string
   external?: boolean
   headingLevel?: 2 | 3
   locale: Locale
@@ -65,7 +63,6 @@ export function ArchiveEntry({
     <>
       <div className="archive-entry-copy">
         <div className="archive-entry-meta">
-          {kind && <span>{kind}</span>}
           {timestamp && Number.isFinite(timestamp.getTime()) && (
             <time dateTime={date!}>
               {new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' }).format(

@@ -27,7 +27,6 @@
     "clear": "清除搜索关键词",
     "submit": "提交",
     "signal": "检索中",
-    "idle": "可搜索文章。",
     "query_label": "关键词",
     "results_for": "共找到 {count} 条与“{query}”相关的结果。",
     "no_results": "未找到结果。",

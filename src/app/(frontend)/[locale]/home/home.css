@@ -201,4 +201,5 @@ body:has(.home-index) footer[data-site-footer] :is(a, button) {
 
 .home-index-grid-ink .home-index-entry-arrow {
   grid-column: 3;
+  color: var(--index-accent);
 }

@@ -1,5 +1,3 @@
-import { getTranslations } from 'next-intl/server'
-
 import type { CardPostData } from '@/components/Card'
 import type { Locale } from '@/i18n/types'
 
@@ -12,22 +10,19 @@ export type SearchResult = {
   type: 'post'
 }
 
-export async function SearchResultsGrid({
+export function SearchResultsGrid({
   results,
   locale,
 }: {
   results: SearchResult[]
   locale: Locale
 }) {
-  const posts = await getTranslations('Posts')
-
   return (
     <ul className="archive-list">
       {results.map(({ id, post }) => (
         <ArchiveEntry
           key={id}
           locale={locale}
-          kind={posts('posts')}
           href={post.slug ? `/posts/${post.slug}` : undefined}
           title={post.title}
           description={post.meta?.description}
