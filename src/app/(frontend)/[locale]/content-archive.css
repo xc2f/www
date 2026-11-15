@@ -99,11 +99,22 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 0.4rem;
+  background: var(--index-hover);
 }
 
 .archive-entry-image picture {
   display: block;
   height: 100%;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .archive-entry-image img {
+    transition: scale 180ms ease-out;
+  }
+
+  a.archive-entry:hover .archive-entry-image img {
+    scale: 1.04;
+  }
 }
 
 .archive-entry-arrow {
@@ -115,7 +126,6 @@
 }
 
 .posts-archive .archive-entry {
-  align-items: flex-start;
   gap: clamp(0.5rem, 2vw, 1rem);
   padding-block: 1rem;
 }
@@ -129,18 +139,6 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-}
-
-.posts-archive .archive-entry-image {
-  flex-basis: clamp(2.75rem, 10vw, 5rem);
-}
-
-.posts-archive .archive-entry-arrow {
-  margin-top: 0.2rem;
-}
-
-.posts-archive .archive-entry:has(.archive-entry-meta time) .archive-entry-arrow {
-  margin-top: 1.8rem;
 }
 
 .archive-note {

@@ -143,6 +143,16 @@ body:has(.home-index) footer[data-site-footer] :is(a, button) {
   opacity: 0.64;
 }
 
+.home-index-ink .home-index-ink-fill {
+  opacity: 0;
+}
+
+.home-index-ink-fill path {
+  fill: color-mix(in oklab, var(--ink-fill) 32%, transparent);
+  stroke: none;
+  opacity: 1;
+}
+
 @media (min-width: 53rem) {
   .home-index-grid-ink .home-index-archives {
     grid-column: 2;

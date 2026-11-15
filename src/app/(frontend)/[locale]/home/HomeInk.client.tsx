@@ -91,6 +91,127 @@ const sketches = [
   ],
 ]
 
+// Color regions sit beneath the ink strokes. Colors are ordered spring, summer, autumn, winter.
+const shanghaiMonth = new Intl.DateTimeFormat('en', { month: 'numeric', timeZone: 'Asia/Shanghai' })
+
+const sketchFills = [
+  [
+    {
+      colors: ['#8b9e76', '#668d90', '#b57557', '#788c9f'],
+      path: 'M235 119 C258 109 272 118 270 132 C269 146 251 155 226 155 L230 146 C248 146 262 139 262 131 C262 124 251 121 233 128 Z',
+    },
+    {
+      colors: ['#b0bc8b', '#82aa9b', '#c48662', '#a6b8c8'],
+      path: 'M117 107 C121 129 125 154 137 170 C151 184 205 184 219 170 C230 153 234 128 238 106 C232 117 207 122 177 121 C143 121 121 116 117 107 Z',
+    },
+    { colors: ['#d2c2a5', '#b1bfb1', '#bca79b', '#ccd8df'], path: sketches[0][0] },
+    {
+      colors: ['#926546', '#926546', '#926546', '#926546'],
+      path: 'M131 106 C152 99 201 98 224 106 C216 112 198 116 177 115 C154 115 137 112 131 106 Z',
+    },
+  ],
+  [
+    {
+      colors: ['#7ba881', '#589783', '#b88959', '#749b9b'],
+      path: 'M137 166 C115 111 164 61 259 53 C237 68 218 79 195 106 C173 132 152 153 137 166 Z',
+    },
+    {
+      colors: ['#a7b873', '#82ac71', '#cdaa6e', '#aabcc0'],
+      path: 'M137 166 C152 153 173 132 195 106 C218 79 237 68 259 53 C257 98 236 147 198 163 C177 172 156 170 137 166 Z',
+    },
+  ],
+  [
+    { colors: ['#c5b5d5', '#96bcd4', '#c8a580', '#a4b8ce'], path: 'M100 108 L278 60 L155 124 Z' },
+    {
+      colors: ['#998ab9', '#7290bd', '#a37e69', '#6d86ac'],
+      path: 'M155 124 L278 60 L179 133 L153 162 Z',
+    },
+    { colors: ['#b494b1', '#a3a4c8', '#b89480', '#95a6bf'], path: 'M153 162 L179 133 L191 139 Z' },
+    { colors: ['#ead8df', '#becedb', '#e3c6a2', '#d9e2ed'], path: 'M179 133 L278 60 L229 159 Z' },
+  ],
+  [
+    {
+      colors: ['#ce8c91', '#d3a96c', '#cda46a', '#a5b5d6'],
+      path: 'M191 48 Q170 78 135 101 Q161 115 183 153 Q184 97 191 48 Z',
+    },
+    {
+      colors: ['#9e9ac2', '#6f9f98', '#b37f6d', '#7d8eb0'],
+      path: 'M191 48 Q207 72 250 100 Q215 122 183 153 Q184 97 191 48 Z',
+    },
+    {
+      colors: ['#ad82a6', '#83a4be', '#a597b9', '#b0a8c6'],
+      path: 'M191 169 l-13 -4 l3 10 Z M174 190 l-11 2 l9 5 Z',
+    },
+  ],
+  [
+    {
+      colors: ['#c39aa6', '#94b7c8', '#d2ac7e', '#c7d5e5'],
+      path: 'M178 74 Q150 116 131 136 L177 135 Z',
+    },
+    {
+      colors: ['#d6c294', '#cba66c', '#9d826d', '#a4adcb'],
+      path: 'M190 91 Q210 118 231 136 L190 136 Z',
+    },
+    { colors: ['#7c9e90', '#628e9c', '#9f7970', '#6a8b9e'], path: sketches[4][3] },
+  ],
+  [
+    {
+      colors: ['#ae7997', '#7f8eb6', '#bc7c78', '#9387ad'],
+      path: 'M175 98 Q184 77 205 89 Z M180 140 Q190 157 207 141 Z',
+    },
+    {
+      colors: ['#c8a181', '#7a9eaa', '#c08c66', '#829ab7'],
+      path: 'M151 109 L119 92 Q127 117 119 139 L151 124 Z',
+    },
+    {
+      colors: ['#dbb89f', '#92b7af', '#dfa46c', '#b0c4d6'],
+      path: 'M251 116 C230 82 180 84 151 109 L151 124 C183 151 227 146 251 116 Z',
+    },
+  ],
+  [
+    {
+      colors: ['#829fbd', '#77a596', '#b19778', '#8fabc7'],
+      path: 'M116 119 Q137 67 188 64 Q172 81 165 119 Q139 104 116 119 Z',
+    },
+    {
+      colors: ['#b59bcc', '#dec18c', '#cca383', '#b7b8d1'],
+      path: 'M188 64 Q206 84 213 119 Q187 104 165 119 Q172 81 188 64 Z',
+    },
+    {
+      colors: ['#8b8bb9', '#65918d', '#a27b70', '#7789a9'],
+      path: 'M188 64 Q237 67 260 119 Q236 104 213 119 Q206 84 188 64 Z',
+    },
+  ],
+  [
+    {
+      colors: ['#c8ad90', '#d4bc8d', '#c3a174', '#a0a1ac'],
+      path: `${sketches[7][0]} Z ${sketches[7][1]} Z`,
+    },
+    {
+      colors: ['#cd8893', '#cb938e', '#b17e73', '#ae8299'],
+      path: 'M133 92 Q132 78 137 75 L149 86 Z M197 86 L210 75 Q215 80 214 94 Z M169 122 q4 -3 8 0 l-4 4 Z',
+    },
+    {
+      colors: ['#cb8990', '#d2a496', '#ca9282', '#c896a1'],
+      path: 'M139 126 a7 3 0 1 0 14 0 a7 3 0 1 0 -14 0 Z M193 126 a7 3 0 1 0 14 0 a7 3 0 1 0 -14 0 Z',
+    },
+  ],
+  [
+    {
+      colors: ['#c2b6a5', '#cbba90', '#c1a07e', '#b7b9c0'],
+      path: `${sketches[8][0]} Z ${sketches[8][2]} Z`,
+    },
+    {
+      colors: ['#8f7567', '#8c846c', '#976b56', '#7e6e62'],
+      path: 'M137 90 C123 85 109 102 107 122 C105 135 113 141 122 134 Q133 127 138 106 Z M207 89 C222 84 237 102 240 122 C242 135 233 141 224 134 Q213 126 209 106 Z',
+    },
+    {
+      colors: ['#c98892', '#c9939a', '#b87b88', '#b5869b'],
+      path: 'M168 134 C168 145 181 145 181 134 Q175 137 168 134 Z',
+    },
+  ],
+]
+
 // Timings follow the sketches: cup, leaf, plane, kite, boat, fish, umbrella, cat, dog.
 const motionTiming = [
   { rest: 380, duration: 1680, settle: 280 },
@@ -163,6 +284,8 @@ export function HomeInk() {
         .filter((index) => index !== previousSketch)
       const sketch = available[Math.floor(between(0, available.length))]
       const strokes = sketches[sketch]
+      const month = Number(shanghaiMonth.format())
+      const season = Math.floor(((month + 9) % 12) / 3)
       previousSketch = sketch
       const angle = between(-5, 5)
       group?.setAttribute('transform', `rotate(${angle} 190 120)`)
@@ -171,6 +294,16 @@ export function HomeInk() {
       body.style.transformOrigin =
         sketch === 1 ? '119px 184px' : sketch === 3 ? '183px 153px' : '190px 116px'
       group?.append(body)
+
+      const color = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+      color.classList.add('home-index-ink-fill')
+      for (const region of sketchFills[sketch]) {
+        const patch = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        patch.setAttribute('d', region.path)
+        patch.style.setProperty('--ink-fill', region.colors[season])
+        color.append(patch)
+      }
+      body.append(color)
 
       const isCat = sketch === 7
       const isDog = sketch === 8
@@ -301,6 +434,7 @@ export function HomeInk() {
 
         if (motion.matches) {
           if (index + 1 < strokes.length) drawStroke(index + 1)
+          else color.style.opacity = '1'
           return
         }
 
@@ -320,7 +454,14 @@ export function HomeInk() {
               drawStroke(index + 1)
             }
           } else {
-            timer = setTimeout(animateObject, rest)
+            animation = color.animate([{ opacity: 0 }, { opacity: 1 }], {
+              duration: 360,
+              easing: 'ease-out',
+            })
+            animation.onfinish = () => {
+              color.style.opacity = '1'
+              timer = setTimeout(animateObject, rest)
+            }
           }
         }
       }

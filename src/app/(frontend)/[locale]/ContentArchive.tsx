@@ -79,6 +79,7 @@ export function ArchiveEntry({
           resource={image}
           className="archive-entry-image"
           imgClassName="h-full w-full object-cover"
+          placeholder="empty"
           size="112px"
         />
       )}
