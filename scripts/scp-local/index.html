@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SCP 文件传输</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/page.js"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>SCP 文件传输</h1>
+        <p>将本机的文件或目录复制到 SSH 服务器。</p>
+      </header>
+
+      <form id="transfer" autocomplete="off">
+        <section aria-labelledby="source-heading">
+          <h2 id="source-heading">本机来源</h2>
+          <label>
+            文件或目录路径
+            <input name="source" required spellcheck="false" placeholder="~/Downloads/backup" />
+          </label>
+          <div class="picker-actions">
+            <button type="button" data-pick="file">选择文件…</button>
+            <button type="button" data-pick="directory">选择目录…</button>
+          </div>
+          <p class="hint">目录会递归复制。SCP 会跟随目录中的符号链接。</p>
+        </section>
+
+        <section aria-labelledby="target-heading">
+          <h2 id="target-heading">目标服务器</h2>
+          <div class="host">
+            <label
+              >主机名或 IP<input name="host" required spellcheck="false" placeholder="example.com"
+            /></label>
+            <label
+              >SSH 端口<input name="port" type="number" required min="1" max="65535" value="22"
+            /></label>
+          </div>
+          <label
+            >用户名<input name="user" required spellcheck="false" placeholder="ubuntu"
+          /></label>
+          <label>
+            目标目录
+            <input
+              name="destination"
+              required
+              spellcheck="false"
+              placeholder="/home/ubuntu/uploads"
+            />
+          </label>
+          <p class="hint">目标目录须已存在且可写。同名文件可能被覆盖。</p>
+        </section>
+
+        <section aria-labelledby="auth-heading">
+          <h2 id="auth-heading">SSH 认证</h2>
+          <fieldset>
+            <legend>认证方式</legend>
+            <label><input type="radio" name="auth" value="password" checked /> 密码</label>
+            <label><input type="radio" name="auth" value="pem" /> PEM 私钥</label>
+          </fieldset>
+          <div id="key-field" class="key-field" hidden>
+            <label>
+              本机私钥路径
+              <input name="key" spellcheck="false" placeholder="~/.ssh/server.pem" disabled />
+            </label>
+            <div class="picker-actions">
+              <button type="button" data-pick="pem">选择 PEM…</button>
+            </div>
+          </div>
+          <label>
+            <span id="secret-label">SSH 密码</span>
+            <input type="password" name="secret" required />
+          </label>
+          <p class="hint">首次连接请先通过终端 SSH 核对主机指纹。</p>
+        </section>
+
+        <div class="actions">
+          <button type="submit">开始传输</button>
+          <button type="button" id="cancel" hidden>取消</button>
+        </div>
+        <p class="status" id="status" role="status"></p>
+      </form>
+    </main>
+  </body>
+</html>
