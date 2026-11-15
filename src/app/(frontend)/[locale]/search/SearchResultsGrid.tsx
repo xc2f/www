@@ -7,6 +7,7 @@ import { ArchiveEntry } from '../ContentArchive'
 
 export type SearchResult = {
   id: string
+  postID: number
   post: CardPostData
   type: 'post'
 }

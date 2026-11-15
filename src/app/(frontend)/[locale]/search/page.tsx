@@ -76,30 +76,25 @@ export default async function Page({
       doc: true,
       slug: true,
       categories: true,
-      heroImage: true,
       meta: true,
       publishedAt: true,
       tags: true,
       title: true,
     },
     where: {
-      and: [
-        { 'doc.relationTo': { equals: 'posts' } },
-        ...(searchWhere ? [searchWhere] : []),
-      ],
+      and: [{ 'doc.relationTo': { equals: 'posts' } }, ...(searchWhere ? [searchWhere] : [])],
     },
   })
 
   const sortedSearchResults = results.docs
     .flatMap<RankedSearchResult>((searchDoc) => {
-      const relationTo = searchDoc.doc?.relationTo
+      const relation = searchDoc.doc
 
-      if (relationTo === 'posts') {
+      if (relation?.relationTo === 'posts' && relation.value != null) {
         const post = {
           categories: searchDoc.categories?.map((category) => ({
             title: category?.title || undefined,
           })),
-          heroImage: searchDoc.heroImage,
           meta: searchDoc.meta,
           publishedAt: searchDoc.publishedAt,
           slug: searchDoc.slug || '',
@@ -113,6 +108,7 @@ export default async function Page({
         return [
           {
             id: `post-${searchDoc.id}`,
+            postID: typeof relation.value === 'object' ? relation.value.id : relation.value,
             post: post as CardPostData,
             score: getPostSearchScore(post, queryTerms),
             sortDate: post.publishedAt,
@@ -137,6 +133,24 @@ export default async function Page({
   const safePage = totalPages > 0 ? Math.min(currentPage, totalPages) : 1
   const searchResults = sortedSearchResults.slice((safePage - 1) * pageSize, safePage * pageSize)
   const resultCount = searchResults.length
+  const covers = new Map<number, CardPostData['heroImage']>()
+  if (resultCount > 0) {
+    const { docs } = await payload.find({
+      collection: 'posts',
+      depth: 1,
+      locale,
+      overrideAccess: false,
+      pagination: false,
+      select: { heroImage: true },
+      where: { id: { in: searchResults.map(({ postID }) => postID) } },
+    })
+    for (const post of docs) covers.set(post.id, post.heroImage)
+  }
+
+  const resultsWithCovers = searchResults.map((result) => ({
+    ...result,
+    post: { ...result.post, heroImage: covers.get(result.postID) },
+  }))
 
   return (
     <ContentArchive title={t('search')} intro={<SearchForm locale={locale} query={query} />}>
@@ -146,7 +160,7 @@ export default async function Page({
           ? t('results_for', { count: totalResults, query })
           : t('empty_with_query', { query })}
       </p>
-      {resultCount > 0 && <SearchResultsGrid results={searchResults} locale={locale} />}
+      {resultCount > 0 && <SearchResultsGrid results={resultsWithCovers} locale={locale} />}
       {totalPages > 1 && (
         <ArchivePagination page={safePage} totalPages={totalPages} query={query} />
       )}

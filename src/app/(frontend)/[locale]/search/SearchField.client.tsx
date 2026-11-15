@@ -17,7 +17,15 @@ export function SearchField({
   const input = useRef<HTMLInputElement>(null)
   const [ready, setReady] = useState(false)
 
-  useEffect(() => setReady(true), [])
+  useEffect(() => {
+    setReady(true)
+    const field = input.current
+    if (field) {
+      field.focus({ preventScroll: true })
+      const end = field.value.length
+      field.setSelectionRange(end, end)
+    }
+  }, [])
   useEffect(() => {
     if (input.current) input.current.value = query
   }, [query])
