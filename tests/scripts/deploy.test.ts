@@ -9,7 +9,7 @@ import { test } from 'node:test'
 const execFileAsync = promisify(execFile)
 
 // Simulate the Docker boundary; never touch the host Docker daemon or database.
-async function simulateDeployment(scenario: string) {
+async function simulateDeployment(scenario: string, args: string[] = []) {
   const directory = await mkdtemp(path.join(tmpdir(), 'xc2f-deploy-test-'))
   try {
     const bin = path.join(directory, 'bin')
@@ -31,8 +31,15 @@ const state = JSON.parse(fs.readFileSync(file, 'utf8'));
 const tool = path.basename(process.argv[1]);
 const args = process.argv.slice(2);
 state.calls.push([tool, ...args]);
+if (tool === 'docker' && args[0] === 'compose' && args.includes('pull')) {
+  state.pulledImage = process.env.PAYLOAD_IMAGE;
+}
 const scenario = process.env.DEPLOY_TEST_SCENARIO;
 let code = 0;
+if (tool === 'docker' && args.includes('--environment') && scenario !== 'missing-image') {
+  process.stdout.write('PAYLOAD_DEV_IMAGE=registry.example.test/payload:dev-latest\\n');
+  process.stdout.write('PAYLOAD_STANDALONE_IMAGE=registry.example.test/payload:latest\\n');
+}
 if (tool === 'docker' && args[0] === 'inspect') {
   if (scenario === 'first-install') code = 1;
   else process.stdout.write('sha256:previous-image\\n');
@@ -52,10 +59,11 @@ process.exit(code);
     let output = ''
     try {
       output = (
-        await execFileAsync('bash', [path.join(directory, 'deploy.sh')], {
+        await execFileAsync('bash', [path.join(directory, 'deploy.sh'), ...args], {
           env: {
             ...process.env,
             PATH: `${bin}:${process.env.PATH}`,
+            PAYLOAD_IMAGE: 'custom-image:pin',
             DEPLOY_TEST_DIR: directory,
             DEPLOY_TEST_SCENARIO: scenario,
           },
@@ -69,6 +77,7 @@ process.exit(code);
     const state = JSON.parse(await readFile(path.join(directory, 'state.json'), 'utf8')) as {
       current: string
       calls: string[][]
+      pulledImage?: string
     }
     await assert.rejects(readFile(path.join(directory, '.deploy.lock')), { code: 'ENOENT' })
     return { ...state, exitCode, output }
@@ -81,6 +90,7 @@ test('deployment waits for database readiness and preserves a rollback image', a
   const result = await simulateDeployment('healthy')
   assert.equal(result.exitCode, 0)
   assert.equal(result.current, 'new')
+  assert.equal(result.pulledImage, 'registry.example.test/payload:latest')
   assert.ok(
     result.calls.some((call) => call.includes('tag') && call.includes('sha256:previous-image')),
   )
@@ -89,6 +99,27 @@ test('deployment waits for database readiness and preserves a rollback image', a
     result.calls.some((call) => call.includes('down')),
     false,
   )
+})
+
+test('explicit deployment targets select their published image tags', async () => {
+  for (const [target, tag] of [['dev', 'dev-latest'], ['standalone', 'latest']]) {
+    const result = await simulateDeployment('healthy', [target])
+    assert.equal(result.exitCode, 0)
+    assert.equal(result.pulledImage, `registry.example.test/payload:${tag}`)
+  }
+})
+
+test('a missing target image stops deployment before pulling', async () => {
+  const result = await simulateDeployment('missing-image', ['dev'])
+  assert.equal(result.exitCode, 2)
+  assert.equal(result.calls.length, 1)
+  assert.ok(result.calls[0].includes('--environment'))
+})
+
+test('unknown deployment targets are rejected before calling Docker', async () => {
+  const result = await simulateDeployment('healthy', ['unknown'])
+  assert.equal(result.exitCode, 2)
+  assert.deepEqual(result.calls, [])
 })
 
 test('failed readiness restores the previous image and still exits unsuccessfully', async () => {

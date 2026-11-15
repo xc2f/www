@@ -1,6 +1,11 @@
-name: '🚀 Build and Push Dev Image'
+name: Publish Dev Image
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/migrations/sqlite/*.ts'
   workflow_dispatch:
 
 permissions:

@@ -96,8 +96,10 @@ bash scripts/deploy.sh
 The deployment script requires `xc2f_sqlite_data` to exist and checks database
 access from inside the container before updating the application. Host `./data`
 is no longer used by the running container. Do not delete the active Docker volume.
-The standalone application applies bundled SQLite migrations on
-startup. New SQLite schema changes need a committed migration:
+Both the Dev and Standalone images apply bundled SQLite migrations when Payload
+initializes against the deployment database. The deploy script waits for the
+application health check before reporting success. New SQLite schema changes
+need a committed migration:
 
 ```bash
 pnpm run db:migrate:create add_post_summary
@@ -164,6 +166,12 @@ and database readiness check; it returns no content or user data.
 
 ### Deployment verification and rollback
 
+`pnpm run deploy dev` uses `PAYLOAD_DEV_IMAGE` and `pnpm run deploy standalone`
+uses `PAYLOAD_STANDALONE_IMAGE`. Set both in the deployment directory's `.env`
+using the image references in `.env.example`, or export the variables before
+running the script. Both commands update the same Compose service and SQLite
+volume. With no argument, `pnpm run deploy` defaults to `standalone`.
+
 `scripts/deploy.sh` preserves the current image as `xc2f-payload:rollback`, checks
 volume access before stopping the current app, and starts the new image without
 removing the Compose project. It polls `/api/health` up to 30 times with five-second
@@ -177,8 +185,9 @@ application behavior afterward. Database migrations are **not** reversed and may
 be incompatible with an older image. Take a verified database backup before
 schema-changing deployments and follow the restore procedure below if needed.
 If an interrupted deployment leaves `.deploy.lock`, verify no deployment is
-running before removing that directory. `PAYLOAD_IMAGE` can pin the production
-Compose service to a specific image tag instead of `latest`.
+running before removing that directory. To pin a deployment to a specific image
+tag, export the corresponding mode variable. The deploy script passes its
+selection to Compose through `PAYLOAD_IMAGE`.
 
 Run `pnpm test:ops` for SQLite backup/recovery, real mail-queue retries, system
 endpoint access, and deployment failure/rollback simulations. Production image

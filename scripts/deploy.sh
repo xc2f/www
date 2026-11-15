@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+usage() {
+  echo "Usage: bash deploy.sh [dev|standalone] (default: standalone)"
+}
+
+if [ "$#" -gt 1 ]; then
+  usage >&2
+  exit 2
+fi
+
+case "${1-standalone}" in
+  dev) IMAGE_VAR=PAYLOAD_DEV_IMAGE ;;
+  standalone) IMAGE_VAR=PAYLOAD_STANDALONE_IMAGE ;;
+  -h|--help) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+
 COMPOSE_FILE="docker-compose.prod.yml"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -14,6 +30,18 @@ else
   exit 1
 fi
 cd "$PROJECT_DIR"
+
+if ! PAYLOAD_IMAGE="$(
+  docker compose -f "$COMPOSE_FILE" config --environment |
+    awk -v prefix="$IMAGE_VAR=" 'index($0, prefix) == 1 { print substr($0, length(prefix) + 1) }'
+)"; then
+  exit 1
+fi
+if [ -z "$PAYLOAD_IMAGE" ]; then
+  echo "Set $IMAGE_VAR in $PROJECT_DIR/.env or export it before deploying." >&2
+  exit 2
+fi
+export PAYLOAD_IMAGE
 
 if ! mkdir .deploy.lock 2>/dev/null; then
   echo "Another deployment holds .deploy.lock. If it was interrupted, verify no deployment is running before removing the lock."

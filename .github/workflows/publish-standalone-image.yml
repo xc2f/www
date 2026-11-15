@@ -1,4 +1,4 @@
-name: '💎 Build and Push Standalone Image'
+name: Publish Standalone Image
 
 on:
   push:

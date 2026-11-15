@@ -1,7 +1,6 @@
 services:
   payload:
-    image: ${PAYLOAD_IMAGE:-public.ecr.aws/umcai/xc2f/payload:latest}
-    # image: public.ecr.aws/umcai/xc2f/payload:dev-latest
+    image: ${PAYLOAD_IMAGE:-${PAYLOAD_STANDALONE_IMAGE:-public.ecr.aws/umcai/xc2f/payload:latest}}
     container_name: payload
     restart: unless-stopped
     ports:
@@ -9,6 +8,7 @@ services:
     volumes:
       - sqlite_data:/app/data
     environment:
+      NODE_ENV: production
       DATABASE_URL: file:/app/data/xc2f.db
     env_file:
       - .env

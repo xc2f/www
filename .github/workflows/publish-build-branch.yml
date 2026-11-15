@@ -1,4 +1,4 @@
-name: Build and Push to Build Branch
+name: Publish Next.js Build to Branch
 
 on:
   workflow_dispatch:
