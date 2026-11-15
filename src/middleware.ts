@@ -2,7 +2,7 @@ import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { acceptsMarkdown, isMarkdownPage } from './utilities/markdownNegotiation'
+import { acceptsMarkdown, isMarkdownPage, markdownSourceHeader } from './utilities/markdownNegotiation'
 
 const intlMiddleware = createMiddleware(routing)
 
@@ -24,8 +24,10 @@ export function middleware(req: NextRequest) {
   const target = req.nextUrl.clone()
   target.pathname = '/api/markdown'
   target.search = ''
-  target.searchParams.set('page', pathname + search)
-  return NextResponse.rewrite(target)
+  // App Route handlers can receive the original URL instead of the rewrite query.
+  const headers = new Headers(req.headers)
+  headers.set(markdownSourceHeader, pathname + search)
+  return NextResponse.rewrite(target, { request: { headers } })
 }
 
 export const config = {

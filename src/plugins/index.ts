@@ -15,7 +15,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'XC2F'
-  return doc?.title ? `${doc.title} | ${SITE_NAME}` : SITE_NAME
+  return doc?.title || SITE_NAME
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {

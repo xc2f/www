@@ -1,6 +1,9 @@
 import { Banner } from '@payloadcms/ui/elements/Banner'
 import Link from 'next/link'
 import React from 'react'
+
+import { getServerSideURL } from '@/utilities/getURL'
+
 import './index.scss'
 
 const baseClass = 'before-dashboard'
@@ -12,7 +15,7 @@ const BeforeDashboard: React.FC = () => {
         <h4>Welcome to your dashboard!</h4>
       </Banner>
       <div className="row">
-        <a href="/" target="_blank">
+        <a href={getServerSideURL()} target="_blank" rel="noopener noreferrer">
           Visit your website
         </a>
         <span>|</span>

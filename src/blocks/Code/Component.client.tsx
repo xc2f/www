@@ -6,10 +6,12 @@ import { CopyButton } from './CopyButton'
 type Props = {
   code: string
   language?: string
+  preserveWhitespace?: boolean
 }
 
-export const Code: React.FC<Props> = ({ code, language = '' }) => {
+export const Code: React.FC<Props> = ({ code, language = '', preserveWhitespace = false }) => {
   const [mounted, setMounted] = useState(false)
+  const displayCode = preserveWhitespace ? code : code.trim()
 
   useEffect(() => {
     const prismWindow = window as Window & { Prism?: typeof Prism }
@@ -27,13 +29,13 @@ export const Code: React.FC<Props> = ({ code, language = '' }) => {
     // 这样服务器和客户端初始渲染的 HTML 就会完全匹配
     return (
       <pre className="bg-black p-4 border text-xs border-border rounded overflow-x-auto">
-        <code className="text-white">{code.trim()}</code>
+        <code className="text-white">{displayCode}</code>
       </pre>
     )
   }
 
   return (
-    <Highlight prism={Prism} code={code.trim()} language={language} theme={themes.vsDark}>
+    <Highlight prism={Prism} code={displayCode} language={language} theme={themes.vsDark}>
       {({ getLineProps, getTokenProps, tokens }) => (
         <pre className="bg-black p-4 border text-xs border-border rounded overflow-x-auto">
           {tokens.map((line, i) => (

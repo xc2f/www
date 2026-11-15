@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import TurndownService from 'turndown'
 
-import { acceptsMarkdown, isMarkdownPage } from '@/utilities/markdownNegotiation'
+import { acceptsMarkdown, isMarkdownPage, markdownSourceHeader } from '@/utilities/markdownNegotiation'
 
 const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' })
 converter.remove((node) =>
@@ -20,7 +20,7 @@ converter.addRule('postMetadata', {
 
 async function serveMarkdown(request: NextRequest) {
   const headers = new Headers({ Vary: 'Accept', 'Cache-Control': 'private, no-store' })
-  const page = request.nextUrl.searchParams.get('page')
+  const page = request.headers.get(markdownSourceHeader) ?? request.nextUrl.searchParams.get('page')
   if (!page || !acceptsMarkdown(request.headers.get('Accept'))) {
     return new Response(null, { status: 404, headers })
   }

@@ -1,3 +1,5 @@
+export const markdownSourceHeader = 'x-xc2f-markdown-source'
+
 export function acceptsMarkdown(accept: string | null): boolean {
   return Boolean(
     accept?.split(',').some((range) => {

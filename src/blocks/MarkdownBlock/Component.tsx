@@ -1,14 +1,15 @@
 import type { MarkdownBlock as MarkdownBlockProps } from 'src/payload-types'
 
 import { cn } from '@/utilities/ui'
-import React from 'react'
-import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintext'
+import React, { isValidElement, useId } from 'react'
 
 import Markdown from 'react-markdown'
 
 // autolink literals, footnotes, strikethrough, tables, tasklists
 import remarkGfm from 'remark-gfm'
 import { remarkLineBreaks } from './remarkLineBreaks'
+import { remarkTableRows } from './remarkTableRows'
+import { getMarkdownSource } from './getMarkdownSource'
 
 // math
 import rehypeKatex from 'rehype-katex'
@@ -54,35 +55,46 @@ const markdownHtmlSchema = {
   },
 } satisfies SanitizeOptions
 
+const sanitizedIdPrefix = defaultSchema.clobberPrefix ?? 'user-content-'
+const footnoteLabelId = `${sanitizedIdPrefix}footnote-label`
+
 export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
+  const footnotePrefix = `markdown-${useId()}-`
+  const localFootnoteLabelId = `${sanitizedIdPrefix}${footnotePrefix}footnote-label`
   const withClassName = cn(className, 'markdown')
-  const markdownContent = convertLexicalToPlaintext({ data: content })
+  const { source, enterGaps } = getMarkdownSource(content)
   const markdownElement = (
     <Markdown
-      remarkPlugins={[remarkMath, remarkGfm, remarkLineBreaks]}
+      remarkPlugins={[remarkMath, remarkGfm, [remarkTableRows, enterGaps], remarkLineBreaks]}
+      remarkRehypeOptions={{ clobberPrefix: footnotePrefix }}
       rehypePlugins={[rehypeRaw, [rehypeSanitize, markdownHtmlSchema], rehypeKatex]}
       components={{
-        // 拦截 pre 标签
-        pre(props) {
-          const { children } = props
-          return <>{children}</>
+        a({ node, href, 'aria-describedby': label, ...props }) {
+          const properties = node?.properties
+          const isFootnote =
+            properties?.dataFootnoteRef !== undefined ||
+            properties?.dataFootnoteBackref !== undefined
+          const target =
+            isFootnote && href?.startsWith('#')
+              ? `#${encodeURIComponent(sanitizedIdPrefix + href.slice(1))}`
+              : href
+          const description = isFootnote && label === footnoteLabelId ? localFootnoteLabelId : label
+          return <a {...props} href={target} aria-describedby={description} />
         },
-        // 代码高亮逻辑
-        code(props) {
-          const { children, className, ...rest } = props
-          const match = /language-(\w+)/.exec(className || '')
-          if (match) {
-            const content = String(children).trim()
-            if (match[1] === 'mermaid') {
-              return <MermaidDiagram chart={content} />
+        h2({ node: _node, id, ...props }) {
+          return <h2 {...props} id={id === footnoteLabelId ? localFootnoteLabelId : id} />
+        },
+        pre({ node: _node, children, ...props }) {
+          if (isValidElement<{ className?: string; children?: React.ReactNode }>(children) &&
+              children.type === 'code' && typeof children.props.children === 'string') {
+            const language = children.props.className?.match(/(?:^|\s)language-([\w+-]+)/)?.[1]
+            const code = children.props.children.replace(/\n$/, '')
+            if (language === 'mermaid') return <MermaidDiagram chart={code} />
+            if (language) {
+              return <CodeHighlighter code={code} language={language} preserveWhitespace />
             }
-            return <CodeHighlighter code={content} language={match[1]} />
           }
-          return (
-            <code {...rest} className={className}>
-              {children}
-            </code>
-          )
+          return <pre {...props}>{children}</pre>
         },
         input(props) {
           if (props.type === 'checkbox') {
@@ -100,7 +112,7 @@ export const MarkdownBlock: React.FC<Props> = ({ className, content }) => {
         },
       }}
     >
-      {markdownContent}
+      {source}
     </Markdown>
   )
 

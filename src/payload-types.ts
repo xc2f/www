@@ -880,7 +880,7 @@ export interface Feed {
   title: string;
   visibility: 'public' | 'private';
   /**
-   * 自动生成，格式为 http://127.0.0.1:4317/api/feeds/for/{slug}
+   * 自动生成，格式为 http://localhost:3000/api/feeds/for/{slug}
    */
   feedUrl?: string | null;
   json?:

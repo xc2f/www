@@ -110,6 +110,39 @@
   flex-shrink: 0;
 }
 
+.posts-archive .content-archive-heading h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.posts-archive .archive-entry {
+  align-items: flex-start;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  padding-block: 1rem;
+}
+
+.posts-archive .archive-entry-title {
+  font-size: clamp(1.0625rem, 2.5vw, 1.25rem);
+}
+
+.posts-archive .archive-entry p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.posts-archive .archive-entry-image {
+  flex-basis: clamp(2.75rem, 10vw, 5rem);
+}
+
+.posts-archive .archive-entry-arrow {
+  margin-top: 0.2rem;
+}
+
+.posts-archive .archive-entry:has(.archive-entry-meta time) .archive-entry-arrow {
+  margin-top: 1.8rem;
+}
+
 .archive-note {
   margin-block: 0 0.75rem;
   color: var(--index-muted);

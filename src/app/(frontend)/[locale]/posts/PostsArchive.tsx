@@ -36,15 +36,17 @@ export async function PostsArchive({ locale, page = 1 }: { locale: Locale; page?
 
   return (
     <ContentArchive
-      className="content-archive-compact"
+      className="content-archive-compact posts-archive"
       title={t('posts')}
       intro={
-        <PageRange
-          collection="posts"
-          currentPage={posts.page}
-          limit={pageSize}
-          totalDocs={posts.totalDocs}
-        />
+        posts.totalPages !== 1 && (
+          <PageRange
+            collection="posts"
+            currentPage={posts.page}
+            limit={pageSize}
+            totalDocs={posts.totalDocs}
+          />
+        )
       }
     >
       <PageClient />

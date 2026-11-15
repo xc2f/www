@@ -27,7 +27,11 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'XC2F'
-  const title = doc?.meta?.title
+  const siteSuffix = ` | ${SITE_NAME}`
+  let title = doc?.meta?.title?.trim()
+  while (title?.endsWith(siteSuffix)) {
+    title = title.slice(0, -siteSuffix.length).trimEnd()
+  }
 
   const metaData = {
     description: doc?.meta?.description,
@@ -40,7 +44,7 @@ export const generateMeta = async (args: {
             },
           ]
         : undefined,
-      title: title ? `${title} | ${SITE_NAME}` : SITE_NAME,
+      title: title && title !== SITE_NAME ? `${title}${siteSuffix}` : SITE_NAME,
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
     }),
   }
@@ -48,7 +52,7 @@ export const generateMeta = async (args: {
   if (title) {
     return {
       ...metaData,
-      title,
+      title: title === SITE_NAME ? { absolute: title } : title,
     }
   }
 
