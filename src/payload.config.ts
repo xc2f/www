@@ -207,7 +207,21 @@ export default buildConfig({
         })
       : undefined,
   // admin ui
-  i18n: { supportedLanguages: { en, zh } },
+  i18n: {
+    supportedLanguages: { en, zh },
+    translations: {
+      zh: {
+        'plugin-redirects': {
+          customUrl: '自定义 URL',
+          documentToRedirect: '目标文档',
+          fromUrl: '来源 URL',
+          internalLink: '站内链接',
+          redirectType: '重定向类型',
+          toUrlType: '目标 URL 类型',
+        },
+      },
+    },
+  },
   // next ui
   localization: {
     locales: [

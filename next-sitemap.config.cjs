@@ -10,6 +10,11 @@ module.exports = {
   // exclude: ['/posts-sitemap.xml', '/pages-sitemap.xml', '/*', '/posts/*'],
   exclude: ['/**'],
   robotsTxtOptions: {
+    transformRobotsTxt: async (_config, robotsTxt) =>
+      robotsTxt.replace(
+        'User-agent: *\n',
+        'User-agent: *\nContent-Signal: ai-train=no, search=yes, ai-input=yes\n',
+      ),
     policies: [
       {
         userAgent: '*',

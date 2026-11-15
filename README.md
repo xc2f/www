@@ -210,10 +210,23 @@ does not update the database in the Docker volume.
 `POST /next/seed` resets demo content in development/test environments only.
 The route returns `404` in production. Do not run it against imported data.
 
-### 本机 SCP 文件传输
+## Local SCP file transfer
 
-在运行网页的电脑上安装 OpenSSH 9.0 或更新版本，并在仓库目录运行 `pnpm scp:local`（也可运行 `npm run scp:local`）。打开 [本机 SCP 页面](http://127.0.0.1:4762)，填入文件或目录的绝对路径（也支持 `~/`）、服务器地址、端口、用户名和已有的远端目标目录。认证可使用 SSH 密码，或填写本机 PEM 私钥路径及可选的私钥口令。
+Install OpenSSH 9.0 or later on your computer and run `pnpm scp:local` or
+`npm run scp:local` from the repository root. Open the
+[local SCP page](http://127.0.0.1:4762) and enter the local file or directory
+path, server address, SSH port, username, and an existing destination directory.
+Local paths can be absolute or start with `~/`. Authenticate with an SSH password
+or a local PEM private key and its passphrase, if required.
 
-首次连接服务器时，先在终端执行 `ssh -p 22 user@example.com`，核对并接受服务器指纹。传输服务仅监听 `127.0.0.1`。目录按 SCP 的规则递归复制，包括空目录，并跟随符号链接。取消或失败时，远端可能保留已传输的内容。
+Before transferring to a server for the first time, connect from your terminal
+with SSH (for example, `ssh -p 22 user@example.com`) and verify its host key
+fingerprint before accepting it. The transfer service listens only on
+`127.0.0.1`. Directory transfers are recursive, include empty directories, and
+follow symbolic links. A cancelled or failed transfer may leave partial data
+at the destination.
 
-在 macOS 上可以点击「选择文件」「选择目录」或「选择 PEM」，在系统窗口中选取路径。再次打开页面时，同一浏览器会回填上次提交的连接信息和路径。SSH 密码和私钥口令每次重新输入。
+On macOS, the file, folder, and PEM buttons open the system picker and fill in
+the selected path. When you reopen the page in the same browser, it fills in the
+connection details and paths from your last submission. Enter the SSH password
+or key passphrase again for each transfer.

@@ -1,0 +1,41 @@
+XC2F API reference
+==================
+
+Public content is available without authentication. The API catalog lives at
+/.well-known/api-catalog and the HTTP operations are described in /api-openapi.json.
+
+Content REST API
+----------------
+
+Use GET /api/posts to list published posts. Other readable collections include
+pages, moments, media, categories, tags, and feeds. Use page and limit for
+pagination, and locale=en or locale=zh for localized fields. GET /api/{collection}/{id}
+fetches a single document. Site navigation can be read at /api/globals/header
+and /api/globals/footer.
+
+GET /api/feeds/for/{slug} returns a published public feed as plain text.
+Add ?json=true to request its JSON representation.
+
+Payload REST query options: https://payloadcms.com/docs/rest-api/overview
+
+Content GraphQL API
+-------------------
+
+POST /api/graphql with Content-Type: application/json and a JSON object
+containing query and, if needed, variables and operationName. For example:
+
+{"query":"{ Posts(limit: 5) { docs { id title slug } } }"}
+
+Payload GraphQL usage: https://payloadcms.com/docs/graphql/overview
+
+Moments feed API
+----------------
+
+GET /en/moments/feed or /zh/moments/feed returns a page of published moments.
+Use ?page=2 to request another page and follow nextPage while hasNextPage is true.
+
+Availability
+------------
+
+GET /api/health returns HTTP 200 when the application database is ready and
+HTTP 503 when it is unavailable.

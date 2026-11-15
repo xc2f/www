@@ -1,0 +1,381 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "XC2F public content APIs",
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "url": "/api-reference.txt"
+  },
+  "paths": {
+    "/api/{collection}": {
+      "get": {
+        "summary": "List public collection documents",
+        "responses": {
+          "200": {
+            "description": "Paginated document list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "docs"
+                  ],
+                  "properties": {
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "collection",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "posts",
+                "pages",
+                "moments",
+                "media",
+                "categories",
+                "tags",
+                "feeds"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ]
+      }
+    },
+    "/api/{collection}/{id}": {
+      "get": {
+        "summary": "Read a public collection document",
+        "responses": {
+          "200": {
+            "description": "Public document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Document unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "collection",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "posts",
+                "pages",
+                "moments",
+                "media",
+                "categories",
+                "tags",
+                "feeds"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "required": true
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/api/globals/{global}": {
+      "get": {
+        "summary": "Read the site header or footer",
+        "responses": {
+          "200": {
+            "description": "Site configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "global",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "header",
+                "footer"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/api/feeds/for/{slug}": {
+      "get": {
+        "summary": "Read a public feed",
+        "responses": {
+          "200": {
+            "description": "Public feed contents",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Public feed unavailable"
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "json",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Include this parameter to request JSON."
+          }
+        ]
+      }
+    },
+    "/api/graphql": {
+      "post": {
+        "summary": "Query public content with GraphQL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "variables": {
+                    "type": "object"
+                  },
+                  "operationName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "GraphQL data and/or errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid GraphQL request"
+          }
+        }
+      }
+    },
+    "/{locale}/moments/feed": {
+      "get": {
+        "summary": "List published moments",
+        "responses": {
+          "200": {
+            "description": "Paginated moments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "docs",
+                    "hasNextPage",
+                    "nextPage"
+                  ],
+                  "properties": {
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "hasNextPage": {
+                      "type": "boolean"
+                    },
+                    "nextPage": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid locale"
+          }
+        },
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "en",
+                "zh"
+              ]
+            },
+            "required": true
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Check application readiness",
+        "responses": {
+          "200": {
+            "description": "Application database ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "ok"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Application database unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "unavailable"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
