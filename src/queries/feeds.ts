@@ -9,7 +9,6 @@ export async function findFeedBySlug(slug: string) {
     overrideAccess: false,
     where: {
       slug: { equals: slug },
-      enabled: { equals: true },
       _status: { equals: 'published' },
     },
     limit: 1,

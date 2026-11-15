@@ -878,11 +878,11 @@ export interface CodeBlock {
 export interface Feed {
   id: number;
   title: string;
+  visibility: 'public' | 'private';
   /**
    * 自动生成，格式为 http://localhost:3000/api/feeds/for/{slug}
    */
   feedUrl?: string | null;
-  enabled?: boolean | null;
   json?:
     | {
         [k: string]: unknown;
@@ -1595,8 +1595,8 @@ export interface CodeBlockSelect<T extends boolean = true> {
  */
 export interface FeedsSelect<T extends boolean = true> {
   title?: T;
+  visibility?: T;
   feedUrl?: T;
-  enabled?: T;
   json?: T;
   body?: T;
   generateSlug?: T;

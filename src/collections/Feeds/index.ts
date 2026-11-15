@@ -1,20 +1,25 @@
-import type { CollectionConfig } from 'payload'
+import { slugField, type CollectionConfig } from 'payload'
 
 import { adminOrEditor } from '../../access/roles'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { slugField } from 'payload'
+import { getServerSideURL } from '../../utilities/getURL'
+import { feedEndpoints } from './endpoints'
 
 export const Feeds: CollectionConfig = {
   slug: 'feeds',
   access: {
     create: adminOrEditor,
     delete: adminOrEditor,
-    read: authenticatedOrPublished,
+    read: (args) =>
+      adminOrEditor(args) || {
+        _status: { equals: 'published' },
+        visibility: { equals: 'public' },
+      },
+    readVersions: adminOrEditor,
     update: adminOrEditor,
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'feedUrl', 'enabled', '_status', 'updatedAt'],
+    defaultColumns: ['title', 'feedUrl', 'visibility', '_status', 'updatedAt'],
     group: 'Tools',
   },
   defaultSort: '-updatedAt',
@@ -25,6 +30,25 @@ export const Feeds: CollectionConfig = {
       required: true,
     },
     {
+      name: 'visibility',
+      type: 'select',
+      required: true,
+      defaultValue: 'public',
+      admin: { position: 'sidebar' },
+      options: [
+        { label: 'Public', value: 'public' },
+        { label: 'Private', value: 'private' },
+      ],
+    },
+    {
+      name: 'privateSubscription',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: { Field: '/collections/Feeds/SubscriptionLink#SubscriptionLink' },
+      },
+    },
+    {
       name: 'feedUrl',
       type: 'text',
       label: 'Feed URL',
@@ -32,11 +56,6 @@ export const Feeds: CollectionConfig = {
         readOnly: true,
         description: `自动生成，格式为 ${process.env.NEXT_PUBLIC_SERVER_URL}/api/feeds/for/{slug}`,
       },
-    },
-    {
-      name: 'enabled',
-      type: 'checkbox',
-      defaultValue: true,
     },
     {
       name: 'json',
@@ -55,54 +74,22 @@ export const Feeds: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
-      ({ data }) => {
-        if (data?.slug) {
-          data.feedUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/feeds/for/${data.slug}${data.json ? '?json' : ''}`
+      ({ data, originalDoc }) => {
+        if (!data) return data
+        const visibility = data.visibility ?? originalDoc?.visibility
+        const slug = data.slug ?? originalDoc?.slug
+        const json = 'json' in data ? data.json : originalDoc?.json
+
+        if (visibility === 'private') {
+          data.feedUrl = null
+        } else if (slug) {
+          data.feedUrl = `${getServerSideURL()}/api/feeds/for/${encodeURIComponent(slug)}${json != null ? '?json' : ''}`
         }
         return data
       },
     ],
   },
-  endpoints: [
-    {
-      path: '/for/:slug',
-      method: 'get',
-      handler: async (req) => {
-        const slug = typeof req.routeParams?.slug === 'string' ? req.routeParams.slug : undefined
-
-        if (!slug) {
-          return Response.json({ message: 'Slug is required' }, { status: 400 })
-        }
-
-        const { json } = req.query
-        const payload = req.payload
-
-        const result = await payload.find({
-          collection: 'feeds',
-          overrideAccess: false,
-          where: {
-            slug: { equals: slug },
-            enabled: { equals: true },
-            _status: { equals: 'published' },
-          },
-          limit: 1,
-        })
-
-        if (!result.docs.length) {
-          return Response.json({ message: 'Feed not found' }, { status: 404 })
-        }
-
-        const feed = result.docs[0]
-        if (json !== undefined) {
-          return Response.json(feed.json ?? {}, { status: 200 })
-        }
-        return new Response(feed.body ?? '', {
-          status: 200,
-          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-        })
-      },
-    },
-  ],
+  endpoints: feedEndpoints,
   versions: {
     drafts: true,
   },
