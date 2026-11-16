@@ -13,6 +13,7 @@ import React, { cache } from 'react'
 import type { Post } from '@/payload-types'
 
 import { generateMeta } from '@/utilities/generateMeta'
+import { getServerSideURL } from '@/utilities/getURL'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 import { Locale } from '@/i18n/types'
@@ -133,7 +134,19 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const decodedSlug = decodeURIComponent(slug)
   const post = await queryPostBySlug({ slug: decodedSlug, locale })
 
-  return generateMeta({ doc: post })
+  const metadata = await generateMeta({ doc: post })
+  if (!post?.slug) return metadata
+
+  const canonical = new URL(
+    `/${locale}/posts/${encodeURIComponent(post.slug)}`,
+    getServerSideURL(),
+  ).href
+
+  return {
+    ...metadata,
+    alternates: { ...metadata.alternates, canonical },
+    openGraph: { ...metadata.openGraph, url: canonical },
+  }
 }
 
 const queryPostBySlug = cache(async ({ slug, locale }: { slug: string; locale: Locale }) => {

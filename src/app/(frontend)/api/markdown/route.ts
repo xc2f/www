@@ -1,9 +1,19 @@
 import type { NextRequest } from 'next/server'
 import TurndownService from 'turndown'
+import { tables } from 'turndown-plugin-gfm'
 
 import { acceptsMarkdown, isMarkdownPage, markdownSourceHeader } from '@/utilities/markdownNegotiation'
 
 const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' })
+converter.use(tables)
+converter.addRule('tableCell', {
+  filter: ['th', 'td'],
+  replacement: (content, node) => {
+    const prefix = node.previousElementSibling ? ' ' : '| '
+    const cell = content.trim().replace(/\|/g, '\\|').replace(/\n+/g, '<br>')
+    return `${prefix}${cell} |`
+  },
+})
 converter.remove((node) =>
   node.matches(
     'head, title, script, style, template, noscript, svg, canvas, button, input, select, textarea, [data-site-header], [data-site-footer]',

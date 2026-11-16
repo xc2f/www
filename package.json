@@ -83,6 +83,7 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "turndown": "^7.2.5",
+    "turndown-plugin-gfm": "^1.0.2",
     "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {

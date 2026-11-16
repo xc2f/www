@@ -18,6 +18,18 @@ Add ?json=true to request its JSON representation.
 
 Payload REST query options: https://payloadcms.com/docs/rest-api/overview
 
+Article detail
+--------------
+
+GET /api/public/posts/{locale}/{slug} returns the metadata of a published
+article. For example, use /api/public/posts/zh/payload-admin-cloudflare-access.
+The response includes the canonical public URL, title, description, author
+names, publication and update dates, categories, and tags. To read the article
+body, request canonicalUrl with Accept: text/markdown.
+
+Supported locales are en and zh. An unsupported locale returns 400. A missing
+or unpublished article returns 404.
+
 Content GraphQL API
 -------------------
 
