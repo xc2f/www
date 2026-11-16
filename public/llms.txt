@@ -1,0 +1,23 @@
+# XC2F
+
+> XC2F 是一个个人档案，收录技术笔记、实验、日常观察和项目。网站提供中文和英文入口。
+>
+> XC2F is a personal archive of technical notes, experiments, everyday observations, and projects, with article indexes in Chinese and English.
+
+从文章索引查找内容。读取正文时，向公开文章 URL 发送 `Accept: text/markdown`。文章详情 API 按语言和 slug 返回元数据，其中的 `canonicalUrl` 是引用和读取正文的公开地址。
+
+## 文章索引
+
+- [中文文章](https://xc2f.com/zh/posts): 浏览中文文章。
+- [English articles](https://xc2f.com/en/posts): Browse articles in English.
+
+## 代表文章
+
+- [用 Cloudflare Access 给 Payload 后台加一道登录](https://xc2f.com/zh/posts/payload-admin-cloudflare-access): 记录 Passkey 登录、后台跳转和 Tunnel 回源排查。
+- [从华中测试 AWS 各区域延迟](https://xc2f.com/zh/posts/ping-aws): 比较不同 AWS 区域的网络延迟。
+
+## 公开 API
+
+- [API 使用指南](https://xc2f.com/api-reference.txt): 介绍公开查询、文章详情和 Markdown 读取方式。
+- [API Catalog](https://xc2f.com/.well-known/api-catalog): 机器可读的 API 目录。
+- [OpenAPI](https://xc2f.com/api-openapi.json): 请求参数和响应结构。
