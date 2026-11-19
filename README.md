@@ -216,6 +216,11 @@ Install OpenSSH 9.0 or later on your computer and run `pnpm scp:local` or
 `npm run scp:local` from the repository root. Open the
 [local SCP page](http://127.0.0.1:4762) and enter the local file or directory
 path, server address, SSH port, username, and an existing destination directory.
+Choose upload to copy a local file or directory to the server, or download to
+pull a remote file or directory into an existing local directory. For downloads,
+enter the remote absolute path and select whether it is a file or directory;
+the local directory picker selects where to save it. Downloads preserve the
+source name inside the local directory and may overwrite files with the same name.
 Local paths can be absolute or start with `~/`. Authenticate with an SSH password
 or a local PEM private key and its passphrase, if required.
 

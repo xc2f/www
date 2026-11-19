@@ -8,9 +8,40 @@ const cancel = document.querySelector('#cancel')
 const status = document.querySelector('#status')
 const pickers = [...form.querySelectorAll('[data-pick]')]
 const historyKey = 'xc2f-scp-last-transfer'
-const rememberedFields = ['source', 'host', 'port', 'user', 'destination', 'auth', 'key']
+const rememberedFields = [
+  'source',
+  'host',
+  'port',
+  'user',
+  'destination',
+  'auth',
+  'key',
+  'direction',
+  'remoteType',
+]
 let activeTransfer
 let picking = false
+
+function updateDirection() {
+  const downloading = form.elements.namedItem('direction').value === 'download'
+  document.querySelector('#source-heading').textContent = downloading ? '本机目标' : '本机来源'
+  document.querySelector('#target-heading').textContent = downloading ? '来源服务器' : '目标服务器'
+  document.querySelector('#local-label').textContent = downloading
+    ? '保存到本机目录'
+    : '文件或目录路径'
+  document.querySelector('#remote-label').textContent = downloading
+    ? '远端文件或目录路径'
+    : '目标目录'
+  document.querySelector('#pick-file').hidden = downloading
+  document.querySelector('#remote-type').hidden = !downloading
+  document.querySelector('#local-hint').textContent = downloading
+    ? '请选择已存在且可写的目录。同名文件可能被覆盖。'
+    : '目录会递归复制。SCP 会跟随目录中的符号链接。'
+  document.querySelector('#remote-hint').textContent = downloading
+    ? '填写远端绝对路径，并选择来源类型。目录会递归下载。'
+    : '目标目录须已存在且可写。同名文件可能被覆盖。'
+  submit.textContent = downloading ? '开始下载' : '开始上传'
+}
 
 function updateAuth() {
   const usesKey = form.elements.namedItem('auth').value === 'pem'
@@ -27,6 +58,8 @@ try {
     const value = previous?.[name]
     if (typeof value !== 'string') continue
     if (name === 'auth' && value !== 'pem' && value !== 'password') continue
+    if (name === 'direction' && value !== 'upload' && value !== 'download') continue
+    if (name === 'remoteType' && value !== 'file' && value !== 'directory') continue
     form.elements.namedItem(name).value = value
   }
 } catch {
@@ -40,6 +73,10 @@ for (const radio of form.querySelectorAll('[name="auth"]')) {
   })
 }
 updateAuth()
+for (const radio of form.querySelectorAll('[name="direction"]')) {
+  radio.addEventListener('change', updateDirection)
+}
+updateDirection()
 
 for (const picker of pickers) {
   picker.addEventListener('click', async () => {

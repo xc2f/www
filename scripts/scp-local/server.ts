@@ -101,6 +101,15 @@ async function transfer(body: Record<string, unknown>, signal: AbortSignal) {
   const source = localPath(inputText(body, 'source'))
   const auth = inputText(body, 'auth')
   const secret = inputText(body, 'secret')
+  // Keep existing clients upload-only when direction is omitted.
+  const direction = body.direction ?? 'upload'
+  if (direction !== 'upload' && direction !== 'download') {
+    throw new InputError('请选择有效的传输方向。')
+  }
+  const downloading = direction === 'download'
+  if (downloading && body.remoteType !== 'file' && body.remoteType !== 'directory') {
+    throw new InputError('请选择远端来源类型。')
+  }
 
   if (!isIP(host) && !/^[a-z\d](?:[a-z\d.-]{0,251}[a-z\d.])?$/i.test(host)) {
     throw new InputError('请输入有效的主机名或 IP 地址。')
@@ -112,13 +121,16 @@ async function transfer(body: Record<string, unknown>, signal: AbortSignal) {
     throw new InputError('请输入有效的 SSH 用户名。')
   }
   if (!destination.startsWith('/')) {
-    throw new InputError('服务器目录须填写以 / 开头的绝对路径。')
+    throw new InputError('远端路径须填写以 / 开头的绝对路径。')
   }
   if (auth !== 'password' && auth !== 'pem') throw new InputError('请选择认证方式。')
   if (auth === 'password' && !secret) throw new InputError('请输入 SSH 密码。')
 
   const sourceInfo = await stat(source).catch(() => null)
-  if (!sourceInfo || (!sourceInfo.isFile() && !sourceInfo.isDirectory())) {
+  if (downloading && !sourceInfo?.isDirectory()) {
+    throw new InputError('本机目标须指向已存在的目录。')
+  }
+  if (!downloading && (!sourceInfo || (!sourceInfo.isFile() && !sourceInfo.isDirectory()))) {
     throw new InputError('本机路径须指向可访问的文件或目录。')
   }
 
@@ -141,7 +153,7 @@ async function transfer(body: Record<string, unknown>, signal: AbortSignal) {
     '-o',
     'IdentityAgent=none',
   ]
-  if (sourceInfo.isDirectory()) args.push('-r')
+  if (downloading ? body.remoteType === 'directory' : sourceInfo?.isDirectory()) args.push('-r')
   if (auth === 'pem') {
     const key = localPath(inputText(body, 'key'))
     if (!(await stat(key).catch(() => null))?.isFile()) {
@@ -154,7 +166,8 @@ async function transfer(body: Record<string, unknown>, signal: AbortSignal) {
   if (!secret) args.push('-B')
 
   const remoteHost = isIP(host) === 6 ? `[${host}]` : host
-  args.push('--', source, `${user}@${remoteHost}:${destination.replace(/\/+$/, '')}/`)
+  const remote = `${user}@${remoteHost}:${downloading ? destination : `${destination.replace(/\/+$/, '')}/`}`
+  args.push('--', ...(downloading ? [remote, source] : [source, remote]))
 
   const env = { ...process.env, SSH_ASKPASS_REQUIRE: 'never', LC_ALL: 'C' }
   const temporary = secret ? await mkdtemp(join(tmpdir(), 'xc2f-scp-')) : undefined
