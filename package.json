@@ -20,6 +20,7 @@
     "deploy": "bash scripts/deploy.sh",
     "db:init": "pnpm run db:migrate",
     "db:migrate": "cross-env ENABLE_EMAIL=false DISABLE_BACKGROUND_JOBS=true payload migrate",
+    "db:migrate:down": "cross-env ENABLE_EMAIL=false DISABLE_BACKGROUND_JOBS=true payload migrate:down",
     "db:migrate:create": "bash scripts/db-migrate-create.sh",
     "db:migrate:status": "cross-env ENABLE_EMAIL=false DISABLE_BACKGROUND_JOBS=true payload migrate:status",
     "typecheck": "tsc --noEmit",

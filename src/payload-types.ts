@@ -945,8 +945,39 @@ export interface Mail {
         id?: string | null;
       }[]
     | null;
+  /**
+   * 留空立即发送；修改时间并发布会替换原发送计划。
+   */
   at?: string | null;
-  sendStatus: 'pending' | 'sent' | 'failed';
+  /**
+   * 发布以发送；取消发布或保存为草稿可撤回未发送邮件。失败后重新发布可重试。
+   */
+  sendStatus: 'pending' | 'sending' | 'sent' | 'cancelled' | 'uncertain' | 'failed';
+  deliveryToken?: string | null;
+  sendStartedAt?: string | null;
+  sentAt?: string | null;
+  messageId?: string | null;
+  activeAttempt?: string | null;
+  /**
+   * 每次尝试独立保留。已发送表示邮件服务已接收，不代表收件人已收到。
+   */
+  deliveryHistory?:
+    | {
+        attemptId: string;
+        jobId?: string | null;
+        startedAt: string;
+        finishedAt?: string | null;
+        acceptedAt?: string | null;
+        outcome: 'sending' | 'sent' | 'failed' | 'uncertain';
+        messageId?: string | null;
+        error?: string | null;
+        resolution?: ('sent' | 'failed') | null;
+        resolvedAt?: string | null;
+        resolvedBy?: string | null;
+        resolutionNote?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   result?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1650,6 +1681,28 @@ export interface MailsSelect<T extends boolean = true> {
       };
   at?: T;
   sendStatus?: T;
+  deliveryToken?: T;
+  sendStartedAt?: T;
+  sentAt?: T;
+  messageId?: T;
+  activeAttempt?: T;
+  deliveryHistory?:
+    | T
+    | {
+        attemptId?: T;
+        jobId?: T;
+        startedAt?: T;
+        finishedAt?: T;
+        acceptedAt?: T;
+        outcome?: T;
+        messageId?: T;
+        error?: T;
+        resolution?: T;
+        resolvedAt?: T;
+        resolvedBy?: T;
+        resolutionNote?: T;
+        id?: T;
+      };
   result?: T;
   updatedAt?: T;
   createdAt?: T;

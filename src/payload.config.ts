@@ -33,6 +33,8 @@ import { zh } from '@payloadcms/translations/languages/zh'
 import { endpoints } from './endpoints'
 import { sqliteFilePath, sqliteURL } from './utilities/sqlite'
 import { migrations } from './migrations/sqlite'
+import { recoverMailDeliveries } from './utilities/mailDelivery'
+import { serializeSqliteJobs } from './utilities/serializeSqliteJobs'
 import { recoverBackupJobs } from './utilities/recoverBackupJobs'
 import { adminOnly } from './access/roles'
 import { systemAccess } from './access/system'
@@ -61,7 +63,11 @@ const s3Config = {
 }
 
 export default buildConfig({
-  onInit: recoverBackupJobs,
+  onInit: async (payload) => {
+    serializeSqliteJobs(payload)
+    await recoverBackupJobs(payload)
+    await recoverMailDeliveries(payload)
+  },
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin'],

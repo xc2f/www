@@ -21,6 +21,7 @@ import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloa
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { SubscriptionLink as SubscriptionLink_9299357a3793b08a4bdc2b0eaf5c2f50 } from '../../../collections/Feeds/SubscriptionLink'
 import { default as default_7b12fdf6bcfe60cc126dc2cbee538cd0 } from '@/components/Divider/index.tsx'
+import { default as default_a5727cb2d807289fc3f3bb73518bec79 } from '@/components/MailDeliveryResolution'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -57,6 +58,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/collections/Feeds/SubscriptionLink#SubscriptionLink": SubscriptionLink_9299357a3793b08a4bdc2b0eaf5c2f50,
   "@/components/Divider/index.tsx#default": default_7b12fdf6bcfe60cc126dc2cbee538cd0,
+  "@/components/MailDeliveryResolution#default": default_a5727cb2d807289fc3f3bb73518bec79,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
