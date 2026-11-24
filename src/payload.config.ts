@@ -25,6 +25,7 @@ import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
 import { sendEmailTask } from './tasks/sendEmail'
+import { translateMomentTask } from './tasks/translateMoment'
 import { backupDatabaseTask } from './tasks/backupDatabase'
 
 import { en } from '@payloadcms/translations/languages/en'
@@ -171,6 +172,7 @@ export default buildConfig({
     },
     tasks: [
       sendEmailTask,
+      translateMomentTask,
       {
         slug: 'backupDatabase',
         handler: backupDatabaseTask,

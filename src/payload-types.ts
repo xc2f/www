@@ -137,6 +137,7 @@ export interface Config {
   jobs: {
     tasks: {
       'send-email': TaskSendEmail;
+      'translate-moment': TaskTranslateMoment;
       backupDatabase: TaskBackupDatabase;
       schedulePublish: TaskSchedulePublish;
       inline: {
@@ -1135,7 +1136,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'send-email' | 'backupDatabase' | 'schedulePublish';
+        taskSlug: 'inline' | 'send-email' | 'translate-moment' | 'backupDatabase' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -1168,7 +1169,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'send-email' | 'backupDatabase' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'send-email' | 'translate-moment' | 'backupDatabase' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -2167,6 +2168,18 @@ export interface CollectionsWidget {
 export interface TaskSendEmail {
   input?: unknown;
   output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskTranslate-moment".
+ */
+export interface TaskTranslateMoment {
+  input: {
+    momentId: number;
+  };
+  output: {
+    translated?: boolean | null;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

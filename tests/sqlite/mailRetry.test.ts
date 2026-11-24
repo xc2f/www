@@ -182,11 +182,18 @@ test('mail plans handle retries, cancellation, rescheduling, duplicates and unce
         job: {
           ...concurrentJob,
           input: '',
-          taskStatus: { 'send-email': {}, backupDatabase: {}, schedulePublish: {}, inline: {} },
+          taskStatus: {
+            'send-email': {},
+            'translate-moment': {},
+            backupDatabase: {},
+            schedulePublish: {},
+            inline: {},
+          },
         },
         req: await createLocalReq({}, payload),
         tasks: {
           'send-email': unexpectedTask,
+          'translate-moment': unexpectedTask,
           backupDatabase: unexpectedTask,
           schedulePublish: unexpectedTask,
           inline: unexpectedTask,
