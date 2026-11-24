@@ -212,6 +212,7 @@ export const Mails: CollectionConfig = {
     {
       name: 'at',
       type: 'date',
+      label: '计划发送时间',
       admin: {
         position: 'sidebar',
         description: '留空立即发送；修改时间并发布会替换原发送计划。',
@@ -256,14 +257,30 @@ export const Mails: CollectionConfig = {
       type: 'date',
       label: '开始发送时间',
       access: { create: () => false, update: () => false },
-      admin: { position: 'sidebar', readOnly: true, hidden: false },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        hidden: false,
+        date: {
+          pickerAppearance: 'dayAndTime',
+          displayFormat: 'yyyy-MM-dd HH:mm:ss',
+        },
+      },
     },
     {
       name: 'sentAt',
       type: 'date',
       label: '服务接收时间',
       access: { create: () => false, update: () => false },
-      admin: { position: 'sidebar', readOnly: true, hidden: false },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        hidden: false,
+        date: {
+          pickerAppearance: 'dayAndTime',
+          displayFormat: 'yyyy-MM-dd HH:mm:ss',
+        },
+      },
     },
     {
       name: 'messageId',
@@ -295,35 +312,82 @@ export const Mails: CollectionConfig = {
         description: '每次尝试独立保留。已发送表示邮件服务已接收，不代表收件人已收到。',
       },
       fields: [
-        { name: 'attemptId', type: 'text', required: true },
-        { name: 'jobId', type: 'text' },
-        { name: 'startedAt', type: 'date', required: true },
-        { name: 'finishedAt', type: 'date' },
-        { name: 'acceptedAt', type: 'date' },
+        // 内部标识：用于匹配发送尝试与后台任务，不在界面展示（值仍保留）
+        { name: 'attemptId', type: 'text', required: true, admin: { hidden: true } },
+        { name: 'jobId', type: 'text', admin: { hidden: true } },
         {
-          name: 'outcome',
-          type: 'select',
-          required: true,
-          options: [
-            { label: '发送中', value: 'sending' },
-            { label: '邮件服务已接收', value: 'sent' },
-            { label: '失败', value: 'failed' },
-            { label: '待核实', value: 'uncertain' },
+          type: 'row',
+          fields: [
+            {
+              name: 'startedAt',
+              type: 'date',
+              label: '开始时间',
+              required: true,
+              admin: {
+                date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm:ss' },
+              },
+            },
+            {
+              name: 'finishedAt',
+              type: 'date',
+              label: '结束时间',
+              admin: {
+                date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm:ss' },
+              },
+            },
+            {
+              name: 'acceptedAt',
+              type: 'date',
+              label: '服务接收时间',
+              admin: {
+                date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm:ss' },
+              },
+            },
           ],
         },
-        { name: 'messageId', type: 'text' },
-        { name: 'error', type: 'textarea' },
         {
-          name: 'resolution',
-          type: 'select',
-          options: [
-            { label: '确认已发送', value: 'sent' },
-            { label: '确认未发送', value: 'failed' },
+          type: 'row',
+          fields: [
+            {
+              name: 'outcome',
+              type: 'select',
+              label: '结果',
+              required: true,
+              options: [
+                { label: '发送中', value: 'sending' },
+                { label: '邮件服务已接收', value: 'sent' },
+                { label: '失败', value: 'failed' },
+                { label: '待核实', value: 'uncertain' },
+              ],
+            },
+            { name: 'messageId', type: 'text', label: 'Message ID' },
           ],
         },
-        { name: 'resolvedAt', type: 'date' },
-        { name: 'resolvedBy', type: 'text' },
-        { name: 'resolutionNote', type: 'textarea' },
+        { name: 'error', type: 'textarea', label: '错误信息', admin: { rows: 3 } },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'resolution',
+              type: 'select',
+              label: '人工核实',
+              options: [
+                { label: '确认已发送', value: 'sent' },
+                { label: '确认未发送', value: 'failed' },
+              ],
+            },
+            {
+              name: 'resolvedAt',
+              type: 'date',
+              label: '核实时间',
+              admin: {
+                date: { pickerAppearance: 'dayAndTime', displayFormat: 'yyyy-MM-dd HH:mm:ss' },
+              },
+            },
+            { name: 'resolvedBy', type: 'text', label: '核实人 ID' },
+          ],
+        },
+        { name: 'resolutionNote', type: 'textarea', label: '核实说明', admin: { rows: 3 } },
       ],
     },
 
