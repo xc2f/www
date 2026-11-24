@@ -127,10 +127,12 @@ schema-changing deployments; image rollback does not reverse database migrations
 
 ### Scheduled database backups
 
-With `DISABLE_BACKGROUND_JOBS=false`, backups run daily at midnight in the
-container's timezone (UTC by default, or 08:00 Asia/Shanghai). The queue polls
-every minute. Failed backups have up to three retries; successful jobs are
-deleted by Payload, and backup files are stored under `backups/` in R2.
+With `DISABLE_BACKGROUND_JOBS=false`, backups run daily at 19:00 UTC, which is
+03:00 Asia/Shanghai (the site's low-traffic window). Cron uses the container's
+timezone, so keep containers on UTC or adjust the schedule in
+`src/payload.config.ts` if `TZ` is changed. The queue polls every minute. Failed
+backups have up to three retries; successful jobs are deleted by Payload, and
+backup files are stored under `backups/` in R2.
 
 Before starting the queue, Payload releases unfinished `backupDatabase` jobs
 whose last update predates the Node process startup. This recovers jobs left

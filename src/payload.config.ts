@@ -128,18 +128,7 @@ export default buildConfig({
     // Apply explicit migrations so retired collection tables stay in existing databases.
     push: false,
   }),
-  collections: [
-    Media,
-    Pages,
-    Posts,
-    Categories,
-    Moments,
-    Tags,
-    Notes,
-    Feeds,
-    Mails,
-    Users,
-  ],
+  collections: [Media, Pages, Posts, Categories, Moments, Tags, Notes, Feeds, Mails, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
@@ -179,7 +168,9 @@ export default buildConfig({
         retries: 3,
         schedule: [
           {
-            cron: '0 0 * * *',
+            // 19:00 UTC = 03:00 Asia/Shanghai, i.e. the site's low-traffic window.
+            // Cron uses the Node process timezone, so keep containers on UTC.
+            cron: '0 19 * * *',
             queue: 'default',
           },
         ],
