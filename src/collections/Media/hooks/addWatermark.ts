@@ -37,7 +37,11 @@ export const addWatermark: CollectionBeforeOperationHook = async ({ args, operat
 </svg>
 `
 
+  // 必须先按 EXIF Orientation 物理旋转像素，再叠加水印：
+  // sharp 默认输出会移除 EXIF 元数据，若此时未旋转像素，
+  // 手机拍摄的照片（Orientation 6/8 等）在元数据被剥离后会显示为横躺/倒置。
   const watermarkedBuffer = await sharp(buffer)
+    .autoOrient()
     .composite([
       {
         input: Buffer.from(svg),

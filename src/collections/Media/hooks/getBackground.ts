@@ -9,30 +9,35 @@ export async function getBackgroundForWatermark(
 ) {
   const { position = 'bottom-right', sampleRatio = 0.1 } = options || {}
 
-  const image = sharp(imageBuffer)
+  // 与 addWatermark 保持一致：按 EXIF 方向旋转后再取样，
+  // 否则取到的是旋转前的角落，水印颜色判断会出错。
+  const image = sharp(imageBuffer).autoOrient()
   const meta = await image.metadata()
 
-  if (!meta.width || !meta.height) {
+  const width = meta.autoOrient?.width ?? meta.width
+  const height = meta.autoOrient?.height ?? meta.height
+
+  if (!width || !height) {
     return { luminance: 128, textColor: 'white' as const }
   }
 
-  const regionWidth = Math.floor(meta.width * sampleRatio)
-  const regionHeight = Math.floor(meta.height * sampleRatio)
+  const regionWidth = Math.floor(width * sampleRatio)
+  const regionHeight = Math.floor(height * sampleRatio)
 
   let left = 0
   let top = 0
 
   switch (position) {
     case 'bottom-right':
-      left = meta.width - regionWidth
-      top = meta.height - regionHeight
+      left = width - regionWidth
+      top = height - regionHeight
       break
     case 'bottom-left':
       left = 0
-      top = meta.height - regionHeight
+      top = height - regionHeight
       break
     case 'top-right':
-      left = meta.width - regionWidth
+      left = width - regionWidth
       top = 0
       break
     case 'top-left':
