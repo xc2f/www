@@ -22,6 +22,7 @@ interface MomentsFeedProps {
   initialMoments: MomentFeedItem[]
   initialHasNextPage?: boolean | null
   initialNextPage?: number | null
+  previewMoment?: MomentFeedItem | null
 }
 
 type MomentsFeedResponse = {
@@ -34,6 +35,7 @@ export default function MomentsFeed({
   initialMoments,
   initialHasNextPage,
   initialNextPage,
+  previewMoment,
 }: MomentsFeedProps) {
   const locale = useLocale()
   const t = useTranslations('Moments')
@@ -44,6 +46,17 @@ export default function MomentsFeed({
   const pendingRequest = useRef<AbortController | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const visibleMoments = previewMoment
+    ? [
+        ...moments.filter((moment) => moment.id !== previewMoment.id),
+        previewMoment,
+      ].sort((a, b) => {
+        const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : Number.NEGATIVE_INFINITY
+        const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : Number.NEGATIVE_INFINITY
+
+        return bTime - aTime
+      })
+    : moments
 
   useEffect(() => {
     setMoments(initialMoments)
@@ -127,14 +140,14 @@ export default function MomentsFeed({
     }
   }, [hasError, hasNextPage, loadNextPage])
 
-  if (!moments?.length) {
+  if (!visibleMoments?.length) {
     return <div className="archive-note">{t('empty')}</div>
   }
 
   return (
     <div>
       <ul className="archive-moments">
-        {moments.map((moment) => (
+        {visibleMoments.map((moment) => (
           <li key={moment.id}>
             <MomentCard moment={moment} />
           </li>

@@ -4,6 +4,7 @@ import React from 'react'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import MomentsFeed from './MomentsFeed'
+import LiveMomentsFeed from './LiveMomentsFeed'
 
 import { Locale } from '@/i18n/types'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
@@ -41,11 +42,19 @@ export default async function Page({ params }: Args) {
         title={t('moments')}
         intro={<p>{t('intro_description')}</p>}
       >
-        <MomentsFeed
-          initialMoments={moments.docs}
-          initialNextPage={moments.nextPage}
-          initialHasNextPage={moments.hasNextPage}
-        />
+        {draft ? (
+          <LiveMomentsFeed
+            initialMoments={moments.docs}
+            initialNextPage={moments.nextPage}
+            initialHasNextPage={moments.hasNextPage}
+          />
+        ) : (
+          <MomentsFeed
+            initialMoments={moments.docs}
+            initialNextPage={moments.nextPage}
+            initialHasNextPage={moments.hasNextPage}
+          />
+        )}
       </ContentArchive>
     </>
   )
