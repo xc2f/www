@@ -32,12 +32,14 @@ import { en } from '@payloadcms/translations/languages/en'
 import { zh } from '@payloadcms/translations/languages/zh'
 
 import { endpoints } from './endpoints'
+import { cancelJobEndpoint } from './endpoints/cancelJob'
 import { sqliteFilePath, sqliteURL } from './utilities/sqlite'
 import { migrations } from './migrations/sqlite'
 import { recoverMailDeliveries } from './utilities/mailDelivery'
 import { serializeSqliteJobs } from './utilities/serializeSqliteJobs'
 import { recoverBackupJobs } from './utilities/recoverBackupJobs'
-import { adminOnly } from './access/roles'
+import { lockJobFieldsExceptWaitUntil } from './utilities/lockJobFieldsExceptWaitUntil'
+import { adminOnly, isAdminUser } from './access/roles'
 import { systemAccess } from './access/system'
 
 const filename = fileURLToPath(import.meta.url)
@@ -82,6 +84,14 @@ export default buildConfig({
     },
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    // Registers the component so `generate:importmap` keeps it, even though the
+    // jobs collection is generated internally and not part of `config.collections`.
+    dependencies: {
+      jobCancelButton: {
+        type: 'component',
+        path: '@/components/JobCancelButton',
+      },
     },
     user: Users.slug,
     dateFormat: 'yyyy-MM-dd HH:mm:ss',
@@ -158,6 +168,7 @@ export default buildConfig({
   jobs: {
     access: {
       run: systemAccess,
+      cancel: ({ req }) => isAdminUser(req.user),
     },
     tasks: [
       sendEmailTask,
@@ -193,7 +204,26 @@ export default buildConfig({
       defaultJobsCollection.access = {
         ...defaultJobsCollection.access,
         read: adminOnly,
+        update: adminOnly,
       }
+      const existingEndpoints = defaultJobsCollection.endpoints
+      defaultJobsCollection.endpoints = [
+        ...(Array.isArray(existingEndpoints) ? existingEndpoints : []),
+        cancelJobEndpoint,
+      ]
+      defaultJobsCollection.fields = lockJobFieldsExceptWaitUntil([
+        ...(defaultJobsCollection.fields ?? []),
+        {
+          name: 'cancelJob',
+          type: 'ui',
+          admin: {
+            position: 'sidebar',
+            components: {
+              Field: '@/components/JobCancelButton',
+            },
+          },
+        },
+      ])
       return defaultJobsCollection
     },
   },
