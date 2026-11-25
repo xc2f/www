@@ -5,7 +5,13 @@ import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { slugField } from 'payload'
 import { slugify } from 'payload/shared'
 import { randomBytes } from 'node:crypto'
-import { collectMomentTexts } from '@/utilities/momentTranslation'
+import {
+  aiTranslatedField,
+  autoTranslateField,
+  createAiTranslatedResetHook,
+  createAutoTranslateAfterChange,
+} from '@/translation'
+import { momentTranslatableFields } from '@/tasks/translateMoment'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 
 const pad = (value: number) => String(value).padStart(2, '0')
@@ -49,22 +55,17 @@ export const Moments: CollectionConfig = {
         return data
       },
     ],
+    beforeChange: [
+      createAiTranslatedResetHook({
+        fields: momentTranslatableFields,
+      }),
+    ],
     afterChange: [
-      async ({ context, doc, req }) => {
-        if (context.skipTranslation || req.locale === 'en') return doc
-
-        if (!doc.title?.trim() && collectMomentTexts(doc.content).length === 0) {
-          return doc
-        }
-
-        await req.payload.jobs.queue({
-          task: 'translate-moment',
-          input: { momentId: doc.id },
-          req,
-        })
-
-        return doc
-      },
+      createAutoTranslateAfterChange({
+        collection: 'moments',
+        fields: momentTranslatableFields,
+        taskSlug: 'translate-moment',
+      }),
     ],
   },
   admin: {
@@ -143,6 +144,8 @@ export const Moments: CollectionConfig = {
         },
       },
     },
+    autoTranslateField(),
+    aiTranslatedField(),
     slugField({
       slugify: ({ data, valueToSlugify }) =>
         slugify(data?.slug) || slugify(valueToSlugify) || timestampSlug(data?.publishedAt),

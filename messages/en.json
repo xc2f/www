@@ -45,6 +45,12 @@
     "load_more": "Load more",
     "load_failed": "Could not load more.",
     "retry": "Retry",
+    "ai_translated": "AI translation",
+    "ai_translated_description": "AI-generated translation. Switch to the original anytime.",
+    "translation_toggle_description": "Switch between the AI translation and original",
+    "show_original": "Show original",
+    "show_translation": "Show AI translation",
+    "original_text": "Original",
     "mood": {
       "happy": "Happy",
       "calm": "Calm",

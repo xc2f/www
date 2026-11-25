@@ -817,6 +817,14 @@ export interface Moment {
   } | null;
   publishedAt?: string | null;
   /**
+   * 保存时把当前语言的内容翻译成其它语言
+   */
+  autoTranslate?: boolean | null;
+  /**
+   * 该语言的内容由 AI 翻译生成
+   */
+  aiTranslated?: boolean | null;
+  /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
@@ -1564,6 +1572,8 @@ export interface MomentsSelect<T extends boolean = true> {
       };
   content?: T;
   publishedAt?: T;
+  autoTranslate?: T;
+  aiTranslated?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -2175,7 +2185,9 @@ export interface TaskSendEmail {
  */
 export interface TaskTranslateMoment {
   input: {
-    momentId: number;
+    documentId: number;
+    sourceLocale?: string | null;
+    targetLocale?: string | null;
   };
   output: {
     translated?: boolean | null;

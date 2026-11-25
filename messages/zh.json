@@ -45,6 +45,12 @@
     "load_more": "加载更多",
     "load_failed": "加载失败。",
     "retry": "重试",
+    "ai_translated": "AI 译文",
+    "ai_translated_description": "译文由 AI 生成，可切换查看原文。",
+    "translation_toggle_description": "切换 AI 译文与原文",
+    "show_original": "显示原文",
+    "show_translation": "显示 AI 译文",
+    "original_text": "原文",
     "mood": {
       "happy": "开心",
       "calm": "放松",

@@ -7,6 +7,11 @@ import type { Media, Moment } from '@/payload-types'
 
 export type MomentFeedItem = Pick<Moment, 'id' | 'content' | 'mood' | 'publishedAt'> & {
   title?: string | null
+  aiTranslated?: boolean | null
+  original?: {
+    title?: string | null
+    content?: Moment['content']
+  } | null
   images: {
     id: string
     image: Media

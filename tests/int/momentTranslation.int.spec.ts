@@ -4,10 +4,19 @@ import config from '@/payload.config'
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import {
-  applyMomentTexts,
-  collectMomentTexts,
-  requestMomentTranslation,
-} from '@/utilities/momentTranslation'
+  applyTranslatedTexts,
+  collectTranslatableTexts,
+  requestTranslation,
+  type TranslatableField,
+} from '@/translation'
+
+const momentFields: TranslatableField[] = [
+  { name: 'title', type: 'text' },
+  { name: 'content', type: 'richText' },
+]
+
+const collectContentTexts = (content: unknown) =>
+  collectTranslatableTexts({ content }, momentFields)
 
 const paragraph = (text: string) => ({
   type: 'paragraph',
@@ -31,7 +40,8 @@ const mockTranslation = () => {
     const body = JSON.parse(String(init.body)) as {
       messages: { content: string }[]
     }
-    const input = JSON.parse(body.messages[1].content) as { texts: string[]; title: string }
+    const prefix = body.messages[0].content.includes('Simplified Chinese') ? 'ZH' : 'EN'
+    const input = JSON.parse(body.messages[1].content) as { texts: string[] }
 
     return new Response(
       JSON.stringify({
@@ -39,8 +49,7 @@ const mockTranslation = () => {
           {
             message: {
               content: JSON.stringify({
-                title: input.title ? `EN ${input.title}` : '',
-                texts: input.texts.map((text) => `EN ${text}`),
+                texts: input.texts.map((text) => `${prefix} ${text}`),
               }),
             },
           },
@@ -54,26 +63,39 @@ const mockTranslation = () => {
   return fetchMock
 }
 
-describe('moment translation helpers', () => {
+describe('translation text helpers', () => {
   it('collects and applies rich text nodes in document order', () => {
     const content = richText('第一段', '', '第二段')
-    const texts = collectMomentTexts(content)
+    const texts = collectContentTexts(content)
 
     expect(texts).toEqual(['第一段', '第二段'])
 
-    const translated = applyMomentTexts(content, ['First', 'Second'])
+    const translated = applyTranslatedTexts({ content }, momentFields, ['First', 'Second'])
 
-    expect(collectMomentTexts(translated)).toEqual(['First', 'Second'])
-    expect(translated.root.children[1].children[0].text).toBe('')
+    expect(collectContentTexts(translated.content)).toEqual(['First', 'Second'])
+    expect(translated.content.root.children[1].children[0].text).toBe('')
+  })
+
+  it('collects text fields in field order', () => {
+    const document = { title: '标题', content: richText('第一段') }
+
+    expect(collectTranslatableTexts(document, momentFields)).toEqual(['标题', '第一段'])
   })
 
   it('returns an empty list for content without text', () => {
-    expect(collectMomentTexts(null)).toEqual([])
-    expect(collectMomentTexts({ root: { type: 'root', children: [] } })).toEqual([])
+    expect(collectContentTexts(null)).toEqual([])
+    expect(collectContentTexts({ root: { type: 'root', children: [] } })).toEqual([])
+    expect(collectTranslatableTexts({ title: '  ', content: null }, momentFields)).toEqual([])
+  })
+
+  it('rejects translations with a different text count', () => {
+    expect(() =>
+      applyTranslatedTexts({ title: '标题' }, momentFields, ['one', 'two']),
+    ).toThrow('count mismatch')
   })
 })
 
-describe('requestMomentTranslation', () => {
+describe('requestTranslation', () => {
   const originalKey = process.env.DEEPSEEK_API_KEY
 
   afterEach(() => {
@@ -81,17 +103,30 @@ describe('requestMomentTranslation', () => {
     process.env.DEEPSEEK_API_KEY = originalKey
   })
 
-  it('translates title and texts through the DeepSeek chat API', async () => {
+  it('translates texts through the DeepSeek chat API', async () => {
     process.env.DEEPSEEK_API_KEY = 'test-key'
     const fetchMock = mockTranslation()
 
-    const result = await requestMomentTranslation({ texts: ['一段话'], title: '标题' })
+    const result = await requestTranslation({ texts: ['一段话'], targetLocale: 'en' })
 
-    expect(result).toEqual({ texts: ['EN 一段话'], title: 'EN 标题' })
+    expect(result).toEqual(['EN 一段话'])
 
     const [url, init] = fetchMock.mock.calls[0]
     expect(url).toBe('https://api.deepseek.com/chat/completions')
     expect((init?.headers as Record<string, string>).Authorization).toBe('Bearer test-key')
+  })
+
+  it('translates into Simplified Chinese when the target is Chinese', async () => {
+    process.env.DEEPSEEK_API_KEY = 'test-key'
+    const fetchMock = mockTranslation()
+
+    const result = await requestTranslation({ texts: ['Hello'], targetLocale: 'zh' })
+
+    expect(result).toEqual(['ZH Hello'])
+    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body)) as {
+      messages: { content: string }[]
+    }
+    expect(body.messages[0].content).toContain('Simplified Chinese')
   })
 
   it('throws when the translation response does not keep the text count', async () => {
@@ -102,13 +137,13 @@ describe('requestMomentTranslation', () => {
         async () =>
           new Response(
             JSON.stringify({
-              choices: [{ message: { content: JSON.stringify({ texts: [], title: '' }) } }],
+              choices: [{ message: { content: JSON.stringify({ texts: [] }) } }],
             }),
           ),
       ),
     )
 
-    await expect(requestMomentTranslation({ texts: ['一段话'], title: '' })).rejects.toThrow(
+    await expect(requestTranslation({ texts: ['一段话'], targetLocale: 'en' })).rejects.toThrow(
       'unexpected shape',
     )
   })
@@ -116,7 +151,7 @@ describe('requestMomentTranslation', () => {
   it('throws without an API key', async () => {
     delete process.env.DEEPSEEK_API_KEY
 
-    await expect(requestMomentTranslation({ texts: [], title: '标题' })).rejects.toThrow(
+    await expect(requestTranslation({ texts: [], targetLocale: 'en' })).rejects.toThrow(
       'DEEPSEEK_API_KEY',
     )
   })
@@ -138,7 +173,8 @@ describe('moment English translation job', () => {
     })
 
     return docs.filter(
-      (job) => (job.input as { momentId?: number } | null | undefined)?.momentId === momentId,
+      (job) =>
+        (job.input as { documentId?: number } | null | undefined)?.documentId === momentId,
     )
   }
 
@@ -203,7 +239,9 @@ describe('moment English translation job', () => {
 
     expect(english.title).toBe('EN 新标题')
     expect(english.slug).toBe(moment.slug)
-    expect(collectMomentTexts(english.content)).toEqual(['EN 第一段', 'EN 第二段'])
+    expect(english.aiTranslated).toBe(true)
+    expect(english.autoTranslate).toBe(false)
+    expect(collectContentTexts(english.content)).toEqual(['EN 第一段', 'EN 第二段'])
 
     await payload.update({
       collection: 'moments',
@@ -247,6 +285,166 @@ describe('moment English translation job', () => {
       locale: 'zh',
       context: { skipTranslation: true },
       data: { title: '还是中文' },
+    })
+
+    expect(await pendingTranslationJobs(moment.id)).toHaveLength(0)
+  })
+
+  it('defaults the switch on for Chinese and off for English', async () => {
+    const moment = await payload.create({
+      collection: 'moments',
+      locale: 'zh',
+      context: { skipTranslation: true },
+      data: { title: '默认开关', slug: `translation-default-test-${Date.now()}` },
+    })
+    createdIds.push(moment.id)
+
+    const chinese = await payload.findByID({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'zh',
+      draft: true,
+      fallbackLocale: false,
+    })
+    const english = await payload.findByID({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: true,
+      fallbackLocale: false,
+    })
+
+    expect(chinese.autoTranslate).toBe(true)
+    expect(english.autoTranslate ?? false).toBe(false)
+  })
+
+  it('translates English back to Chinese when the English switch is enabled', async () => {
+    process.env.DEEPSEEK_API_KEY = 'test-key'
+    mockTranslation()
+
+    const moment = await payload.create({
+      collection: 'moments',
+      locale: 'zh',
+      context: { skipTranslation: true },
+      data: {
+        title: '中文标题',
+        content: richText('中文段落'),
+        slug: `translation-reverse-test-${Date.now()}`,
+      },
+    })
+    createdIds.push(moment.id)
+
+    await payload.update({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: moment._status !== 'published',
+      data: {
+        title: 'English title',
+        content: richText('English paragraph'),
+        autoTranslate: true,
+      },
+    })
+
+    expect(await runTranslationJobs(moment.id)).toBe(1)
+
+    const chinese = await payload.findByID({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'zh',
+      draft: true,
+      fallbackLocale: false,
+    })
+
+    expect(chinese.title).toBe('ZH English title')
+    expect(chinese.aiTranslated).toBe(true)
+    expect(chinese.autoTranslate).toBe(false)
+    expect(collectContentTexts(chinese.content)).toEqual(['ZH English paragraph'])
+  })
+
+  it('clears the AI marker only when the translated content is edited by hand', async () => {
+    process.env.DEEPSEEK_API_KEY = 'test-key'
+    mockTranslation()
+
+    const moment = await payload.create({
+      collection: 'moments',
+      locale: 'zh',
+      context: { skipTranslation: true },
+      data: {
+        title: '手工校对',
+        content: richText('中文段落'),
+        slug: `translation-manual-edit-test-${Date.now()}`,
+      },
+    })
+    createdIds.push(moment.id)
+
+    await payload.update({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'zh',
+      data: { title: '手工校对标题' },
+    })
+
+    expect(await runTranslationJobs(moment.id)).toBe(1)
+
+    const translated = await payload.findByID({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: true,
+      fallbackLocale: false,
+    })
+    expect(translated.aiTranslated).toBe(true)
+
+    await payload.update({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: moment._status !== 'published',
+      data: { mood: 'happy' },
+    })
+
+    const afterMetaEdit = await payload.findByID({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: true,
+      fallbackLocale: false,
+    })
+    expect(afterMetaEdit.aiTranslated).toBe(true)
+
+    await payload.update({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: moment._status !== 'published',
+      data: { title: 'Hand written title' },
+    })
+
+    const afterContentEdit = await payload.findByID({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'en',
+      draft: true,
+      fallbackLocale: false,
+    })
+    expect(afterContentEdit.aiTranslated).toBe(false)
+  })
+
+  it('does not queue translation when the switch is turned off', async () => {
+    const moment = await payload.create({
+      collection: 'moments',
+      locale: 'zh',
+      context: { skipTranslation: true },
+      data: { title: '关闭翻译', slug: `translation-off-test-${Date.now()}` },
+    })
+    createdIds.push(moment.id)
+
+    await payload.update({
+      collection: 'moments',
+      id: moment.id,
+      locale: 'zh',
+      data: { title: '关闭翻译后更新', autoTranslate: false },
     })
 
     expect(await pendingTranslationJobs(moment.id)).toHaveLength(0)

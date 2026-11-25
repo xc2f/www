@@ -6,6 +6,8 @@ import * as migration_20261115_subscribe_private_feeds from './20261115_subscrib
 import * as migration_20261120_mail_delivery_plans from './20261120_mail_delivery_plans'
 
 import * as migration_20261120_mail_delivery_recovery from './20261120_mail_delivery_recovery'
+import * as migration_20261125_113425_add_moment_auto_translate from './20261125_113425_add_moment_auto_translate'
+import * as migration_20261125_115600_add_moment_ai_translated from './20261125_115600_add_moment_ai_translated'
 
 export const migrations = [
   {
@@ -42,5 +44,15 @@ export const migrations = [
     up: migration_20261120_mail_delivery_recovery.up,
     down: migration_20261120_mail_delivery_recovery.down,
     name: '20261120_mail_delivery_recovery',
+  },
+  {
+    up: migration_20261125_113425_add_moment_auto_translate.up,
+    down: migration_20261125_113425_add_moment_auto_translate.down,
+    name: '20261125_113425_add_moment_auto_translate',
+  },
+  {
+    up: migration_20261125_115600_add_moment_ai_translated.up,
+    down: migration_20261125_115600_add_moment_ai_translated.down,
+    name: '20261125_115600_add_moment_ai_translated',
   },
 ]
